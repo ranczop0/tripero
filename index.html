@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pieniny & Tatry — Plan wycieczki 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:  #1B3A4B;
+    --gold:  #C8860A;
+    --teal:  #2A7F8A;
+    --green: #2E7D32;
+    --purple:#4A235A;
+    --light: #F8F6F2;
+    --white: #FFFFFF;
+    --text:  #2C2C2C;
+    --muted: #777777;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--light);
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; height: 56px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.3);
+  }
+  nav .logo { color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1.2rem; }
+  nav ul { list-style: none; display: flex; gap: 1.5rem; }
+  nav ul li a { color: rgba(255,255,255,.8); text-decoration: none; font-size: .85rem; font-weight: 500;
+    transition: color .2s; }
+  nav ul li a:hover { color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    position: relative; min-height: 92vh;
+    background: linear-gradient(160deg, var(--navy) 0%, #2A5A72 50%, var(--teal) 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 4rem 2rem; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: url('photos/hero.jpg') center/cover no-repeat;
+    opacity: 0.25;
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 760px; }
+  .hero-badge {
+    display: inline-block; background: var(--gold); color: white;
+    font-size: .75rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+    padding: .35rem 1rem; border-radius: 2rem; margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 7vw, 5rem);
+    color: white; line-height: 1.1; margin-bottom: 1rem;
+  }
+  .hero h1 span { color: var(--gold); }
+  .hero p { font-size: 1.15rem; color: rgba(255,255,255,.8); margin-bottom: .5rem; }
+  .hero .en { font-style: italic; color: rgba(255,255,255,.55); font-size: 1rem; }
+  .hero-meta {
+    display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;
+    margin-top: 2.5rem;
+  }
+  .hero-meta div {
+    background: rgba(255,255,255,.1); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: .75rem; padding: .75rem 1.5rem; color: white;
+    font-size: .9rem;
+  }
+  .hero-meta strong { display: block; font-size: 1.1rem; color: var(--gold); }
+  .scroll-hint {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    color: rgba(255,255,255,.5); font-size: .8rem; animation: bounce 2s infinite;
+  }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+  /* SECTION */
+  section { padding: 5rem 1.5rem; }
+  .container { max-width: 900px; margin: 0 auto; }
+
+  /* DAY HEADER */
+  .day-header {
+    border-radius: 1rem 1rem 0 0; padding: 2rem 2.5rem 1.5rem;
+    margin-bottom: 0; position: relative; overflow: hidden;
+  }
+  .day-header::before {
+    content: attr(data-day);
+    position: absolute; right: 2rem; top: 50%; transform: translateY(-50%);
+    font-family: 'Playfair Display', serif; font-size: 6rem; font-weight: 700;
+    color: rgba(255,255,255,.08); line-height: 1;
+  }
+  .day-header .tag {
+    font-size: .7rem; letter-spacing: .15em; text-transform: uppercase;
+    color: rgba(255,255,255,.6); font-weight: 600; margin-bottom: .4rem;
+  }
+  .day-header h2 {
+    font-family: 'Playfair Display', serif; font-size: 1.9rem; color: white; line-height: 1.2;
+  }
+  .day-header .sub { font-size: .95rem; color: rgba(255,255,255,.65); margin-top: .3rem; font-style: italic; }
+
+  .day-d1 { background: linear-gradient(135deg, var(--navy), #2A5A72); }
+  .day-d2 { background: linear-gradient(135deg, var(--green), #1B5E20); }
+  .day-d3 { background: linear-gradient(135deg, var(--purple), #6A1B9A); }
+
+  /* DAY BODY */
+  .day-body {
+    background: white; border-radius: 0 0 1rem 1rem;
+    box-shadow: 0 8px 40px rgba(0,0,0,.08);
+    margin-bottom: 3rem; overflow: hidden;
+  }
+
+  /* PHOTO PLACEHOLDER */
+  .photo-slot {
+    background: #E8E8E8; border: 2.5px dashed #BBBBBB;
+    border-radius: .5rem; margin: 1.5rem 2rem;
+    height: 220px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; cursor: pointer;
+    transition: background .2s;
+  }
+  .photo-slot:hover { background: #E0ECF4; border-color: var(--teal); }
+  .photo-slot .icon { font-size: 2.5rem; margin-bottom: .5rem; }
+  .photo-slot p { color: var(--muted); font-size: .9rem; }
+  .photo-slot img { width: 100%; height: 100%; object-fit: cover; border-radius: .5rem; display: none; }
+
+  /* ATTRACTION */
+  .attraction {
+    padding: 1.5rem 2rem 1rem;
+    border-bottom: 1px solid #F0F0F0;
+  }
+  .attraction:last-child { border-bottom: none; }
+  .attraction-title {
+    display: flex; align-items: center; gap: .6rem;
+    font-size: 1.1rem; font-weight: 700; color: var(--navy);
+    margin-bottom: .3rem;
+  }
+  .attraction-title .emoji { font-size: 1.3rem; }
+  .attraction-en { font-size: .85rem; color: var(--muted); font-style: italic; margin-bottom: .8rem; }
+  .desc-pl { font-size: .95rem; color: var(--text); margin-bottom: .35rem; }
+  .desc-en { font-size: .9rem; color: var(--muted); font-style: italic; margin-bottom: .75rem; }
+  .tip {
+    display: inline-flex; align-items: center; gap: .4rem;
+    background: #E8F5E9; color: var(--green); font-size: .85rem;
+    font-weight: 600; padding: .35rem .8rem; border-radius: .4rem;
+    margin-bottom: .75rem;
+  }
+  .link-btn {
+    display: inline-flex; align-items: center; gap: .4rem;
+    color: var(--teal); font-size: .85rem; font-weight: 500;
+    text-decoration: none; border-bottom: 1px solid transparent;
+    transition: border-color .2s;
+  }
+  .link-btn:hover { border-color: var(--teal); }
+
+  /* GOLD DIVIDER */
+  .gold-line {
+    width: 3rem; height: 3px; background: var(--gold);
+    border-radius: 2px; margin: .5rem 0 1rem;
+  }
+
+  /* MAP SECTION */
+  .map-section { background: var(--navy); }
+  .map-section h2 { font-family: 'Playfair Display', serif; font-size: 2rem; color: white; margin-bottom: .5rem; }
+  .map-section .sub { color: rgba(255,255,255,.6); font-style: italic; margin-bottom: 2rem; }
+  .map-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+  .map-card {
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+    border-radius: .75rem; padding: 1.25rem 1.5rem;
+  }
+  .map-card .distance { font-size: 1.4rem; font-weight: 700; color: var(--gold); }
+  .map-card .place { color: white; font-weight: 600; margin: .2rem 0; }
+  .map-card .time { font-size: .85rem; color: rgba(255,255,255,.55); }
+  .map-link {
+    display: inline-flex; align-items: center; gap: .5rem; margin-top: 2rem;
+    background: var(--gold); color: white; padding: .75rem 1.75rem;
+    border-radius: 2rem; font-weight: 600; text-decoration: none;
+    transition: opacity .2s;
+  }
+  .map-link:hover { opacity: .85; }
+
+  /* PRACTICAL */
+  .practical-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 1.25rem; }
+  .practical-card {
+    background: white; border-radius: .75rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,.07);
+    padding: 1.5rem;
+  }
+  .practical-card .icon { font-size: 2rem; margin-bottom: .75rem; }
+  .practical-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .2rem; }
+  .practical-card .en { font-size: .8rem; color: var(--muted); font-style: italic; margin-bottom: .6rem; }
+  .practical-card p { font-size: .9rem; color: var(--text); line-height: 1.6; }
+
+  /* COMMENTS */
+  .comments-section { background: white; }
+  .comments-section h2 { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--navy); margin-bottom: .4rem; }
+  .comments-section .sub { color: var(--muted); font-style: italic; margin-bottom: 2rem; }
+  #utterances-container { margin-top: 1rem; }
+
+  /* FOOTER */
+  footer {
+    background: var(--navy); color: rgba(255,255,255,.5);
+    text-align: center; padding: 2rem;
+    font-size: .85rem;
+  }
+  footer strong { color: var(--gold); }
+
+  /* RESPONSIVE */
+  @media(max-width:600px) {
+    nav ul { display: none; }
+    .hero h1 { font-size: 2.5rem; }
+    .hero-meta { gap: 1rem; }
+    .day-header { padding: 1.5rem; }
+    .attraction { padding: 1.25rem 1.25rem .75rem; }
+    .photo-slot { margin: 1rem 1.25rem; height: 160px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">🏔️ Pieniny & Tatry</div>
+  <ul>
+    <li><a href="#day1">Dzień 1</a></li>
+    <li><a href="#day2">Dzień 2</a></li>
+    <li><a href="#day3">Dzień 3</a></li>
+    <li><a href="#mapa">Mapa</a></li>
+    <li><a href="#komentarze">Komentarze</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">Plan wycieczki · Trip Guide · 2025</div>
+    <h1>Pieniny<br><span>&</span> Tatry</h1>
+    <p>Wycieczka 3-dniowa dla całej rodziny</p>
+    <p class="en">3-Day Family Adventure Trip</p>
+    <div class="hero-meta">
+      <div><strong>📍 Baza</strong>Połaniec</div>
+      <div><strong>📅 3 dni</strong>3 noce</div>
+      <div><strong>👨‍👩‍👧‍👦 13 osób</strong>rodzina</div>
+      <div><strong>🇵🇱🇦🇺</strong>dwujęzycznie</div>
+    </div>
+  </div>
+  <div class="scroll-hint">↓ przewiń</div>
+</div>
+
+<!-- DAY 1 -->
+<section id="day1">
+  <div class="container">
+    <div class="day-header day-d1" data-day="01">
+      <div class="tag">Dzień 1 · Day 1</div>
+      <h2>Czorsztyn — Zamek & Jezioro</h2>
+      <div class="sub">Castle, Lake Cruise & E-bike Ride</div>
+    </div>
+    <div class="day-body">
+
+      <div class="photo-slot" onclick="this.querySelector('input').click()">
+        <div class="icon">📸</div>
+        <p>Kliknij aby dodać zdjęcie — Zamek Czorsztyn</p>
+        <input type="file" accept="image/*" style="display:none" onchange="loadPhoto(this)">
+        <img alt="Zamek Czorsztyn">
+      </div>
+
+      <div class="attraction">
+        <div class="attraction-title"><span class="emoji">🏰</span> Zamek Czorsztyn</div>
+        <div class="gold-line"></div>
+        <div class="attraction-en">Czorsztyn Castle</div>
+        <div class="desc-pl">Ruiny gotyckiego zamku z XIV w. z panoramą na Jezioro Czorsztyńskie i zamek Niedzica. Zwiedzanie ok. 1.5h, częściowo dostępne dla seniorów.</div>
+        <div class="desc-en">14th-century Gothic castle ruins with panoramic views of Lake Czorsztyn and Niedzica Castle. ~1.5h visit, partially accessible for seniors.</div>
+        <a href="https://zamek-czorsztyn.pl" class="link-btn" target="_blank">↗ zamek-czorsztyn.pl</a>
+      </div>
+
+      <div class="photo-slot" onclick="this.querySelector('input').click()">
+        <div class="icon">📸</div>
+        <p>Kliknij aby dodać zdjęcie — Jezioro Czorsztyńskie</p>
+        <input type="file" accept="image/*" style="display:none" onchange="loadPhoto(this)">
+        <img alt="Jezioro">
+      </div>
+
+      <div class="attraction">
+        <div class="attraction-title"><span class="emoji">⛵</span> Rejs po Jeziorze Czorsztyńskim</div>
+        <div class="gold-line"></div>
+        <div class="attraction-en">Boat Cruise on Lake Czorsztyn</div>
+        <div class="desc-pl">Rejs stateczkiem z widokiem na oba zamki i panoramę Tatr. Bezpieczne dla dzieci, ok. 45 min.</div>
+        <div class="desc-en">Boat cruise with views of both castles and the Tatra Mountains. Safe for children, approx. 45 min.</div>
+        <a href="https://www.pieniny.com/pl" class="link-btn" target="_blank">↗ pieniny.com</a>
+      </div>
+
+      <div class="attraction">
+        <div class="attraction-title"><span class="emoji">🚲</span> E-rowery dookoła jeziora</div>
+        <div class="gold-line"></div>
+        <div class="attraction-en">E-bike Ride Around the Lake</div>
+        <div class="desc-pl">Pętla ~25 km wokół Jeziora Czorsztyńskiego. Łagodna, widokowa, idealna dla całej rodziny. Rezerwacja online zalecana.</div>
+        <div class="desc-en">~25 km loop around Lake Czorsztyn. Gentle, scenic, perfect for all ages. Online booking recommended.</div>
+        <a href="https://www.jezioro-czorsztynskie.pl" class="link-btn" target="_blank">↗ jezioro-czorsztynskie.pl</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DAY 2 -->
+<section id="day2" style="padding-top:0">
+  <div class="container">
+    <div class="day-header day-d2" data-day="02">
+      <div class="tag">Dzień 2 · Day 2</div>
+      <h2>Spływ Dunajcem & Wąwóz Homole</h2>
+      <div class="sub">Dunajec River Rafting & Homole Gorge</div>
+    </div>
+    <div class="day-body">
+
+      <div class="photo-slot" onclick="this.querySelector('input').click()">
+        <div class="icon">📸</div>
+        <p>Kliknij aby dodać zdjęcie — Spływ Dunajcem</p>
+        <input type="file" accept="image/*" style="display:none" onchange="loadPhoto(this)">
+        <img alt="Dunajec">
+      </div>
+
+      <div class="attraction">
+        <div class="attraction-title"><span class="emoji">🛶</span> Spływ Dunajcem</div>
+        <div class="gold-line"></div>
+        <div class="attraction-en">Dunajec River Rafting</div>
+        <div class="desc-pl">Tradycyjny spływ tratwą z Sromowiec Kątów do Szczawnicy (~18 km, 2–3h). Przez malowniczy Przełom Pieniński. Bezpieczny dla całej rodziny.</div>
+        <div class="desc-en">Traditional raft ride from Sromowce Kąty to Szczawnica (~18 km, 2–3h). Through the scenic Pieniny Gorge. Safe for the whole family.</div>
+        <div class="tip">💡 Rezerwacja obowiązkowa · Advance booking essential</div><br>
+        <a href="https://www.flisacy.com.pl" class="link-btn" target="_blank">↗ flisacy.com.pl</a>
+      </div>
+
+      <div class="photo-slot" onclick="this.querySelector('input').click()">
+        <div class="icon">📸</div>
+        <p>Kliknij aby dodać zdjęcie — Wąwóz Homole</p>
+        <input type="file" accept="image/*" style="display:none" onchange="loadPhoto(this)">
+        <img alt="Homole">
+      </div>
+
+      <div class="attraction">
+        <div class="attraction-title"><span class="emoji">🏞️</span> Wąwóz Homole</div>
+        <div class="gold-line"></div>
+        <div class="attraction-en">Homole Gorge Nature Reserve</div>
+        <div class="desc-pl">Krótki spacer przez wąwóz skalny (~2 km, ok. 1h). Pionowe skały, wodospady, bujna roślinność — dzieci zachwycone! Dostępny dla seniorów.</div>
+        <div class="desc-en">Short walk through a rocky gorge (~2 km, ~1h). Vertical cliffs, waterfalls, lush greenery — children love it! Accessible for seniors.</div>
+        <a href="https://wawoz-homole.pl" class="link-btn" target="_blank">↗ wawoz-homole.pl</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DAY 3 -->
+<section id="day3" style="padding-top:0">
+  <div class="container">
+    <div class="day-header day-d3" data-day="03">
+      <div class="tag">Dzień 3 · Day 3</div>
+      <h2>Morskie Oko</h2>
+      <div class="sub">Eye of the Sea — The Most Beautiful Lake in the Tatras</div>
+    </div>
+    <div class="day-body">
+
+      <div class="photo-slot" onclick="this.querySelector('input').click()">
+        <div class="icon">📸</div>
+        <p>Kliknij aby dodać zdjęcie — Morskie Oko</p>
+        <input type="file" accept="image/*" style="display:none" onchange="loadPhoto(this)">
+        <img alt="Morskie Oko">
+      </div>
+
+      <div class="attraction">
+        <div class="attraction-title"><span class="emoji">🏔️</span> Morskie Oko</div>
+        <div class="gold-line"></div>
+        <div class="attraction-en">Eye of the Sea</div>
+        <div class="desc-pl">Najpiękniejsze i największe jezioro Tatr. Parking: Palenica Białczańska (~3h z Połańca) → bus wahadłowy LUB spacer 9 km. Dla seniorów i dzieci: bryczka konna w obie strony!</div>
+        <div class="desc-en">The most beautiful and largest lake in the Tatras. Park at Palenica Białczańska (~3h from Połaniec) → shuttle bus OR 9 km walk. For seniors & children: horse-drawn carriage both ways!</div>
+        <div class="tip">💡 Wyjeżdżaj przed 8:00! · Leave before 8:00 AM!</div><br>
+        <a href="https://tpn.pl/odwiedzaj" class="link-btn" target="_blank">↗ tpn.pl</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAP -->
+<section id="mapa" class="map-section">
+  <div class="container">
+    <h2>📍 Odległości z Połańca</h2>
+    <div class="sub">Distances from Połaniec</div>
+    <div class="map-cards">
+      <div class="map-card">
+        <div class="distance">~2.5h</div>
+        <div class="place">Czorsztyn</div>
+        <div class="time">przez Nowy Sącz · via Nowy Sącz</div>
+      </div>
+      <div class="map-card">
+        <div class="distance">~2.5h</div>
+        <div class="place">Spływ Dunajcem</div>
+        <div class="time">Sromowce Kąty</div>
+      </div>
+      <div class="map-card">
+        <div class="distance">~3h</div>
+        <div class="place">Morskie Oko</div>
+        <div class="time">Palenica Białczańska</div>
+      </div>
+      <div class="map-card">
+        <div class="distance">3 dni</div>
+        <div class="place">Cały wyjazd</div>
+        <div class="time">piątek–poniedziałek · Fri–Mon</div>
+      </div>
+    </div>
+    <a href="https://maps.google.com/maps?q=Czorsztyn,Poland" target="_blank" class="map-link">
+      🗺️ Otwórz w Google Maps
+    </a>
+  </div>
+</section>
+
+<!-- PRACTICAL -->
+<section>
+  <div class="container">
+    <h2 style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--navy);margin-bottom:.4rem;">
+      ℹ️ Informacje praktyczne
+    </h2>
+    <p style="color:var(--muted);font-style:italic;margin-bottom:2rem;">Practical Information</p>
+    <div class="practical-grid">
+      <div class="practical-card">
+        <div class="icon">👨‍👩‍👧‍👦</div>
+        <h3>Dla kogo?</h3>
+        <div class="en">For whom?</div>
+        <p>Rodziny z dziećmi, seniorzy ✅<br>Każda atrakcja ma wariant dostępny.<br><em>Every attraction has an accessible option.</em></p>
+      </div>
+      <div class="practical-card">
+        <div class="icon">📅</div>
+        <h3>Kiedy?</h3>
+        <div class="en">When?</div>
+        <p>22 czerwca – 17 lipca 2025<br>Optymalnie: piątek wieczór → poniedziałek rano<br><em>Ideal: Fri evening → Mon morning</em></p>
+      </div>
+      <div class="practical-card">
+        <div class="icon">🚗</div>
+        <h3>Dojazd</h3>
+        <div class="en">Getting there</div>
+        <p>Z Połańca przez Nowy Sącz.<br>Czorsztyn: ~2.5h<br>Morskie Oko: ~3h</p>
+      </div>
+      <div class="practical-card">
+        <div class="icon">⚠️</div>
+        <h3>Ważne</h3>
+        <div class="en">Important</div>
+        <p>Spływ Dunajcem: rezerwacja!<br>Morskie Oko: wyjazd przed 8:00<br><em>Dunajec: book ahead! MO: before 8AM</em></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMENTS -->
+<section id="komentarze" class="comments-section">
+  <div class="container">
+    <h2>💬 Komentarze</h2>
+    <div class="sub">Zostaw swój komentarz · Leave a comment</div>
+    <div id="utterances-container"></div>
+    <script>
+      const s = document.createElement('script');
+      s.src = 'https://utteranc.es/client.js';
+      s.setAttribute('repo', 'ranczop0/tripero');
+      s.setAttribute('issue-term', 'pathname');
+      s.setAttribute('theme', 'github-light');
+      s.setAttribute('crossorigin', 'anonymous');
+      s.async = true;
+      document.getElementById('utterances-container').appendChild(s);
+    </script>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>🏔️ <strong>Pieniny & Tatry 2025</strong> &nbsp;·&nbsp; Baza: Połaniec &nbsp;·&nbsp; Plan wycieczki rodzinnej</p>
+</footer>
+
+<script>
+function loadPhoto(input) {
+  if (!input.files || !input.files[0]) return;
+  const slot = input.closest('.photo-slot');
+  const img  = slot.querySelector('img');
+  const reader = new FileReader();
+  reader.onload = e => {
+    img.src = e.target.result;
+    img.style.display = 'block';
+    slot.querySelector('.icon').style.display = 'none';
+    slot.querySelector('p').style.display = 'none';
+    slot.style.border = 'none';
+    slot.style.height = 'auto';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+</script>
+
+</body>
+</html>
