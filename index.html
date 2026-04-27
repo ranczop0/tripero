@@ -67,8 +67,10 @@ main{max-width:960px;margin:0 auto;padding:3rem 1.5rem 5rem}
 .trip-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.14)}
 
 .trip-card-img{
-  height:190px;background-size:cover;background-position:center;
-  position:relative;flex-shrink:0;
+  height:190px;position:relative;flex-shrink:0;overflow:hidden;background:#ccc;
+}
+.trip-card-img img{
+  width:100%;height:100%;object-fit:cover;display:block;
 }
 .trip-card-img::after{
   content:'';position:absolute;inset:0;
@@ -130,8 +132,6 @@ footer strong{color:var(--gold)}
 <div class="hero">
   <div class="hero-inner">
     <div class="hero-logo">trip<span>ero</span></div>
-    <p class="hero-sub pl">Nasze rodzinne wycieczki — plan, zdjęcia, wskazówki</p>
-    <p class="hero-sub en">Our family trips — plans, photos, tips</p>
   </div>
 </div>
 
@@ -143,19 +143,18 @@ footer strong{color:var(--gold)}
 
     <!-- Pieniny & Tatry -->
     <a class="trip-card" href="pieniny/">
-      <div class="trip-card-img" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Panorama-Morskiego-Oka.jpg/960px-Panorama-Morskiego-Oka.jpg')">
+      <div class="trip-card-img">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Jezioro_Czorsztynskie_1.jpg/960px-Jezioro_Czorsztynskie_1.jpg" alt="Pieniny">
         <div class="trip-card-badge">#1</div>
         <div class="trip-card-days"><span class="pl">3 dni</span><span class="en">3 days</span></div>
       </div>
       <div class="trip-card-body">
         <div class="trip-card-title">Pieniny & Tatry</div>
-        <div class="trip-card-date">📅 <span class="pl">czerwiec–lipiec 2025</span><span class="en">June–July 2025</span></div>
-        <div class="trip-card-desc pl">Zamek Czorsztyn, spływ Dunajcem, Wąwóz Homole i Morskie Oko. Wycieczka dla całej rodziny — dzieci, dorośli i seniorzy.</div>
-        <div class="trip-card-desc en">Czorsztyn Castle, Dunajec rafting, Homole Gorge and Morskie Oko. A trip for the whole family — kids, adults and seniors.</div>
+        <div class="trip-card-desc pl">Zamek Czorsztyn, spływ Dunajcem, Wąwóz Homole i Morskie Oko.</div>
+        <div class="trip-card-desc en">Czorsztyn Castle, Dunajec rafting, Homole Gorge and Morskie Oko.</div>
         <div class="trip-card-footer">
           <div class="trip-card-tags">
             <span class="tag">🏔️ Góry</span>
-            <span class="tag">👨‍👩‍👧‍👦 Rodzina</span>
             <span class="tag">🚲 Aktywnie</span>
           </div>
           <div class="trip-card-arrow">→</div>
