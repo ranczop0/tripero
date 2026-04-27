@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pieniny & Tatry 2025</title>
+<title>Tripero — Plan wycieczek</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -14,7 +13,10 @@
   --light:#F8F6F2;--white:#fff;--text:#2C2C2C;--muted:#777;
 }
 html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);line-height:1.7}
+body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);min-height:100vh}
+
+[data-lang="en"] .pl{display:none}
+[data-lang="pl"] .en{display:none}
 
 .lang-btn{
   position:fixed;top:14px;right:1rem;z-index:999;
@@ -24,89 +26,100 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);li
   transition:opacity .2s;
 }
 .lang-btn:hover{opacity:.85}
-[data-lang="en"] .pl{display:none}
-[data-lang="pl"] .en{display:none}
 
+/* HERO */
 .hero{
-  position:relative;min-height:75vh;
-  background:linear-gradient(160deg,var(--navy) 0%,#2A5A72 60%,var(--teal) 100%);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:4rem 1.5rem 6rem;overflow:hidden;
+  background:linear-gradient(160deg,var(--navy) 0%,#1e4d63 60%,var(--teal) 100%);
+  padding:5rem 1.5rem 4rem;text-align:center;position:relative;overflow:hidden;
 }
 .hero::before{
   content:'';position:absolute;inset:0;
-  background:url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Jezioro_Czorsztynskie_1.jpg/1280px-Jezioro_Czorsztynskie_1.jpg') center/cover;
-  opacity:.2;
+  background:url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Panorama-Morskiego-Oka.jpg/1280px-Panorama-Morskiego-Oka.jpg') center/cover;
+  opacity:.12;
 }
-.hero-content{position:relative;z-index:1;max-width:680px}
-.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.6rem,8vw,5rem);color:white;line-height:1.1;margin-bottom:1rem}
-.hero h1 span{color:var(--gold)}
-.hero .tagline{font-size:1.05rem;color:rgba(255,255,255,.75);margin-bottom:.3rem}
-.hero .tagline.en{font-style:italic;color:rgba(255,255,255,.5);font-size:.95rem}
-.scroll-hint{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.4);font-size:.8rem;animation:bounce 2s infinite}
-@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+.hero-inner{position:relative;z-index:1;max-width:640px;margin:0 auto}
+.hero-logo{font-family:'Playfair Display',serif;font-size:3rem;color:white;letter-spacing:-.02em}
+.hero-logo span{color:var(--gold)}
+.hero-sub{color:rgba(255,255,255,.65);font-size:1rem;margin-top:.5rem;font-weight:300}
+.hero-sub.en{font-style:italic;font-size:.9rem}
 
-.map-section{background:var(--navy);padding:3.5rem 1.5rem}
-.map-section h2{font-family:'Playfair Display',serif;font-size:1.8rem;color:white;margin-bottom:.3rem}
-.map-section .sub{color:rgba(255,255,255,.5);font-style:italic;margin-bottom:1.5rem;font-size:.9rem}
-#map{height:380px;border-radius:1rem;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)}
-.map-legend{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.25rem}
-.map-legend div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:.5rem;padding:.5rem 1rem;color:white;font-size:.85rem}
-.map-legend strong{color:var(--gold)}
+/* MAIN */
+main{max-width:960px;margin:0 auto;padding:3rem 1.5rem 5rem}
 
-section{padding:4rem 1.5rem}
-.container{max-width:880px;margin:0 auto}
-
-.day-header{border-radius:1rem 1rem 0 0;padding:1.75rem 2rem;position:relative;overflow:hidden}
-.day-header::after{content:attr(data-day);position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-family:'Playfair Display',serif;font-size:5.5rem;font-weight:700;color:rgba(255,255,255,.07);line-height:1;pointer-events:none}
-.day-header .tag{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:600;margin-bottom:.35rem}
-.day-header h2{font-family:'Playfair Display',serif;font-size:1.75rem;color:white;line-height:1.2}
-.day-header .sub{font-size:.9rem;color:rgba(255,255,255,.6);margin-top:.25rem;font-style:italic}
-.d1{background:linear-gradient(135deg,var(--navy),#2A5A72)}
-.d2{background:linear-gradient(135deg,var(--green),#1B5E20)}
-.d3{background:linear-gradient(135deg,var(--purple),#6A1B9A)}
-.day-body{background:white;border-radius:0 0 1rem 1rem;box-shadow:0 8px 40px rgba(0,0,0,.08);margin-bottom:3rem;overflow:hidden}
-
-/* ── INFINITE SCROLL STRIP ── */
-.strip-outer{position:relative;overflow:hidden;height:230px;background:#111;cursor:grab;user-select:none}
-.strip-outer:active{cursor:grabbing}
-.strip-track{display:flex;height:100%;width:max-content;will-change:transform;transition:none}
-.strip-track img{height:100%;width:auto;min-width:260px;max-width:400px;object-fit:cover;margin-right:4px;flex-shrink:0;pointer-events:none;display:block}
-.strip-loading{display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,.4);font-size:.85rem;letter-spacing:.05em}
-.strip-count{
-  position:absolute;top:.6rem;right:.75rem;
-  background:rgba(0,0,0,.5);color:rgba(255,255,255,.7);
-  font-size:.7rem;padding:.2rem .55rem;border-radius:1rem;pointer-events:none;
+.section-label{
+  font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+  font-weight:700;color:var(--muted);margin-bottom:1.5rem;
 }
-.strip-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.55));color:rgba(255,255,255,.8);font-size:.75rem;padding:.4rem .85rem 1rem;font-style:italic;pointer-events:none}
 
-.attraction{padding:1.4rem 1.75rem 1rem;border-bottom:1px solid #F0F0F0}
-.attraction:last-child{border-bottom:none}
-.attraction-title{display:flex;align-items:center;gap:.5rem;font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:.2rem}
-.gold-line{width:2.5rem;height:3px;background:var(--gold);border-radius:2px;margin:.35rem 0 .7rem}
-.desc{font-size:.93rem;margin-bottom:.3rem}
-.desc.en{color:var(--muted);font-style:italic;margin-bottom:.7rem}
-.tip{display:inline-flex;align-items:center;gap:.4rem;background:#E8F5E9;color:var(--green);font-size:.83rem;font-weight:600;padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem}
-.lnk{color:var(--teal);font-size:.83rem;font-weight:500;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
-.lnk:hover{border-color:var(--teal)}
+/* TRIP CARDS GRID */
+.trips-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:1.5rem;
+}
 
-.arrival-note{background:linear-gradient(135deg,#EBF5FB,#FFF8E7);border-left:4px solid var(--gold);padding:1rem 1.5rem;margin:1.25rem 1.75rem;border-radius:0 .5rem .5rem 0;font-size:.9rem;color:var(--navy)}
-.arrival-note strong{display:block;margin-bottom:.25rem;color:var(--gold);font-size:.95rem}
+.trip-card{
+  background:white;border-radius:1.1rem;
+  box-shadow:0 4px 24px rgba(0,0,0,.08);
+  overflow:hidden;text-decoration:none;color:inherit;
+  transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column;
+}
+.trip-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.14)}
 
-.pract-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem}
-.pract-card{background:white;border-radius:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.07);padding:1.4rem}
-.pract-card .icon{font-size:1.8rem;margin-bottom:.6rem}
-.pract-card h3{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.15rem}
-.pract-card p{font-size:.88rem;color:var(--text);line-height:1.6}
+.trip-card-img{
+  height:190px;background-size:cover;background-position:center;
+  position:relative;flex-shrink:0;
+}
+.trip-card-img::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,.45));
+}
+.trip-card-badge{
+  position:absolute;top:.75rem;left:.75rem;z-index:1;
+  background:var(--gold);color:white;font-size:.65rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;padding:.25rem .65rem;border-radius:1rem;
+}
+.trip-card-days{
+  position:absolute;bottom:.75rem;right:.75rem;z-index:1;
+  background:rgba(0,0,0,.5);color:white;font-size:.72rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:1rem;
+}
 
-footer{background:var(--navy);color:rgba(255,255,255,.45);text-align:center;padding:1.75rem;font-size:.82rem}
+.trip-card-body{padding:1.25rem 1.4rem 1.4rem;flex:1;display:flex;flex-direction:column}
+.trip-card-title{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--navy);margin-bottom:.3rem;line-height:1.2}
+.trip-card-date{font-size:.78rem;color:var(--gold);font-weight:600;margin-bottom:.65rem}
+.trip-card-desc{font-size:.88rem;color:var(--muted);line-height:1.6;flex:1}
+.trip-card-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:1rem;padding-top:.85rem;border-top:1px solid #F0F0F0;
+}
+.trip-card-tags{display:flex;gap:.4rem;flex-wrap:wrap}
+.tag{
+  font-size:.68rem;background:var(--light);color:var(--navy);
+  padding:.2rem .55rem;border-radius:.35rem;font-weight:600;
+}
+.trip-card-arrow{
+  width:32px;height:32px;border-radius:50%;background:var(--navy);
+  color:white;display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;flex-shrink:0;transition:background .2s;
+}
+.trip-card:hover .trip-card-arrow{background:var(--gold)}
+
+/* COMING SOON CARD */
+.trip-card.soon{opacity:.6;cursor:default;pointer-events:none}
+.trip-card.soon .trip-card-arrow{background:var(--muted)}
+.soon-label{
+  position:absolute;top:.75rem;left:.75rem;z-index:1;
+  background:var(--muted);color:white;font-size:.65rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;padding:.25rem .65rem;border-radius:1rem;
+}
+
+footer{background:var(--navy);color:rgba(255,255,255,.4);text-align:center;padding:1.5rem;font-size:.8rem}
 footer strong{color:var(--gold)}
 
-@media(max-width:600px){
-  .hero h1{font-size:2.4rem}
-  .day-header{padding:1.25rem 1.25rem}
-  .attraction{padding:1.1rem 1.25rem .8rem}
-  .strip-outer{height:180px}
+@media(max-width:500px){
+  .hero-logo{font-size:2.2rem}
+  .trips-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -115,325 +128,71 @@ footer strong{color:var(--gold)}
 <button class="lang-btn" onclick="toggleLang()">EN 🌐</button>
 
 <div class="hero">
-  <div class="hero-content">
-    <h1>Pieniny<br><span>&</span> Tatry</h1>
-    <p class="tagline pl">Wycieczka rodzinna · 3 dni · czerwiec 2025</p>
-    <p class="tagline en">Family Trip · 3 Days · June 2025</p>
-  </div>
-  <div class="scroll-hint">↓</div>
-</div>
-
-<div class="map-section" id="mapa">
-  <div class="container">
-    <h2 class="pl">📍 Plan wycieczki — mapa</h2>
-    <h2 class="en">📍 Trip Map</h2>
-    <p class="sub pl">Odległości z Połańca · kliknij znacznik aby zobaczyć więcej</p>
-    <p class="sub en">Distances from Połaniec · click a marker for details</p>
-    <div id="map"></div>
-    <div class="map-legend">
-      <div><strong>🟠 Połaniec</strong> — baza / base</div>
-      <div><strong>🔵 Czorsztyn</strong> — ~2.5h</div>
-      <div><strong>🟢 Spływ Dunajcem</strong> — ~2.5h</div>
-      <div><strong>🟣 Morskie Oko</strong> — ~3h</div>
-    </div>
+  <div class="hero-inner">
+    <div class="hero-logo">trip<span>ero</span></div>
+    <p class="hero-sub pl">Nasze rodzinne wycieczki — plan, zdjęcia, wskazówki</p>
+    <p class="hero-sub en">Our family trips — plans, photos, tips</p>
   </div>
 </div>
 
-<!-- DAY 1 -->
-<section id="day1">
-  <div class="container">
-    <div class="day-header d1" data-day="01">
-      <div class="tag"><span class="pl">Dzień 1</span><span class="en">Day 1</span> · Czorsztyn</div>
-      <h2 class="pl">Przyjazd & Czorsztyn</h2>
-      <h2 class="en">Arrival & Czorsztyn</h2>
-      <div class="sub pl">Zamek · Rejs · E-rowery</div>
-      <div class="sub en">Castle · Lake Cruise · E-bikes</div>
-    </div>
-    <div class="day-body">
-      <div class="arrival-note">
-        <strong>🚗 <span class="pl">Przyjazd</span><span class="en">Arrival</span></strong>
-        <span class="pl">Przejazd z Połańca do Czorsztyna (~2.5h przez Nowy Sącz). Po przyjeździe zameldowanie i opcjonalne atrakcje:</span>
-        <span class="en">Drive from Połaniec to Czorsztyn (~2.5h via Nowy Sącz). After check-in, optional activities:</span>
-      </div>
+<main>
+  <div class="section-label pl">Wycieczki / Trips</div>
+  <div class="section-label en">Trips</div>
 
-      <div class="attraction">
-        <div class="attraction-title">🏰 <span class="pl">Zamek Czorsztyn</span><span class="en">Czorsztyn Castle</span></div>
-        <div class="gold-line"></div>
-        <div class="desc pl">Ruiny gotyckiego zamku z XIV w. z panoramą na jezioro i zamek Niedzica. Zwiedzanie ok. 1.5h, częściowo dostępne dla seniorów.</div>
-        <div class="desc en">14th-century Gothic castle ruins with panoramic views of the lake and Niedzica Castle. ~1.5h visit, partially accessible for seniors.</div>
-        <a href="https://zamek-czorsztyn.pl" class="lnk" target="_blank">↗ zamek-czorsztyn.pl</a>
-      </div>
-      <div class="strip-outer" data-wiki="Czorsztyn Castle" data-label-pl="Zamek Czorsztyn" data-label-en="Czorsztyn Castle">
-        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
-        <div class="strip-count"></div>
-        <div class="strip-label"><span class="pl">Zamek Czorsztyn</span><span class="en">Czorsztyn Castle</span></div>
-      </div>
+  <div class="trips-grid">
 
-      <div class="attraction">
-        <div class="attraction-title">⛵ <span class="pl">Rejs po Jeziorze Czorsztyńskim</span><span class="en">Boat Cruise on Lake Czorsztyn</span></div>
-        <div class="gold-line"></div>
-        <div class="desc pl">Rejs stateczkiem z widokiem na oba zamki i Tatry. Bezpieczne dla dzieci, ok. 45 min. Idealne popołudnie po przyjeździe.</div>
-        <div class="desc en">Boat cruise with views of both castles and the Tatras. Safe for children, ~45 min. Perfect afternoon after arrival.</div>
-        <a href="https://www.pieniny.com/pl" class="lnk" target="_blank">↗ pieniny.com</a>
+    <!-- Pieniny & Tatry -->
+    <a class="trip-card" href="pieniny/">
+      <div class="trip-card-img" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Panorama-Morskiego-Oka.jpg/960px-Panorama-Morskiego-Oka.jpg')">
+        <div class="trip-card-badge">#1</div>
+        <div class="trip-card-days"><span class="pl">3 dni</span><span class="en">3 days</span></div>
       </div>
-      <div class="strip-outer" data-wiki="Jezioro Czorsztynskie" data-label-pl="Jezioro Czorsztyńskie" data-label-en="Lake Czorsztyn">
-        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
-        <div class="strip-count"></div>
-        <div class="strip-label"><span class="pl">Jezioro Czorsztyńskie</span><span class="en">Lake Czorsztyn</span></div>
+      <div class="trip-card-body">
+        <div class="trip-card-title">Pieniny & Tatry</div>
+        <div class="trip-card-date">📅 <span class="pl">czerwiec–lipiec 2025</span><span class="en">June–July 2025</span></div>
+        <div class="trip-card-desc pl">Zamek Czorsztyn, spływ Dunajcem, Wąwóz Homole i Morskie Oko. Wycieczka dla całej rodziny — dzieci, dorośli i seniorzy.</div>
+        <div class="trip-card-desc en">Czorsztyn Castle, Dunajec rafting, Homole Gorge and Morskie Oko. A trip for the whole family — kids, adults and seniors.</div>
+        <div class="trip-card-footer">
+          <div class="trip-card-tags">
+            <span class="tag">🏔️ Góry</span>
+            <span class="tag">👨‍👩‍👧‍👦 Rodzina</span>
+            <span class="tag">🚲 Aktywnie</span>
+          </div>
+          <div class="trip-card-arrow">→</div>
+        </div>
       </div>
+    </a>
 
-      <div class="attraction">
-        <div class="attraction-title">🚲 <span class="pl">E-rowery dookoła jeziora</span><span class="en">E-bike Ride Around the Lake</span></div>
-        <div class="gold-line"></div>
-        <div class="desc pl">Pętla ~25 km wokół Jeziora Czorsztyńskiego. Łagodna, widokowa, dla całej rodziny. Wypożyczalnia przy jeziorze — rezerwacja online.</div>
-        <div class="desc en">~25 km loop around Lake Czorsztyn. Gentle, scenic, for all ages. Rental at the lake — book online in advance.</div>
-        <a href="https://www.jezioro-czorsztynskie.pl" class="lnk" target="_blank">↗ jezioro-czorsztynskie.pl</a>
+    <!-- Placeholder 2 -->
+    <div class="trip-card soon">
+      <div class="trip-card-img" style="background:linear-gradient(135deg,#2E7D32,#1B5E20)">
+        <div class="soon-label pl">Wkrótce</div>
+        <div class="soon-label en" style="display:none">Coming soon</div>
       </div>
-      <div class="strip-outer" data-wiki="Czorsztyn lake panorama" data-label-pl="Widoki z trasy rowerowej" data-label-en="Views from the cycling route">
-        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
-        <div class="strip-count"></div>
-        <div class="strip-label"><span class="pl">Widoki z trasy rowerowej</span><span class="en">Views from the cycling route</span></div>
+      <div class="trip-card-body">
+        <div class="trip-card-title" style="color:var(--muted)"><span class="pl">Następna wycieczka…</span><span class="en">Next trip…</span></div>
+        <div class="trip-card-desc pl">Miejsce na kolejny plan wycieczki.</div>
+        <div class="trip-card-desc en">Room for the next trip plan.</div>
+        <div class="trip-card-footer">
+          <div class="trip-card-tags"><span class="tag">❓ <span class="pl">Nieznane</span><span class="en">TBD</span></span></div>
+          <div class="trip-card-arrow" style="background:var(--muted)">→</div>
+        </div>
       </div>
     </div>
+
   </div>
-</section>
-
-<!-- DAY 2 -->
-<section id="day2" style="padding-top:0">
-  <div class="container">
-    <div class="day-header d2" data-day="02">
-      <div class="tag"><span class="pl">Dzień 2</span><span class="en">Day 2</span></div>
-      <h2 class="pl">Spływ Dunajcem & Wąwóz Homole</h2>
-      <h2 class="en">Dunajec Rafting & Homole Gorge</h2>
-      <div class="sub pl">Tratwa flisacka · Wąwóz skalny</div>
-      <div class="sub en">Traditional rafting · Rocky gorge</div>
-    </div>
-    <div class="day-body">
-      <div class="attraction">
-        <div class="attraction-title">🛶 <span class="pl">Spływ Dunajcem</span><span class="en">Dunajec River Rafting</span></div>
-        <div class="gold-line"></div>
-        <div class="desc pl">Tradycyjny spływ tratwą z Sromowiec Kątów do Szczawnicy (~18 km, 2–3h). Przez malowniczy Przełom Pieniński. Bezpieczny dla całej rodziny, bez doświadczenia.</div>
-        <div class="desc en">Traditional raft ride from Sromowce Kąty to Szczawnica (~18 km, 2–3h). Through the scenic Pieniny Gorge. Safe for the whole family, no experience required.</div>
-        <div class="tip">💡 <span class="pl">Rezerwacja obowiązkowa w sezonie!</span><span class="en">Advance booking essential in summer!</span></div><br>
-        <a href="https://www.flisacy.com.pl" class="lnk" target="_blank">↗ flisacy.com.pl</a>
-      </div>
-      <div class="strip-outer" data-wiki="Dunajec river rafting Pieniny" data-label-pl="Spływ Dunajcem" data-label-en="Dunajec Rafting">
-        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
-        <div class="strip-count"></div>
-        <div class="strip-label"><span class="pl">Spływ Dunajcem przez Przełom Pieniński</span><span class="en">Dunajec rafting through Pieniny Gorge</span></div>
-      </div>
-
-      <div class="attraction">
-        <div class="attraction-title">🏞️ <span class="pl">Wąwóz Homole</span><span class="en">Homole Gorge</span></div>
-        <div class="gold-line"></div>
-        <div class="desc pl">Krótki spacer przez wąwóz skalny (~2 km, ok. 1h). Pionowe skały, wodospady, bujna roślinność — dzieci zachwycone! Dostępny dla seniorów.</div>
-        <div class="desc en">Short walk through a rocky gorge (~2 km, ~1h). Vertical cliffs, waterfalls, lush greenery — children love it! Accessible for seniors.</div>
-        <a href="https://wawoz-homole.pl" class="lnk" target="_blank">↗ wawoz-homole.pl</a>
-      </div>
-      <div class="strip-outer" data-wiki="Wąwóz Homole" data-label-pl="Wąwóz Homole" data-label-en="Homole Gorge">
-        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
-        <div class="strip-count"></div>
-        <div class="strip-label"><span class="pl">Wąwóz Homole</span><span class="en">Homole Gorge</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- DAY 3 -->
-<section id="day3" style="padding-top:0">
-  <div class="container">
-    <div class="day-header d3" data-day="03">
-      <div class="tag"><span class="pl">Dzień 3</span><span class="en">Day 3</span></div>
-      <h2>Morskie Oko</h2>
-      <div class="sub pl">Największe jezioro Tatr · Bryczka lub bus</div>
-      <div class="sub en">Largest Tatra lake · Carriage or shuttle bus</div>
-    </div>
-    <div class="day-body">
-      <div class="attraction">
-        <div class="attraction-title">🏔️ Morskie Oko</div>
-        <div class="gold-line"></div>
-        <div class="desc pl">Najpiękniejsze i największe jezioro Tatr. Parking: Palenica Białczańska (~3h z Połańca) → bus wahadłowy LUB spacer 9 km. Dla seniorów i dzieci: bryczka konna w obie strony!</div>
-        <div class="desc en">The most beautiful and largest lake in the Tatras. Park at Palenica Białczańska (~3h from Połaniec) → shuttle bus OR 9 km walk. For seniors & children: horse-drawn carriage both ways!</div>
-        <div class="tip">💡 <span class="pl">Wyjeżdżaj przed 8:00 — unikniesz tłumów!</span><span class="en">Leave before 8:00 AM — avoid the crowds!</span></div><br>
-        <a href="https://tpn.pl/odwiedzaj" class="lnk" target="_blank">↗ tpn.pl</a>
-      </div>
-      <div class="strip-outer" data-wiki="Morskie Oko lake Tatra" data-label-pl="Morskie Oko — Tatrzański Park Narodowy" data-label-en="Morskie Oko — Tatra National Park">
-        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
-        <div class="strip-count"></div>
-        <div class="strip-label"><span class="pl">Morskie Oko — Tatrzański Park Narodowy</span><span class="en">Morskie Oko — Tatra National Park</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PRACTICAL -->
-<section style="padding-top:0">
-  <div class="container">
-    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--navy);margin-bottom:1.5rem">
-      <span class="pl">ℹ️ Informacje praktyczne</span>
-      <span class="en">ℹ️ Practical Info</span>
-    </h2>
-    <div class="pract-grid">
-      <div class="pract-card">
-        <div class="icon">🚗</div>
-        <h3 class="pl">Dojazd</h3><h3 class="en">Getting there</h3>
-        <p class="pl">Z Połańca przez Nowy Sącz.<br>Czorsztyn: ~2.5h<br>Morskie Oko: ~3h</p>
-        <p class="en">From Połaniec via Nowy Sącz.<br>Czorsztyn: ~2.5h<br>Morskie Oko: ~3h</p>
-      </div>
-      <div class="pract-card">
-        <div class="icon">⚠️</div>
-        <h3 class="pl">Ważne</h3><h3 class="en">Important</h3>
-        <p class="pl">Dunajcem: rezerwacja!<br>Morskie Oko: wyjazd przed 8:00<br>E-rowery: booking online</p>
-        <p class="en">Dunajec: book ahead!<br>Morskie Oko: before 8 AM<br>E-bikes: book online</p>
-      </div>
-    </div>
-  </div>
-</section>
+</main>
 
 <footer>
-  <p>🏔️ <strong>Pieniny & Tatry 2025</strong> &nbsp;·&nbsp;
-  <span class="pl">Plan wycieczki rodzinnej</span>
-  <span class="en">Family Trip Guide</span>
-  &nbsp;·&nbsp; <span style="font-size:.75rem">📷 Zdjęcia: Wikimedia Commons (CC)</span></p>
+  <p><strong>tripero</strong> &nbsp;·&nbsp; <span class="pl">Rodzinne wycieczki 2025</span><span class="en">Family trips 2025</span></p>
 </footer>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// ── MAP ───────────────────────────────────────────────────────────────────────
-const map = L.map('map').setView([49.7, 20.6], 8);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-  attribution:'© OpenStreetMap contributors', maxZoom:18
-}).addTo(map);
-function mkr(lat,lng,color,title,desc){
-  const icon = L.divIcon({
-    html:`<div style="background:${color};width:14px;height:14px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,.4)"></div>`,
-    iconSize:[14,14],iconAnchor:[7,7],className:''
-  });
-  L.marker([lat,lng],{icon}).addTo(map).bindPopup(`<strong>${title}</strong><br>${desc}`);
-}
-mkr(50.430,21.573,'#C8860A','Połaniec','Baza wypadowa / Base');
-mkr(49.434,20.323,'#1B3A4B','Czorsztyn','Zamek · Jezioro · E-rowery<br>~2.5h z Połańca');
-mkr(49.408,20.435,'#2E7D32','Spływ Dunajcem','Sromowce Kąty<br>~2.5h z Połańca');
-mkr(49.200,20.068,'#4A235A','Morskie Oko','Palenica Białczańska<br>~3h z Połańca');
-
-// ── LANGUAGE ──────────────────────────────────────────────────────────────────
 function toggleLang(){
   const body=document.body, btn=document.querySelector('.lang-btn');
   if(body.dataset.lang==='pl'){body.dataset.lang='en';btn.textContent='PL 🌐';}
   else{body.dataset.lang='pl';btn.textContent='EN 🌐';}
 }
-
-// ── WIKIMEDIA COMMONS API ─────────────────────────────────────────────────────
-async function fetchWikiImages(query){
-  const params = new URLSearchParams({
-    action:     'query',
-    generator:  'search',
-    gsrsearch:  query,
-    gsrnamespace: 6,
-    gsrlimit:   50,
-    prop:       'imageinfo',
-    iiprop:     'url',
-    iiurlwidth: 960,
-    format:     'json',
-    origin:     '*'
-  });
-  const res  = await fetch(`https://commons.wikimedia.org/w/api.php?${params}`);
-  const data = await res.json();
-  const pages = Object.values(data.query?.pages || {});
-  return pages
-    .filter(p => p.imageinfo && !/\.(svg|gif|tiff|pdf|ogg|webm|ogv|mp4)/i.test(p.title))
-    .map(p => p.imageinfo[0].thumburl || p.imageinfo[0].url)
-    .filter(Boolean);
-}
-
-// ── STRIP INIT ────────────────────────────────────────────────────────────────
-function buildStrip(outer, urls){
-  const track    = outer.querySelector('.strip-track');
-  const countEl  = outer.querySelector('.strip-count');
-
-  track.innerHTML = '';
-  countEl.textContent = `📷 ${urls.length} zdjęć`;
-
-  // Fill track with enough clones for seamless infinite loop
-  // We need at least 3 full sets so the loop never shows a gap
-  const minSets = Math.max(3, Math.ceil(3000 / (urls.length * 200 + 1)));
-  const totalSets = minSets + 2;
-  for(let s = 0; s < totalSets; s++){
-    urls.forEach(src => {
-      const img = document.createElement('img');
-      img.src = src;
-      img.alt = '';
-      img.loading = 'lazy';
-      track.appendChild(img);
-    });
-  }
-
-  let pos       = 0;
-  let speed     = 0.45;
-  let paused    = false;
-  let dragStart = null;
-  let dragPos   = 0;
-
-  // Calculate width of one full set (called after images load a bit)
-  function oneSetWidth(){
-    const imgs = track.querySelectorAll('img');
-    if(!imgs.length) return 1;
-    // Approximate: average rendered width × count per set
-    let total = 0;
-    let counted = 0;
-    imgs.forEach((img, i) => {
-      if(i < urls.length){ total += img.offsetWidth + 4; counted++; }
-    });
-    return counted > 0 ? total : urls.length * 290;
-  }
-
-  function loop(){
-    if(!paused){
-      pos += speed;
-      const w = oneSetWidth();
-      if(w > 0 && pos >= w) pos -= w;
-    }
-    track.style.transform = `translateX(${-pos}px)`;
-    requestAnimationFrame(loop);
-  }
-  loop();
-
-  outer.addEventListener('mouseenter', () => { paused = true; });
-  outer.addEventListener('mouseleave', () => { paused = false; });
-
-  function startDrag(x){ paused=true; dragStart=x; dragPos=pos; }
-  function moveDrag(x){
-    if(dragStart===null) return;
-    pos = dragPos + (dragStart - x);
-    const w = oneSetWidth();
-    if(w>0){ if(pos<0) pos+=w; if(pos>w*totalSets) pos-=w; }
-  }
-  function endDrag(){ dragStart=null; paused=false; }
-
-  outer.addEventListener('mousedown',  e => startDrag(e.clientX));
-  window.addEventListener('mousemove', e => { if(dragStart!==null) moveDrag(e.clientX); });
-  window.addEventListener('mouseup',   endDrag);
-  outer.addEventListener('touchstart', e => startDrag(e.touches[0].clientX), {passive:true});
-  outer.addEventListener('touchmove',  e => moveDrag(e.touches[0].clientX),  {passive:true});
-  outer.addEventListener('touchend',   endDrag);
-}
-
-// ── LOAD ALL STRIPS ───────────────────────────────────────────────────────────
-document.querySelectorAll('.strip-outer[data-wiki]').forEach(async outer => {
-  const query = outer.dataset.wiki;
-  try {
-    const urls = await fetchWikiImages(query);
-    if(urls.length === 0){
-      outer.querySelector('.strip-track').innerHTML =
-        '<div class="strip-loading">Brak zdjęć / No photos found</div>';
-      return;
-    }
-    buildStrip(outer, urls);
-  } catch(e) {
-    outer.querySelector('.strip-track').innerHTML =
-      '<div class="strip-loading">Błąd ładowania / Loading error</div>';
-  }
-});
 </script>
 </body>
 </html>
