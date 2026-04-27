@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chorwacja — Dubrownik 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B3A4B;--gold:#C8860A;--teal:#2A7F8A;
+  --green:#2E7D32;--blue:#1565C0;--red:#C62828;
+  --light:#F8F6F2;--white:#fff;--text:#2C2C2C;--muted:#777;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);line-height:1.7}
+
+.back-btn{position:fixed;top:14px;left:1rem;z-index:999;background:rgba(0,0,0,.45);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:600;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:background .2s}
+.back-btn:hover{background:rgba(0,0,0,.7)}
+.lang-btn{position:fixed;top:14px;right:1rem;z-index:999;background:var(--gold);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:700;cursor:pointer;letter-spacing:.05em;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:opacity .2s}
+.lang-btn:hover{opacity:.85}
+[data-lang="en"] .pl{display:none}
+[data-lang="pl"] .en{display:none}
+
+.hero{position:relative;min-height:65vh;background:linear-gradient(160deg,#001533 0%,#003B6F 55%,#0077B6 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 1.5rem 6rem;overflow:hidden}
+.hero-content{position:relative;z-index:1;max-width:720px}
+.hero .sub-title{font-size:.95rem;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;font-weight:500;margin-bottom:.6rem}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,6vw,4rem);color:white;line-height:1.1;margin-bottom:.75rem}
+.hero h1 span{color:var(--gold)}
+.hero .tagline{font-size:1rem;color:rgba(255,255,255,.75);margin-bottom:.3rem}
+.hero .tagline.en{font-style:italic;color:rgba(255,255,255,.5);font-size:.93rem}
+.scroll-hint{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.4);font-size:.8rem;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+/* FLIGHT BOX */
+.flight-section{background:linear-gradient(135deg,#003087,#0050B3);padding:2.5rem 1.5rem}
+.flight-box{max-width:760px;margin:0 auto;background:white;border-radius:1rem;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.3)}
+.flight-header{background:#003087;color:white;padding:.75rem 1.5rem;display:flex;align-items:center;gap:.75rem;font-weight:700;font-size:.9rem}
+.flight-header .logo{font-size:1.1rem;letter-spacing:-.02em}
+.flight-leg{display:grid;grid-template-columns:80px 1fr 1fr 1fr 80px;align-items:center;padding:1.1rem 1.5rem;gap:.5rem;border-bottom:1px solid #F0F0F0}
+.flight-leg:last-child{border-bottom:none}
+.fl-date{font-size:1.5rem;font-weight:700;color:#003087;line-height:1}
+.fl-date span{display:block;font-size:.72rem;font-weight:400;color:var(--muted);margin-top:.1rem}
+.fl-time{font-size:1.3rem;font-weight:700;color:var(--text)}
+.fl-city{font-size:.8rem;color:var(--muted);margin-top:.15rem}
+.fl-arrow{text-align:center;color:var(--muted);font-size:.85rem;position:relative}
+.fl-arrow::before{content:'';display:block;height:2px;background:#E0E0E0;margin:.5rem 0}
+.fl-num{font-size:.75rem;color:var(--muted)}
+.fl-dur{font-size:.72rem;color:var(--teal);font-weight:600}
+.fl-right{text-align:right}
+.flight-footer{background:#F8F9FA;padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;font-size:.85rem}
+.flight-footer .pax{color:var(--navy);font-weight:600}
+.flight-footer .price{font-size:1.1rem;font-weight:700;color:#003087}
+.flight-footer .price span{font-size:.75rem;font-weight:400;color:var(--muted);display:block}
+
+/* MAP */
+.map-section{background:var(--navy);padding:3.5rem 1.5rem}
+.map-section h2{font-family:'Playfair Display',serif;font-size:1.8rem;color:white;margin-bottom:.3rem}
+.map-section .sub{color:rgba(255,255,255,.5);font-style:italic;margin-bottom:1.5rem;font-size:.9rem}
+#map{height:400px;border-radius:1rem;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.map-legend{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.25rem}
+.map-legend div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:.5rem;padding:.5rem 1rem;color:white;font-size:.85rem}
+.map-legend strong{color:var(--gold)}
+
+/* WHERE TO STAY */
+.base-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:1.5rem}
+.base-card{background:white;border-radius:1rem;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.09)}
+.base-card-img{height:180px;overflow:hidden}
+.base-card-img img{width:100%;height:100%;object-fit:cover;display:block}
+.base-card-body{padding:1.25rem 1.4rem 1.4rem}
+.base-card-label{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:.22rem .6rem;border-radius:1rem;display:inline-block;margin-bottom:.5rem}
+.label-green{background:#E8F5E9;color:#2E7D32}
+.label-blue{background:#E3F2FD;color:#1565C0}
+.label-gold{background:#FFF8E1;color:#F57F17}
+.base-card h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--navy);margin-bottom:.5rem}
+.base-card p{font-size:.88rem;color:var(--text);line-height:1.6;margin-bottom:.75rem}
+.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.8rem}
+.pros{color:#2E7D32}
+.cons{color:#C62828}
+.pros li,.cons li{list-style:none;padding:.1rem 0}
+.pros li::before{content:'✓ '}
+.cons li::before{content:'✗ '}
+
+/* DAY SECTIONS */
+section{padding:4rem 1.5rem}
+.container{max-width:880px;margin:0 auto}
+.day-header{border-radius:1rem 1rem 0 0;padding:1.75rem 2rem;position:relative;overflow:hidden}
+.day-header::after{content:attr(data-day);position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-family:'Playfair Display',serif;font-size:5.5rem;font-weight:700;color:rgba(255,255,255,.07);line-height:1;pointer-events:none}
+.day-header .tag{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:600;margin-bottom:.35rem}
+.day-header h2{font-family:'Playfair Display',serif;font-size:1.75rem;color:white;line-height:1.2}
+.day-header .sub{font-size:.9rem;color:rgba(255,255,255,.6);margin-top:.25rem;font-style:italic}
+.d-croatia{background:linear-gradient(135deg,#00264D,#0077B6)}
+.day-body{background:white;border-radius:0 0 1rem 1rem;box-shadow:0 8px 40px rgba(0,0,0,.08);margin-bottom:2rem;overflow:hidden}
+
+.options-note{background:#F3F4F6;border-left:4px solid var(--gold);padding:1rem 1.5rem;margin:1.25rem 1.75rem;border-radius:0 .5rem .5rem 0;font-size:.9rem;color:var(--navy)}
+.options-note strong{display:block;margin-bottom:.25rem;color:var(--gold)}
+
+.attraction{padding:1.4rem 1.75rem 1rem;border-bottom:1px solid #F0F0F0}
+.attraction:last-child{border-bottom:none}
+.attraction-title{display:flex;align-items:center;gap:.5rem;font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:.2rem}
+.gold-line{width:2.5rem;height:3px;background:var(--gold);border-radius:2px;margin:.35rem 0 .7rem}
+.desc{font-size:.93rem;margin-bottom:.3rem}
+.desc.en{color:var(--muted);font-style:italic;margin-bottom:.7rem}
+.tip{display:inline-flex;align-items:center;gap:.4rem;background:#E8F5E9;color:var(--green);font-size:.83rem;font-weight:600;padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem}
+.warn{display:inline-flex;align-items:center;gap:.4rem;background:#FFF3E0;color:#E65100;font-size:.83rem;font-weight:600;padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem}
+.lnk{color:var(--teal);font-size:.83rem;font-weight:500;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+.lnk:hover{border-color:var(--teal)}
+
+.strip-outer{position:relative;overflow:hidden;height:230px;background:#111;cursor:grab;user-select:none}
+.strip-outer:active{cursor:grabbing}
+.strip-track{display:flex;height:100%;width:max-content;will-change:transform}
+.strip-track img{height:100%;width:auto;min-width:260px;max-width:400px;object-fit:cover;margin-right:4px;flex-shrink:0;pointer-events:none;display:block}
+.strip-loading{display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,.4);font-size:.85rem}
+.strip-count{position:absolute;top:.6rem;right:.75rem;background:rgba(0,0,0,.5);color:rgba(255,255,255,.7);font-size:.7rem;padding:.2rem .55rem;border-radius:1rem;pointer-events:none}
+.strip-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.55));color:rgba(255,255,255,.8);font-size:.75rem;padding:.4rem .85rem 1rem;font-style:italic;pointer-events:none}
+
+.pract-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem}
+.pract-card{background:white;border-radius:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.07);padding:1.4rem}
+.pract-card .icon{font-size:1.8rem;margin-bottom:.6rem}
+.pract-card h3{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.15rem}
+.pract-card p{font-size:.88rem;color:var(--text);line-height:1.6}
+
+footer{background:var(--navy);color:rgba(255,255,255,.45);text-align:center;padding:1.75rem;font-size:.82rem}
+footer strong{color:var(--gold)}
+
+@media(max-width:600px){
+  .hero h1{font-size:1.9rem}
+  .flight-leg{grid-template-columns:60px 1fr 1fr;gap:.3rem}
+  .fl-arrow,.fl-right{display:none}
+  .base-grid{grid-template-columns:1fr}
+  .strip-outer{height:180px}
+}
+</style>
+</head>
+<body data-lang="pl">
+
+<a class="back-btn" href="../">← <span class="pl">Wycieczki</span><span class="en">All Trips</span></a>
+<button class="lang-btn" onclick="toggleLang()">EN 🌐</button>
+
+<div class="hero">
+  <div class="hero-content">
+    <div class="sub-title">Kraków → Dubrownik ✈️</div>
+    <h1>Chorwacja — <span>Dubrownik</span></h1>
+    <p class="tagline pl">Wycieczka lotnicza · 7 nocy · 13 osób 🇭🇷</p>
+    <p class="tagline en">Flight trip · 7 nights · 13 people 🇭🇷</p>
+  </div>
+  <div class="scroll-hint">↓</div>
+</div>
+
+<!-- FLIGHT INFO -->
+<div class="flight-section">
+  <div class="flight-box">
+    <div class="flight-header">
+      <span class="logo">✈ RYANAIR / BUZZ</span>
+      <span class="pl">Wybrane loty · w dwie strony · 13 osób</span>
+      <span class="en">Selected flights · return · 13 passengers</span>
+    </div>
+    <div class="flight-leg">
+      <div>
+        <div class="fl-date">24 <span>CZE</span></div>
+      </div>
+      <div>
+        <div class="fl-time">20:55</div>
+        <div class="fl-city">Kraków (KRK)</div>
+      </div>
+      <div class="fl-arrow">
+        FR 8304<br>
+        <span class="fl-dur">1h 40min</span>
+      </div>
+      <div class="fl-right">
+        <div class="fl-time">22:35</div>
+        <div class="fl-city">Dubrownik (DBV)</div>
+      </div>
+      <div style="text-align:right;font-size:.7rem;color:var(--muted)">Buzz</div>
+    </div>
+    <div class="flight-leg">
+      <div>
+        <div class="fl-date">01 <span>LIP</span></div>
+      </div>
+      <div>
+        <div class="fl-time">23:00</div>
+        <div class="fl-city">Dubrownik (DBV)</div>
+      </div>
+      <div class="fl-arrow">
+        FR 8305<br>
+        <span class="fl-dur">1h 40min</span>
+      </div>
+      <div class="fl-right">
+        <div class="fl-time">00:40</div>
+        <div class="fl-city">Kraków (KRK)</div>
+      </div>
+      <div style="text-align:right;font-size:.7rem;color:var(--muted)">Buzz</div>
+    </div>
+    <div class="flight-footer">
+      <span class="pax">👥 13 <span class="pl">osób</span><span class="en">passengers</span> · 7 <span class="pl">nocy</span><span class="en">nights</span></span>
+      <span class="price">2 479,10 zł <span class="pl">same loty (bez bagażu)</span><span class="en">flights only (no baggage)</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- MAP -->
+<div class="map-section" id="mapa">
+  <div class="container">
+    <h2 class="pl">📍 Mapa regionu</h2>
+    <h2 class="en">📍 Regional Map</h2>
+    <p class="sub pl">Dubrownik jako baza · wycieczki do Bośni, Czarnogóry i wysp · kliknij znacznik</p>
+    <p class="sub en">Dubrovnik as base · day trips to Bosnia, Montenegro and islands · click a marker</p>
+    <div id="map"></div>
+    <div class="map-legend">
+      <div><strong>✈️ Dubrownik DBV</strong> — lotnisko / baza</div>
+      <div><strong>🟢 Cavtat</strong> — tańsza baza (20 min)</div>
+      <div><strong>🟡 Półwysep Pelješac</strong> — wino i plaże</div>
+      <div><strong>🔴 Mostar</strong> — Bośnia i Hercegowina</div>
+      <div><strong>🟠 Kotor</strong> — Czarnogóra</div>
+      <div><strong>🔵 Mljet</strong> — park narodowy</div>
+    </div>
+  </div>
+</div>
+
+<!-- WHERE TO STAY -->
+<section id="baza">
+  <div class="container">
+    <h2 style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--navy);margin-bottom:.4rem">
+      <span class="pl">🏨 Gdzie się zatrzymać?</span>
+      <span class="en">🏨 Where to stay?</span>
+    </h2>
+    <p style="color:var(--muted);font-size:.93rem;margin-bottom:1.5rem">
+      <span class="pl">Trzy różne opcje — każda z dobrym dojazdem do atrakcji. Moja rekomendacja: Cavtat lub dzielnica Lapad.</span>
+      <span class="en">Three different options — all with good access to attractions. My recommendation: Cavtat or the Lapad district.</span>
+    </p>
+    <div class="base-grid">
+
+      <!-- LAPAD -->
+      <div class="base-card">
+        <div class="base-card-img">
+          <img data-wiki="Dubrovnik Old Town Croatia" alt="Dubrownik">
+        </div>
+        <div class="base-card-body">
+          <div class="base-card-label label-blue"><span class="pl">Blisko centrum</span><span class="en">Close to centre</span></div>
+          <h3><span class="pl">Dubrownik — Lapad</span><span class="en">Dubrovnik — Lapad</span></h3>
+          <p class="pl">Dzielnica Lapad to idealne połączenie: plaża przy hotelu, autobus do Starego Miasta w 10 min, spokojna okolica dla seniorów i dzieci. Nie nocuj w samym Starym Mieście — drogie i głośne w nocy.</p>
+          <p class="en">Lapad district is the ideal compromise: beach at your hotel, bus to Old Town in 10 min, calm area for seniors and children. Don't stay inside the Old Town — expensive and noisy at night.</p>
+          <div class="pros-cons">
+            <ul class="pros">
+              <li>Plaża przy hotelu</li>
+              <li>Autobus do centrum</li>
+              <li>Dostępne dla seniorów</li>
+              <li>Dobra infrastruktura</li>
+            </ul>
+            <ul class="cons">
+              <li>Drogie w szczycie</li>
+              <li>Tłoczne w czerwcu</li>
+              <li>Brak klimatu wioski</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAVTAT -->
+      <div class="base-card">
+        <div class="base-card-img">
+          <img data-wiki="Cavtat Croatia" alt="Cavtat">
+        </div>
+        <div class="base-card-body">
+          <div class="base-card-label label-green">⭐ <span class="pl">Rekomendowane</span><span class="en">Recommended</span></div>
+          <h3>Cavtat</h3>
+          <p class="pl">Mała malownicza miejscowość 20 km od Dubrownika — łódka do Starego Miasta w 25 min lub autobus w 30 min. Znacznie tańsze noclegi, spokojniejsza atmosfera, piękne nabrzeże. Doskonałe dla dużej grupy z dziećmi i seniorami.</p>
+          <p class="en">Small picturesque town 20 km from Dubrovnik — boat to Old Town in 25 min or bus in 30 min. Significantly cheaper accommodation, calmer atmosphere, beautiful waterfront. Excellent for a large group with children and seniors.</p>
+          <div class="pros-cons">
+            <ul class="pros">
+              <li>Tańsze noclegi</li>
+              <li>Spokojna atmosfera</li>
+              <li>Łódka do Dubrownika</li>
+              <li>Piękna promenada</li>
+              <li>Blisko lotniska</li>
+            </ul>
+            <ul class="cons">
+              <li>Konieczny transport</li>
+              <li>Mniej atrakcji w mieście</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- PELJEŠAC -->
+      <div class="base-card">
+        <div class="base-card-img">
+          <img data-wiki="Pelješac Peninsula Croatia" alt="Półwysep Pelješac">
+        </div>
+        <div class="base-card-body">
+          <div class="base-card-label label-gold"><span class="pl">Baza plażowa</span><span class="en">Beach base</span></div>
+          <h3><span class="pl">Półwysep Pelješac</span><span class="en">Pelješac Peninsula</span></h3>
+          <p class="pl">Najpiękniejsze plaże regionu, winnice Dingač, mury Stonu — ale dalej od Dubrownika (~1,5h). Idealne dla tych, którzy chcą się skupić na plażowaniu i winie, a Dubrownik zwiedzić 1-2 razy.</p>
+          <p class="en">The finest beaches in the region, Dingač vineyards, Ston walls — but further from Dubrovnik (~1.5h). Ideal for those who want to focus on beaches and wine, visiting Dubrovnik only 1-2 times.</p>
+          <div class="pros-cons">
+            <ul class="pros">
+              <li>Piękne plaże</li>
+              <li>Winnice Dingač</li>
+              <li>Mury w Stonie</li>
+              <li>Cisza i spokój</li>
+            </ul>
+            <ul class="cons">
+              <li>Daleko od Dubrownika</li>
+              <li>Potrzeba auta</li>
+              <li>Mniej atrakcji</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DAY PLAN -->
+<section id="plan" style="padding-top:0">
+  <div class="container">
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--navy);margin-bottom:.3rem">
+      <span class="pl">📅 Propozycja 7 dni — baza Cavtat / Lapad</span>
+      <span class="en">📅 7-day plan — Cavtat / Lapad base</span>
+    </h2>
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:2rem">
+      <span class="pl">Dubrownik jako centrum · wycieczki do Bośni, Czarnogóry i na wyspy Mljet · 3 kraje w 1 wycieczce!</span>
+      <span class="en">Dubrovnik as hub · day trips to Bosnia, Montenegro and Mljet island · 3 countries in 1 trip!</span>
+    </p>
+
+    <!-- D1 -->
+    <div class="day-header d-croatia" data-day="01">
+      <div class="tag">24 CZE · <span class="pl">Dzień 1</span><span class="en">Day 1</span></div>
+      <h2 class="pl">Przylot nocny → Transfer → Zakwaterowanie</h2>
+      <h2 class="en">Night arrival → Transfer → Check-in</h2>
+      <div class="sub pl">Lądowanie 22:35 · wieczór przyjazdowy</div>
+      <div class="sub en">Landing 22:35 · arrival evening</div>
+    </div>
+    <div class="day-body">
+      <div class="attraction">
+        <div class="attraction-title">🛬 <span class="pl">Przylot 22:35 → wynajem aut → hotel</span><span class="en">Land 22:35 → car hire → hotel</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Lotnisko Dubrownik (DBV) jest małe i sprawne — odbiór bagażu zajmuje zazwyczaj 20–30 min. Odlot z Krakowa o 20:55 — wyjedź z Połańca ok. 17:30–18:00. Po przylocie: odbiór wynajętych aut i 20-minutowy transfer do Cavtatu lub Lapadu. Wieczór przyjazdowy — zakwaterowanie, spacer na nabrzeże, pierwsze chorwackie wino.</div>
+        <div class="desc en">Dubrovnik Airport (DBV) is small and efficient — baggage claim usually takes 20–30 min. Departure from Kraków at 20:55 — leave Połaniec around 17:30–18:00. After landing: pick up hire cars and 20-minute transfer to Cavtat or Lapad. Arrival evening — check in, stroll to the waterfront, first Croatian wine.</div>
+        <div class="tip">🚗 <span class="pl">13 osób = 2 duże vany (7+7) lub 3 standardowe auta — zarezerwuj z dużym wyprzedzeniem!</span><span class="en">13 people = 2 large vans (7+7) or 3 standard cars — book well in advance!</span></div>
+        <div class="warn">⏰ <span class="pl">Odlot 20:55 z Krakowa → bądź na lotnisku najpóźniej o 18:55 (2h wcześniej)!</span><span class="en">Departure 20:55 from Kraków → be at the airport by 18:55 at the latest (2h before)!</span></div>
+      </div>
+    </div>
+
+    <!-- D2 -->
+    <div class="day-header d-croatia" data-day="02" style="margin-top:0">
+      <div class="tag">25 CZE · <span class="pl">Dzień 2</span><span class="en">Day 2</span></div>
+      <h2 class="pl">Stare Miasto Dubrownik + Wyspa Lokrum</h2>
+      <h2 class="en">Dubrovnik Old Town + Lokrum Island</h2>
+      <div class="sub pl">Mury miejskie · Stradun · łódka na Lokrum</div>
+      <div class="sub en">City walls · Stradun · boat to Lokrum</div>
+    </div>
+    <div class="day-body">
+      <div class="attraction">
+        <div class="attraction-title">🏛️ <span class="pl">Stare Miasto — Stradun i mury</span><span class="en">Old Town — Stradun and walls</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Dubrownik to jedno z najpiękniejszych miast na świecie — całe Stare Miasto wpisane na listę UNESCO. Stradun (główna ulica wyłożona marmurem), Twierdza Lovrijenac, Kościół Wniebowzięcia NMP, port Stara Luka. Mury miejskie (ok. 2 km) dają niesamowity widok na miasto i morze — opcja dla aktywnych, może być zbyt stroma dla seniorów w upał.</div>
+        <div class="desc en">Dubrovnik is one of the world's most beautiful cities — the entire Old Town is a UNESCO World Heritage Site. Stradun (main marble-paved street), Lovrijenac Fortress, Church of the Assumption, Old Harbour. City walls (~2 km) give incredible views over the city and sea — an option for the active; may be too steep for seniors in the heat.</div>
+        <div class="warn">☀️ <span class="pl">Koniec czerwca: 30–35°C! Mury miejskie bez cienia — ruszaj rano przed 9:00 lub po 17:00!</span><span class="en">Late June: 30–35°C! City walls have no shade — go early before 9am or after 5pm!</span></div>
+      </div>
+      <div class="strip-outer" data-wiki="Dubrovnik Old Town walls">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Dubrownik — Stare Miasto</div>
+      </div>
+      <div class="attraction">
+        <div class="attraction-title">🏝️ <span class="pl">Wyspa Lokrum — popołudnie</span><span class="en">Lokrum Island — afternoon</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Łódka z portu Stara Luka — 10 min i jesteś na zielonej wyspie tuż przy Dubrownik. Rezerwat przyrody, ruiny średniowiecznego klasztoru benedyktyńskiego, słony Martwe Jezioro (do kąpieli!), pawia chodzi swobodnie po wyspie. Świetne dla dzieci — można pływać przy skałach, plaże naturalne. Restauracja na wyspie.</div>
+        <div class="desc en">Boat from Stara Luka harbour — 10 minutes and you're on a green island right beside Dubrovnik. Nature reserve, ruins of a medieval Benedictine monastery, saltwater Dead Lake (swimmable!), peacocks roaming freely. Great for children — swimming off rocks, natural beaches. Restaurant on the island.</div>
+        <div class="tip">🦚 <span class="pl">Pawie chodzą dosłownie wśród turystów — dzieci będą zachwycone!</span><span class="en">Peacocks literally walk among the visitors — the kids will love it!</span></div>
+        <br>
+        <a href="https://pl.wikipedia.org/wiki/Lokrum" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Lokrum island Dubrovnik">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Wyspa Lokrum</div>
+      </div>
+    </div>
+
+    <!-- D3 -->
+    <div class="day-header d-croatia" data-day="03" style="margin-top:0">
+      <div class="tag">26 CZE · <span class="pl">Dzień 3</span><span class="en">Day 3</span></div>
+      <h2 class="pl">Kolejka na Srd + plaże — dzień z wyborem</h2>
+      <h2 class="en">Cable car to Srđ + beaches — choice day</h2>
+      <div class="sub pl">Kolejka linowa · panorama · Banje Beach · dzień plażowy</div>
+      <div class="sub en">Cable car · panorama · Banje Beach · beach day</div>
+    </div>
+    <div class="day-body">
+      <div class="options-note">
+        <strong class="pl">Dzień z opcjami — podział grupy sprawdza się tu idealnie</strong>
+        <strong class="en">Split-group day — works perfectly here</strong>
+        <span class="pl">Aktywni: kolejka linowa na Srd (279 m n.p.m.) → panorama na 360° → fort Napoleon. Seniorzy i małe dzieci: Banje Beach lub plaże w Cavtacie — pływanie, leżaki, lody. Spotykacie się na kolację.</span>
+        <span class="en">Active group: cable car to Srđ (279 m asl) → 360° panorama → Fort Imperial. Seniors and young children: Banje Beach or Cavtat beaches — swimming, sunbeds, ice cream. Reunite for dinner.</span>
+      </div>
+      <div class="attraction">
+        <div class="attraction-title">🚡 <span class="pl">Kolejka linowa na szczyt Srd</span><span class="en">Cable car to the summit of Srđ</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Kolejka linowa (Žičara) wiezie na szczyt góry Srd (279 m) w 4 minuty — widok na Dubrownik, wyspy i morze jest absolutnie niesamowity. Na szczycie: Fort Imperial (fort napoleoński z 1812 r.) z muzeum wojennym oraz restauracja z panoramicznym widokiem. Idealne na wczesne rano lub późne popołudnie.</div>
+        <div class="desc en">The cable car (Žičara) climbs to the summit of Srđ hill (279 m) in 4 minutes — the view over Dubrovnik, the islands and the sea is absolutely breathtaking. At the top: Fort Imperial (Napoleonic fort from 1812) with a war museum and a restaurant with panoramic views. Best in early morning or late afternoon.</div>
+        <div class="warn">🎟️ <span class="pl">Kolejka linowa — rezerwuj bilety online, kolejki mogą być ogromne!</span><span class="en">Cable car — book tickets online, queues can be enormous!</span></div>
+      </div>
+      <div class="strip-outer" data-wiki="Dubrovnik cable car Srd">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Dubrownik — widok z kolejki na Srd</div>
+      </div>
+    </div>
+
+    <!-- D4 -->
+    <div class="day-header d-croatia" data-day="04" style="margin-top:0">
+      <div class="tag">27 CZE · <span class="pl">Dzień 4</span><span class="en">Day 4</span></div>
+      <h2>🇧🇦 Mostar — Bośnia i Hercegowina</h2>
+      <div class="sub pl">~2,5h jazdy · Stary Most · Muzułmańska starówka</div>
+      <div class="sub en">~2.5h drive · Stari Most bridge · Muslim old quarter</div>
+    </div>
+    <div class="day-body">
+      <div class="attraction">
+        <div class="attraction-title">🌉 <span class="pl">Stary Most (Stari Most)</span><span class="en">Stari Most Bridge</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Jedna z najpiękniejszych wycieczek jednodniowych z Dubrownika — przekraczasz granicę do Bośni i Hercegowiny! Mostar to miasto o fascynującym splocie kultur: Stary Most z 1566 r. (UNESCO), odbudowany po bombardowaniu w 1993 r. — symbol pojednania. Stara Bazar z rzemiosłem i kawą po turecku, meczet Koski Mehmed-Paszy z widokiem na most. Śmiałkowie skaczą z mostu do rzeki Neretwy (~21 m).</div>
+        <div class="desc en">One of the finest day trips from Dubrovnik — you cross the border into Bosnia and Herzegovina! Mostar is a city with a fascinating cultural blend: Stari Most bridge from 1566 (UNESCO), rebuilt after the 1993 bombardment — a symbol of reconciliation. Old Bazaar with crafts and Turkish coffee, Koski Mehmed Pasha Mosque with views of the bridge. Daredevils jump from the bridge into the River Neretwa (~21 m).</div>
+        <div class="tip">🛂 <span class="pl">Pamiętaj o paszportach — przekraczasz granicę do Bośni i Hercegowiny! (karta ID też wystarczy)</span><span class="en">Remember your passports — you're crossing into Bosnia and Herzegovina! (national ID also accepted)</span></div>
+        <div class="warn">🚗 <span class="pl">~2,5h w każdą stronę — wyjedź przed 8:00, wróć ok. 19:00–20:00</span><span class="en">~2.5h each way — leave before 8am, return around 7–8pm</span></div>
+        <br>
+        <a href="https://pl.wikipedia.org/wiki/Stary_Most_w_Mostarze" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Mostar Stari Most bridge">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Mostar — Stary Most</div>
+      </div>
+    </div>
+
+    <!-- D5 -->
+    <div class="day-header d-croatia" data-day="05" style="margin-top:0">
+      <div class="tag">28 CZE · <span class="pl">Dzień 5</span><span class="en">Day 5</span></div>
+      <h2>🇲🇪 Kotor — Czarnogóra</h2>
+      <div class="sub pl">~2h jazdy · Zatoka Kotorska · Mury twierdzy</div>
+      <div class="sub en">~2h drive · Bay of Kotor · Fortress walls</div>
+    </div>
+    <div class="day-body">
+      <div class="attraction">
+        <div class="attraction-title">🏰 <span class="pl">Zatoka Kotorska i Stare Miasto</span><span class="en">Bay of Kotor and Old Town</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Kotor to kolejna wycieczka graniczna — tym razem do Czarnogóry. Zatoka Kotorska jest wpisana na listę UNESCO i często nazywana "jedynym fiordem na Adriatyku". Stare Miasto Kotoru otoczone murami twierdzy (XIV w.) — wspinaczka na twierdzę (~1200 schodów) z niesamowitym widokiem na zatokę. Kotory koty — Kotor słynie z kotów miejskich, dzieci będą zachwycone!</div>
+        <div class="desc en">Kotor is another cross-border excursion — this time into Montenegro. The Bay of Kotor is UNESCO-listed and often called "the only fjord on the Adriatic." Kotor's Old Town is surrounded by medieval fortress walls (14th c.) — climb to the fortress (~1,200 steps) for breathtaking views over the bay. Kotor cats — Kotor is famous for its city cats, the kids will be delighted!</div>
+        <div class="tip">🛂 <span class="pl">Czarnogóra nie jest w UE — paszport lub dowód tożsamości wymagany na granicy</span><span class="en">Montenegro is not in the EU — passport or ID required at the border</span></div>
+        <div class="tip">🐱 <span class="pl">Kotor ma oficjalną "Kaplicę Kotów" i tysiące wolnych kotów w Starym Mieście!</span><span class="en">Kotor has an official "Cat Chapel" and thousands of free-roaming cats in the Old Town!</span></div>
+        <br>
+        <a href="https://pl.wikipedia.org/wiki/Kotor" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Kotor Montenegro Bay">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Kotor — Zatoka Kotorska</div>
+      </div>
+    </div>
+
+    <!-- D6 -->
+    <div class="day-header d-croatia" data-day="06" style="margin-top:0">
+      <div class="tag">29 CZE · <span class="pl">Dzień 6</span><span class="en">Day 6</span></div>
+      <h2 class="pl">Wyspa Mljet — Park Narodowy</h2>
+      <h2 class="en">Mljet Island — National Park</h2>
+      <div class="sub pl">Prom z Dubrownika · dwa słone jeziora · klasztor na wyspie</div>
+      <div class="sub en">Ferry from Dubrovnik · two salt lakes · monastery on an island</div>
+    </div>
+    <div class="day-body">
+      <div class="attraction">
+        <div class="attraction-title">🏝️ <span class="pl">Park Narodowy Mljet</span><span class="en">Mljet National Park</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Mljet jest nazywany "najpiękniejszą wyspą Adriatyku" — połowa wyspy to Park Narodowy z dwoma słonymi jeziorami: Wielkie i Małe Jeziero. W środku Wielkiego Jeziora: mała wysepka ze średniowiecznym klasztorem benedyktynów z XII w. (dopływasz łódką). Woda w jeziorach jest ciepła i krystalicznie czysta — idealna do pływania. Trasa rowerowa wokół parku (17 km) lub kajakarstwo.</div>
+        <div class="desc en">Mljet is called "the most beautiful island of the Adriatic" — half the island is a National Park with two salt lakes: Veliko Jezero and Malo Jezero. In the middle of Veliko Jezero: a small islet with a 12th-century Benedictine monastery (you reach it by boat). The lake water is warm and crystal clear — perfect for swimming. Cycling trail around the park (17 km) or kayaking.</div>
+        <div class="tip">⛴️ <span class="pl">Prom Dubrownik → Sobra (Mljet): ~2,5h. Sprawdź rozkład jadronlinija.hr</span><span class="en">Ferry Dubrovnik → Sobra (Mljet): ~2.5h. Check schedule at jadronlinija.hr</span></div>
+        <div class="warn">📅 <span class="pl">Zarezerwuj prom wcześniej — w szczycie sezonu jest bardzo oblegany!</span><span class="en">Book the ferry in advance — it's very popular at peak season!</span></div>
+        <br>
+        <a href="https://pl.wikipedia.org/wiki/Mljet" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Mljet National Park Croatia lake">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Mljet — Park Narodowy</div>
+      </div>
+    </div>
+
+    <!-- D7 -->
+    <div class="day-header d-croatia" data-day="07" style="margin-top:0">
+      <div class="tag">30 CZE · <span class="pl">Dzień 7</span><span class="en">Day 7</span></div>
+      <h2 class="pl">Pelješac — wino Dingač i mury Stonu</h2>
+      <h2 class="en">Pelješac — Dingač wine and Ston walls</h2>
+      <div class="sub pl">~1,5h od Dubrownika · najdłuższe mury w Europie · wieczorny powrót · lot 23:00</div>
+      <div class="sub en">~1.5h from Dubrovnik · longest walls in Europe · evening return · flight 23:00</div>
+    </div>
+    <div class="day-body">
+      <div class="attraction">
+        <div class="attraction-title">🍷 <span class="pl">Winnice Dingač + Mury w Stonie</span><span class="en">Dingač vineyards + Ston walls</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Ostatni pełny dzień — wypad na Półwysep Pelješac. Ston to malutkie miasteczko z ogromnymi murami obronnymi z XIV w. (5,5 km — najdłuższe w Europie po Wielkim Murze Chińskim!). Wejście na mury z widokiem na solniska i morze. Ostrygami z Pelješca słynnie całe wybrzeże — obiad w restauracji nad zatoką. Wina Dingač: degustacja w jednej z winnic — jedno z najlepszych win Chorwacji. Powrót do Dubrownika na wieczór, obiad/kolacja, transfer na lotnisko przed 21:00.</div>
+        <div class="desc en">Last full day — trip to the Pelješac Peninsula. Ston is a tiny town with enormous 14th-century defensive walls (5.5 km — the longest in Europe after the Great Wall of China!). Walk the walls with views over salt pans and the sea. Pelješac oysters are famous along the whole coast — lunch at a harbourside restaurant. Dingač wines: tasting at one of the vineyards — among the finest wines in Croatia. Return to Dubrovnik for the evening, dinner, transfer to the airport before 9pm.</div>
+        <div class="warn">✈️ <span class="pl">Lot 23:00 — bądź na lotnisku DBV najpóźniej o 21:00 (2h wcześniej)!</span><span class="en">Flight 23:00 — be at DBV airport by 9pm at the latest (2h before)!</span></div>
+        <div class="tip">🦪 <span class="pl">Ostrygi z Pelješca są świeżutkie i tanie przy miejscowych restauracjach — nie omijaj!</span><span class="en">Pelješac oysters are super fresh and cheap at local restaurants — don't miss them!</span></div>
+        <br>
+        <a href="https://pl.wikipedia.org/wiki/Ston" class="lnk" target="_blank">↗ Ston Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Ston Croatia walls Pelješac">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Ston — mury obronne i Pelješac</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PRACTICAL -->
+<section style="padding-top:0">
+  <div class="container">
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--navy);margin-bottom:1.5rem">
+      <span class="pl">ℹ️ Informacje praktyczne</span>
+      <span class="en">ℹ️ Practical Info</span>
+    </h2>
+    <div class="pract-grid">
+      <div class="pract-card">
+        <div class="icon">✈️</div>
+        <h3 class="pl">Dojazd na lotnisko</h3><h3 class="en">Getting to the airport</h3>
+        <p class="pl">Połaniec → Kraków: ~1,5h<br>Odlot 20:55 → wyjedź o 17:30!<br>Powrót: lądowanie 00:40 (2 LIP)</p>
+        <p class="en">Połaniec → Kraków: ~1.5h<br>Flight 20:55 → leave at 17:30!<br>Return: landing 00:40 (2 Jul)</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">💶</div>
+        <h3 class="pl">Waluta</h3><h3 class="en">Currency</h3>
+        <p class="pl">Chorwacja: Euro € (od 2023)<br>Bośnia: Marka (BAM) ~2 zł<br>Czarnogóra: Euro €</p>
+        <p class="en">Croatia: Euro € (since 2023)<br>Bosnia: Marka (BAM) ~0.50 €<br>Montenegro: Euro €</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">🚗</div>
+        <h3 class="pl">Transport</h3><h3 class="en">Transport</h3>
+        <p class="pl">13 osób: 2 vany lub 3 auta<br>Granice do Bośni/Czarnogóry: autem<br>Mljet: prom z portu Dubrownik</p>
+        <p class="en">13 people: 2 vans or 3 cars<br>Bosnia/Montenegro borders: by car<br>Mljet: ferry from Dubrovnik port</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">☀️</div>
+        <h3 class="pl">Czerwiec w Chorwacji</h3><h3 class="en">June in Croatia</h3>
+        <p class="pl">~30–35°C na słońcu!<br>Morze ~24°C — super do kąpieli<br>Krem z filtrem, czapki, woda!</p>
+        <p class="en">~30–35°C in the sun!<br>Sea ~24°C — great for swimming<br>Sunscreen, hats, water!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>🇭🇷 <strong>Chorwacja — Dubrownik 2025</strong> &nbsp;·&nbsp;
+  <span class="pl">Plan wycieczki lotniczej</span>
+  <span class="en">Flight Trip Guide</span>
+  &nbsp;·&nbsp; <span style="font-size:.75rem">📷 Zdjęcia: Wikimedia Commons (CC)</span></p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map = L.map('map');
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(map);
+const _bounds=[];
+function mkr(lat,lng,color,title,desc,big){
+  const s=big?18:14;
+  const icon=L.divIcon({html:`<div style="background:${color};width:${s}px;height:${s}px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,.4)"></div>`,iconSize:[s,s],iconAnchor:[s/2,s/2],className:''});
+  L.marker([lat,lng],{icon}).addTo(map).bindPopup(`<strong>${title}</strong><br>${desc}`);
+  _bounds.push([lat,lng]);
+}
+mkr(42.561,18.268,'#003087','✈ Dubrownik DBV','Lotnisko Čilipi<br>Przylot 22:35 · Odlot 23:00',true);
+mkr(42.578,18.219,'#2E7D32','Cavtat','⭐ Rekomendowana baza<br>20 min od Dubrownika<br>Łódka do Starego Miasta');
+mkr(42.641,18.108,'#0077B6','Dubrownik — Stare Miasto','Dzień 2 — Stradun · Mury miejskie<br>Dzień 3 — Kolejka na Srd<br>UNESCO');
+mkr(42.627,18.123,'#1565C0','Wyspa Lokrum','Dzień 2 po południu<br>Klasztor · Martwe Jezioro<br>Łódka 10 min z portu');
+mkr(43.343,17.815,'#C62828','Mostar — Bośnia 🇧🇦','Dzień 4 — Stary Most UNESCO<br>~2,5h od Dubrownika<br>Paszport/dowód wymagany!');
+mkr(42.424,18.771,'#E65100','Kotor — Czarnogóra 🇲🇪','Dzień 5 — Zatoka Kotorska UNESCO<br>~2h od Dubrownika<br>Koty i twierdza');
+mkr(42.740,17.390,'#9C27B0','Mljet — Park Narodowy','Dzień 6 — dwa słone jeziora<br>Klasztor na wyspie<br>Prom z Dubrownika ~2,5h');
+mkr(42.832,17.697,'#F57F17','Ston — Półwysep Pelješac','Dzień 7 — Mury obronne (5,5 km)<br>Winnice Dingač · Ostrygi<br>~1,5h od Dubrownika');
+map.fitBounds(_bounds,{padding:[30,30]});
+
+function toggleLang(){
+  const body=document.body,btn=document.querySelector('.lang-btn');
+  if(body.dataset.lang==='pl'){body.dataset.lang='en';btn.textContent='PL 🌐';}
+  else{body.dataset.lang='pl';btn.textContent='EN 🌐';}
+}
+
+async function fetchWikiImages(query){
+  const params=new URLSearchParams({action:'query',generator:'search',gsrsearch:query,gsrnamespace:6,gsrlimit:50,prop:'imageinfo',iiprop:'url',iiurlwidth:960,format:'json',origin:'*'});
+  const res=await fetch(`https://commons.wikimedia.org/w/api.php?${params}`);
+  const data=await res.json();
+  return Object.values(data.query?.pages||{})
+    .filter(p=>p.imageinfo&&!/\.(svg|gif|tiff|pdf|ogg|webm|ogv|mp4)/i.test(p.title))
+    .map(p=>p.imageinfo[0].thumburl||p.imageinfo[0].url)
+    .filter(Boolean);
+}
+
+function buildStrip(outer,urls){
+  const track=outer.querySelector('.strip-track');
+  const countEl=outer.querySelector('.strip-count');
+  track.innerHTML='';
+  countEl.textContent=`📷 ${urls.length} zdjęć`;
+  const sets=Math.max(3,Math.ceil(3000/(urls.length*200+1)))+2;
+  for(let s=0;s<sets;s++) urls.forEach(src=>{const img=document.createElement('img');img.src=src;img.loading='lazy';track.appendChild(img);});
+  let pos=0,paused=false,dragStart=null,dragPos=0;
+  function oneSet(){let t=0;track.querySelectorAll('img').forEach((img,i)=>{if(i<urls.length)t+=img.offsetWidth+4;});return t||urls.length*290;}
+  function loop(){if(!paused){pos+=0.45;const w=oneSet();if(w>0&&pos>=w)pos-=w;}track.style.transform=`translateX(${-pos}px)`;requestAnimationFrame(loop);}
+  loop();
+  outer.addEventListener('mouseenter',()=>{paused=true;});
+  outer.addEventListener('mouseleave',()=>{paused=false;});
+  function sd(x){paused=true;dragStart=x;dragPos=pos;}
+  function md(x){if(dragStart===null)return;pos=dragPos+(dragStart-x);const w=oneSet();if(w>0){if(pos<0)pos+=w;if(pos>w*sets)pos-=w;}}
+  function ed(){dragStart=null;paused=false;}
+  outer.addEventListener('mousedown',e=>sd(e.clientX));
+  window.addEventListener('mousemove',e=>{if(dragStart!==null)md(e.clientX);});
+  window.addEventListener('mouseup',ed);
+  outer.addEventListener('touchstart',e=>sd(e.touches[0].clientX),{passive:true});
+  outer.addEventListener('touchmove',e=>md(e.touches[0].clientX),{passive:true});
+  outer.addEventListener('touchend',ed);
+}
+
+document.querySelectorAll('.strip-outer[data-urls]').forEach(outer=>{
+  const urls=outer.dataset.urls.split('|').filter(Boolean);
+  if(urls.length) buildStrip(outer,urls);
+});
+
+document.querySelectorAll('.strip-outer[data-wiki]').forEach(async outer=>{
+  try{
+    const urls=await fetchWikiImages(outer.dataset.wiki);
+    if(!urls.length){outer.querySelector('.strip-track').innerHTML='<div class="strip-loading">Brak zdjęć</div>';return;}
+    buildStrip(outer,urls);
+  }catch{outer.querySelector('.strip-track').innerHTML='<div class="strip-loading">Błąd ładowania</div>';}
+});
+
+document.querySelectorAll('img[data-wiki]').forEach(async img=>{
+  const params=new URLSearchParams({action:'query',generator:'search',gsrsearch:img.dataset.wiki,gsrnamespace:6,gsrlimit:1,prop:'imageinfo',iiprop:'url',iiurlwidth:960,format:'json',origin:'*'});
+  try{
+    const res=await fetch(`https://commons.wikimedia.org/w/api.php?${params}`);
+    const data=await res.json();
+    const page=Object.values(data.query?.pages||{})[0];
+    if(page?.imageinfo?.[0]?.thumburl) img.src=page.imageinfo[0].thumburl;
+  }catch(e){}
+});
+</script>
+</body>
+</html>
