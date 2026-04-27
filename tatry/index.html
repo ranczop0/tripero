@@ -151,7 +151,7 @@ footer strong{color:var(--gold)}
         &nbsp;&nbsp;
         <a href="https://pl.wikipedia.org/wiki/Kasprowy_Wierch" class="lnk" target="_blank">↗ Wikipedia</a>
       </div>
-      <div class="strip-outer" data-wiki="Kasprowy Wierch cable car Tatry">
+      <div class="strip-outer" data-wiki="Kasprowy Wierch">
         <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
         <div class="strip-count"></div>
         <div class="strip-label"><span class="pl">Kasprowy Wierch — 2155 m n.p.m.</span><span class="en">Kasprowy Wierch — 2,155 m a.s.l.</span></div>
@@ -190,7 +190,7 @@ footer strong{color:var(--gold)}
         &nbsp;&nbsp;
         <a href="https://pl.wikipedia.org/wiki/Dolina_Ko%C5%9Bcieliska" class="lnk" target="_blank">↗ Wikipedia</a>
       </div>
-      <div class="strip-outer" data-wiki="Dolina Kościeliska Tatry valley">
+      <div class="strip-outer" data-wiki="Dolina Kościeliska">
         <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
         <div class="strip-count"></div>
         <div class="strip-label"><span class="pl">Dolina Kościeliska</span><span class="en">Kościeliska Valley</span></div>
@@ -208,7 +208,7 @@ footer strong{color:var(--gold)}
         &nbsp;&nbsp;
         <a href="https://pl.wikipedia.org/wiki/Dolina_Choch%C3%B3%C5%82owska" class="lnk" target="_blank">↗ Wikipedia</a>
       </div>
-      <div class="strip-outer" data-wiki="Dolina Chochołowska Tatry meadow">
+      <div class="strip-outer" data-wiki="Dolina Chochołowska">
         <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
         <div class="strip-count"></div>
         <div class="strip-label"><span class="pl">Dolina Chochołowska</span><span class="en">Chochołowska Valley</span></div>
@@ -226,7 +226,7 @@ footer strong{color:var(--gold)}
         &nbsp;&nbsp;
         <a href="https://pl.wikipedia.org/wiki/Termy_Choch%C3%B3%C5%82owskie" class="lnk" target="_blank">↗ Wikipedia</a>
       </div>
-      <div class="strip-outer" data-wiki="Termy Chochołowskie thermal baths Poland">
+      <div class="strip-outer" data-wiki="Chochołów">
         <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
         <div class="strip-count"></div>
         <div class="strip-label"><span class="pl">Termy Chochołowskie</span><span class="en">Chochołów Thermal Baths</span></div>
@@ -244,7 +244,7 @@ footer strong{color:var(--gold)}
         &nbsp;&nbsp;
         <a href="https://pl.wikipedia.org/wiki/Dolina_Bia%C5%82ego" class="lnk" target="_blank">↗ Wikipedia</a>
       </div>
-      <div class="strip-outer" data-wiki="Dolina Białego Zakopane waterfall">
+      <div class="strip-outer" data-wiki="Dolina Białego">
         <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
         <div class="strip-count"></div>
         <div class="strip-label"><span class="pl">Dolina Białego — wodospad</span><span class="en">Białego Valley — waterfall</span></div>
@@ -294,11 +294,11 @@ function mkr(lat,lng,color,title,desc){
   L.marker([lat,lng],{icon}).addTo(map).bindPopup(`<strong>${title}</strong><br>${desc}`);
 }
 mkr(50.430,21.573,'#C8860A','Połaniec','Baza wypadowa / Base');
-mkr(49.231,19.982,'#1565C0','Kasprowy Wierch','Kolejka z Kuźnic<br>~3h z Połańca');
-mkr(49.287,19.857,'#2E7D32','Dolina Kościeliska','Opcja A<br>Bryczka konna dostępna');
-mkr(49.332,19.771,'#F57F17','Dolina Chochołowska','Opcja B<br>Najdłuższa dolina Tatr');
-mkr(49.370,19.730,'#795548','Termy Chochołowskie','Opcja C<br>Baseny geotermalne ~36°C');
-mkr(49.295,19.962,'#6A1B9A','Dolina Białego','Opcja D<br>Krótka, spokojna, wodospad');
+mkr(49.232,19.982,'#1565C0','Kasprowy Wierch','Kolejka z Kuźnic<br>~3h z Połańca');
+mkr(49.278,19.853,'#2E7D32','Dolina Kościeliska','Opcja A<br>Bryczka konna dostępna');
+mkr(49.321,19.755,'#F57F17','Dolina Chochołowska','Opcja B<br>Najdłuższa dolina Tatr');
+mkr(49.386,19.718,'#795548','Termy Chochołowskie','Opcja C<br>Baseny geotermalne ~36°C');
+mkr(49.300,19.940,'#6A1B9A','Dolina Białego','Opcja D<br>Krótka, spokojna, wodospad');
 
 function toggleLang(){
   const body=document.body,btn=document.querySelector('.lang-btn');
