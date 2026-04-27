@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Okolice Krakowa 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B3A4B;--gold:#C8860A;--teal:#2A7F8A;
+  --green:#2E7D32;--purple:#4A235A;--orange:#E65100;--red:#B71C1C;
+  --light:#F8F6F2;--white:#fff;--text:#2C2C2C;--muted:#777;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);line-height:1.7}
+
+.back-btn{
+  position:fixed;top:14px;left:1rem;z-index:999;
+  background:rgba(0,0,0,.45);color:white;border:none;
+  padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:600;
+  cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3);
+  transition:background .2s;
+}
+.back-btn:hover{background:rgba(0,0,0,.7)}
+.lang-btn{
+  position:fixed;top:14px;right:1rem;z-index:999;
+  background:var(--gold);color:white;border:none;
+  padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:700;
+  cursor:pointer;letter-spacing:.05em;box-shadow:0 2px 8px rgba(0,0,0,.3);
+  transition:opacity .2s;
+}
+.lang-btn:hover{opacity:.85}
+[data-lang="en"] .pl{display:none}
+[data-lang="pl"] .en{display:none}
+
+.hero{
+  position:relative;min-height:65vh;
+  background:linear-gradient(160deg,#E65100 0%,#BF360C 60%,#4A1E0A 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:4rem 1.5rem 6rem;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Wieliczka_Salt_Mine.jpg/1280px-Wieliczka_Salt_Mine.jpg') center/cover;
+  opacity:.15;
+}
+.hero-content{position:relative;z-index:1;max-width:680px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,7vw,4.2rem);color:white;line-height:1.1;margin-bottom:1rem}
+.hero h1 span{color:var(--gold)}
+.hero .tagline{font-size:1.05rem;color:rgba(255,255,255,.75);margin-bottom:.3rem}
+.hero .tagline.en{font-style:italic;color:rgba(255,255,255,.5);font-size:.95rem}
+.scroll-hint{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.4);font-size:.8rem;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+.map-section{background:var(--navy);padding:3.5rem 1.5rem}
+.map-section h2{font-family:'Playfair Display',serif;font-size:1.8rem;color:white;margin-bottom:.3rem}
+.map-section .sub{color:rgba(255,255,255,.5);font-style:italic;margin-bottom:1.5rem;font-size:.9rem}
+#map{height:360px;border-radius:1rem;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.map-legend{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.25rem}
+.map-legend div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:.5rem;padding:.5rem 1rem;color:white;font-size:.85rem}
+.map-legend strong{color:var(--gold)}
+
+section{padding:4rem 1.5rem}
+.container{max-width:880px;margin:0 auto}
+
+.day-header{border-radius:1rem 1rem 0 0;padding:1.75rem 2rem;position:relative;overflow:hidden}
+.day-header::after{content:attr(data-day);position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-family:'Playfair Display',serif;font-size:5.5rem;font-weight:700;color:rgba(255,255,255,.07);line-height:1;pointer-events:none}
+.day-header .tag{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:600;margin-bottom:.35rem}
+.day-header h2{font-family:'Playfair Display',serif;font-size:1.75rem;color:white;line-height:1.2}
+.day-header .sub{font-size:.9rem;color:rgba(255,255,255,.6);margin-top:.25rem;font-style:italic}
+.d1{background:linear-gradient(135deg,#E65100,#BF360C)}
+.d2{background:linear-gradient(135deg,var(--navy),#2A5A72)}
+.day-body{background:white;border-radius:0 0 1rem 1rem;box-shadow:0 8px 40px rgba(0,0,0,.08);margin-bottom:3rem;overflow:hidden}
+
+/* OPTIONS for day 2 */
+.options-note{
+  background:#F3F4F6;border-left:4px solid var(--gold);
+  padding:1rem 1.5rem;margin:1.25rem 1.75rem;border-radius:0 .5rem .5rem 0;
+  font-size:.9rem;color:var(--navy);
+}
+.options-note strong{display:block;margin-bottom:.25rem;color:var(--gold)}
+
+.option-label{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  padding:.25rem .65rem;border-radius:1rem;margin-bottom:.5rem;
+}
+.option-a{background:#E3F2FD;color:#1565C0}
+.option-b{background:#FFEBEE;color:#B71C1C}
+.option-alt{background:#E8F5E9;color:#2E7D32}
+
+/* STRIP */
+.strip-outer{position:relative;overflow:hidden;height:230px;background:#111;cursor:grab;user-select:none}
+.strip-outer:active{cursor:grabbing}
+.strip-track{display:flex;height:100%;width:max-content;will-change:transform}
+.strip-track img{height:100%;width:auto;min-width:260px;max-width:400px;object-fit:cover;margin-right:4px;flex-shrink:0;pointer-events:none;display:block}
+.strip-loading{display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,.4);font-size:.85rem}
+.strip-count{position:absolute;top:.6rem;right:.75rem;background:rgba(0,0,0,.5);color:rgba(255,255,255,.7);font-size:.7rem;padding:.2rem .55rem;border-radius:1rem;pointer-events:none}
+.strip-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.55));color:rgba(255,255,255,.8);font-size:.75rem;padding:.4rem .85rem 1rem;font-style:italic;pointer-events:none}
+
+.attraction{padding:1.4rem 1.75rem 1rem;border-bottom:1px solid #F0F0F0}
+.attraction:last-child{border-bottom:none}
+.attraction-title{display:flex;align-items:center;gap:.5rem;font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:.2rem}
+.gold-line{width:2.5rem;height:3px;background:var(--gold);border-radius:2px;margin:.35rem 0 .7rem}
+.desc{font-size:.93rem;margin-bottom:.3rem}
+.desc.en{color:var(--muted);font-style:italic;margin-bottom:.7rem}
+.tip{display:inline-flex;align-items:center;gap:.4rem;background:#E8F5E9;color:var(--green);font-size:.83rem;font-weight:600;padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem}
+.warn{display:inline-flex;align-items:center;gap:.4rem;background:#FFF3E0;color:#E65100;font-size:.83rem;font-weight:600;padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem}
+.lnk{color:var(--teal);font-size:.83rem;font-weight:500;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+.lnk:hover{border-color:var(--teal)}
+
+.pract-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem}
+.pract-card{background:white;border-radius:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.07);padding:1.4rem}
+.pract-card .icon{font-size:1.8rem;margin-bottom:.6rem}
+.pract-card h3{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.15rem}
+.pract-card p{font-size:.88rem;color:var(--text);line-height:1.6}
+
+footer{background:var(--navy);color:rgba(255,255,255,.45);text-align:center;padding:1.75rem;font-size:.82rem}
+footer strong{color:var(--gold)}
+
+@media(max-width:600px){
+  .hero h1{font-size:2rem}
+  .day-header{padding:1.25rem 1.25rem}
+  .attraction{padding:1.1rem 1.25rem .8rem}
+  .strip-outer{height:180px}
+}
+</style>
+</head>
+<body data-lang="pl">
+
+<a class="back-btn" href="../">← <span class="pl">Wycieczki</span><span class="en">All Trips</span></a>
+<button class="lang-btn" onclick="toggleLang()">EN 🌐</button>
+
+<div class="hero">
+  <div class="hero-content">
+    <h1>Okolice<br><span>Krakowa</span></h1>
+    <p class="tagline pl">Wycieczka rodzinna · 2 dni</p>
+    <p class="tagline en">Family Trip · 2 Days</p>
+  </div>
+  <div class="scroll-hint">↓</div>
+</div>
+
+<div class="map-section" id="mapa">
+  <div class="container">
+    <h2 class="pl">📍 Plan wycieczki — mapa</h2>
+    <h2 class="en">📍 Trip Map</h2>
+    <p class="sub pl">Odległości z Połańca · kliknij znacznik aby zobaczyć więcej</p>
+    <p class="sub en">Distances from Połaniec · click a marker for details</p>
+    <div id="map"></div>
+    <div class="map-legend">
+      <div><strong>🟠 Połaniec</strong> — baza / base</div>
+      <div><strong>🔴 Energylandia</strong> — ~1.5h · Dzień 1</div>
+      <div><strong>🔵 Wieliczka</strong> — ~1.5h · Dzień 2A</div>
+      <div><strong>⚫ Auschwitz</strong> — ~1.5h · Dzień 2B</div>
+    </div>
+  </div>
+</div>
+
+<!-- DAY 1 -->
+<section id="day1">
+  <div class="container">
+    <div class="day-header d1" data-day="01">
+      <div class="tag"><span class="pl">Dzień 1</span><span class="en">Day 1</span> · Zator</div>
+      <h2>Energylandia</h2>
+      <div class="sub pl">Największy park rozrywki w Polsce</div>
+      <div class="sub en">The largest amusement park in Poland</div>
+    </div>
+    <div class="day-body">
+
+      <div class="attraction">
+        <div class="attraction-title">🎢 Energylandia</div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Największy park rozrywki w Polsce — ponad 100 atrakcji na 60 ha. Strefy dla każdego wieku: od rollercoasterów dla nastolatków po Family Zone i Bajkowe Królestwo dla najmłodszych. Cały dzień to minimum.</div>
+        <div class="desc en">Poland's largest amusement park — over 100 attractions on 60 hectares. Zones for every age: from rollercoasters for teens to Family Zone and Fairy Tale Kingdom for the youngest. A full day is the minimum.</div>
+        <div class="tip">💡 <span class="pl">Bilety online taniej — kupuj z wyprzedzeniem!</span><span class="en">Online tickets are cheaper — book in advance!</span></div><br>
+        <a href="https://energylandia.pl" class="lnk" target="_blank">↗ energylandia.pl</a>
+        &nbsp;&nbsp;
+        <a href="https://pl.wikipedia.org/wiki/Energylandia" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Energylandia park rozrywki Zator">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label"><span class="pl">Energylandia — Zator</span><span class="en">Energylandia — Zator</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DAY 2 -->
+<section id="day2" style="padding-top:0">
+  <div class="container">
+    <div class="day-header d2" data-day="02">
+      <div class="tag"><span class="pl">Dzień 2</span><span class="en">Day 2</span></div>
+      <h2 class="pl">Do wyboru: Wieliczka lub Auschwitz</h2>
+      <h2 class="en">Choose: Wieliczka or Auschwitz</h2>
+      <div class="sub pl">Dwie różne opcje — zdecydujcie grupą</div>
+      <div class="sub en">Two different options — decide as a group</div>
+    </div>
+    <div class="day-body">
+
+      <div class="options-note">
+        <strong>🗳️ <span class="pl">Wybierzcie opcję</span><span class="en">Choose an option</span></strong>
+        <span class="pl">Obie atrakcje są w podobnej odległości od Połańca (~1.5h). Auschwitz zalecane dla osób 14+ — młodsze dzieci mogą zostać z opiekunem lub wybrać opcję alternatywną.</span>
+        <span class="en">Both attractions are a similar distance from Połaniec (~1.5h). Auschwitz recommended for ages 14+ — younger children may stay with a guardian or choose the alternative option.</span>
+      </div>
+
+      <!-- OPCJA A: Wieliczka -->
+      <div class="attraction">
+        <div class="option-label option-a">⚪ <span class="pl">Opcja A</span><span class="en">Option A</span></div>
+        <div class="attraction-title">🧂 <span class="pl">Kopalnia Soli Wieliczka</span><span class="en">Wieliczka Salt Mine</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Podziemne miasto wykute w soli — 300 metrów pod ziemią, kaplice, jeziora, rzeźby. UNESCO. Trasa turystyczna ok. 3h, dostępna dla seniorów. Dla dzieci: niesamowita przygoda pod ziemią.</div>
+        <div class="desc en">Underground city carved in salt — 300 metres underground, chapels, lakes, sculptures. UNESCO World Heritage. Tourist route ~3h, accessible for seniors. For children: an amazing underground adventure.</div>
+        <div class="tip">💡 <span class="pl">Temperatura w kopalni: 14°C — weź kurtkę!</span><span class="en">Temperature inside: 14°C — bring a jacket!</span></div><br>
+        <a href="https://www.wieliczka-saltmine.com" class="lnk" target="_blank">↗ wieliczka-saltmine.com</a>
+        &nbsp;&nbsp;
+        <a href="https://pl.wikipedia.org/wiki/Kopalnia_soli_Wieliczka" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Wieliczka salt mine underground chapel">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label"><span class="pl">Kopalnia Soli Wieliczka</span><span class="en">Wieliczka Salt Mine</span></div>
+      </div>
+
+      <!-- OPCJA B: Auschwitz -->
+      <div class="attraction" style="margin-top:.5rem">
+        <div class="option-label option-b">⚫ <span class="pl">Opcja B</span><span class="en">Option B</span></div>
+        <div class="attraction-title">🕯️ <span class="pl">Auschwitz-Birkenau</span><span class="en">Auschwitz-Birkenau</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Były obóz koncentracyjny i zagłady — ważne świadectwo historii XX wieku. UNESCO. Zwiedzanie z przewodnikiem ok. 3.5h. Głęboko poruszające doświadczenie dla starszych dzieci i dorosłych.</div>
+        <div class="desc en">Former concentration and extermination camp — an important witness to 20th-century history. UNESCO World Heritage. Guided tour ~3.5h. A deeply moving experience for older children and adults.</div>
+        <div class="warn">⚠️ <span class="pl">Zalecane 14+ · Rezerwacja obowiązkowa!</span><span class="en">Recommended 14+ · Booking required!</span></div><br>
+        <a href="https://www.auschwitz.org" class="lnk" target="_blank">↗ auschwitz.org</a>
+        &nbsp;&nbsp;
+        <a href="https://pl.wikipedia.org/wiki/KL_Auschwitz" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Auschwitz Birkenau memorial museum">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label"><span class="pl">Auschwitz-Birkenau — Muzeum i Miejsce Pamięci</span><span class="en">Auschwitz-Birkenau — Memorial and Museum</span></div>
+      </div>
+
+      <!-- Alternatywa dla młodszych -->
+      <div class="attraction" style="margin-top:.5rem">
+        <div class="option-label option-alt">🟢 <span class="pl">Alternatywa dla młodszych dzieci</span><span class="en">Alternative for younger children</span></div>
+        <div class="attraction-title">🦁 <span class="pl">Zoo Kraków</span><span class="en">Kraków Zoo</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Jedno z najlepszych zoo w Polsce — ponad 1500 zwierząt na 18 ha. Dostępne dla seniorów, wózków, dzieci w każdym wieku. Idealne gdy część grupy jedzie do Auschwitz.</div>
+        <div class="desc en">One of the best zoos in Poland — over 1,500 animals on 18 hectares. Accessible for seniors, prams, children of all ages. Ideal when part of the group visits Auschwitz.</div>
+        <a href="https://zoo.krakow.pl" class="lnk" target="_blank">↗ zoo.krakow.pl</a>
+      </div>
+      <div class="strip-outer" data-wiki="Kraków Zoo animals">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label"><span class="pl">Zoo Kraków</span><span class="en">Kraków Zoo</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PRACTICAL -->
+<section style="padding-top:0">
+  <div class="container">
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--navy);margin-bottom:1.5rem">
+      <span class="pl">ℹ️ Informacje praktyczne</span>
+      <span class="en">ℹ️ Practical Info</span>
+    </h2>
+    <div class="pract-grid">
+      <div class="pract-card">
+        <div class="icon">🚗</div>
+        <h3 class="pl">Dojazd</h3><h3 class="en">Getting there</h3>
+        <p class="pl">Z Połańca:<br>Energylandia (Zator): ~1.5h<br>Wieliczka: ~1.5h<br>Auschwitz: ~1.5h</p>
+        <p class="en">From Połaniec:<br>Energylandia (Zator): ~1.5h<br>Wieliczka: ~1.5h<br>Auschwitz: ~1.5h</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">⚠️</div>
+        <h3 class="pl">Ważne</h3><h3 class="en">Important</h3>
+        <p class="pl">Energylandia: bilety online!<br>Wieliczka: rezerwacja trasy<br>Auschwitz: rezerwacja 14+</p>
+        <p class="en">Energylandia: online tickets!<br>Wieliczka: book the route<br>Auschwitz: book, ages 14+</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>🏛️ <strong>Okolice Krakowa 2025</strong> &nbsp;·&nbsp;
+  <span class="pl">Plan wycieczki rodzinnej</span>
+  <span class="en">Family Trip Guide</span>
+  &nbsp;·&nbsp; <span style="font-size:.75rem">📷 Zdjęcia: Wikimedia Commons (CC)</span></p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map = L.map('map').setView([50.05, 19.8], 8);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(map);
+function mkr(lat,lng,color,title,desc){
+  const icon=L.divIcon({html:`<div style="background:${color};width:14px;height:14px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,.4)"></div>`,iconSize:[14,14],iconAnchor:[7,7],className:''});
+  L.marker([lat,lng],{icon}).addTo(map).bindPopup(`<strong>${title}</strong><br>${desc}`);
+}
+mkr(50.430,21.573,'#C8860A','Połaniec','Baza wypadowa / Base');
+mkr(49.987,19.448,'#E65100','Energylandia','Zator<br>~1.5h z Połańca');
+mkr(49.984,20.055,'#1B3A4B','Wieliczka','Kopalnia Soli<br>~1.5h z Połańca');
+mkr(50.027,19.203,'#333333','Auschwitz-Birkenau','Muzeum i Miejsce Pamięci<br>~1.5h z Połańca');
+
+function toggleLang(){
+  const body=document.body,btn=document.querySelector('.lang-btn');
+  if(body.dataset.lang==='pl'){body.dataset.lang='en';btn.textContent='PL 🌐';}
+  else{body.dataset.lang='pl';btn.textContent='EN 🌐';}
+}
+
+async function fetchWikiImages(query){
+  const params=new URLSearchParams({action:'query',generator:'search',gsrsearch:query,gsrnamespace:6,gsrlimit:50,prop:'imageinfo',iiprop:'url',iiurlwidth:960,format:'json',origin:'*'});
+  const res=await fetch(`https://commons.wikimedia.org/w/api.php?${params}`);
+  const data=await res.json();
+  return Object.values(data.query?.pages||{})
+    .filter(p=>p.imageinfo&&!/\.(svg|gif|tiff|pdf|ogg|webm|ogv|mp4)/i.test(p.title))
+    .map(p=>p.imageinfo[0].thumburl||p.imageinfo[0].url)
+    .filter(Boolean);
+}
+
+function buildStrip(outer,urls){
+  const track=outer.querySelector('.strip-track');
+  const countEl=outer.querySelector('.strip-count');
+  track.innerHTML='';
+  countEl.textContent=`📷 ${urls.length} zdjęć`;
+  const sets=Math.max(3,Math.ceil(3000/(urls.length*200+1)))+2;
+  for(let s=0;s<sets;s++) urls.forEach(src=>{const img=document.createElement('img');img.src=src;img.loading='lazy';track.appendChild(img);});
+  let pos=0,paused=false,dragStart=null,dragPos=0;
+  function oneSet(){let t=0;track.querySelectorAll('img').forEach((img,i)=>{if(i<urls.length)t+=img.offsetWidth+4;});return t||urls.length*290;}
+  function loop(){if(!paused){pos+=0.45;const w=oneSet();if(w>0&&pos>=w)pos-=w;}track.style.transform=`translateX(${-pos}px)`;requestAnimationFrame(loop);}
+  loop();
+  outer.addEventListener('mouseenter',()=>{paused=true;});
+  outer.addEventListener('mouseleave',()=>{paused=false;});
+  function sd(x){paused=true;dragStart=x;dragPos=pos;}
+  function md(x){if(dragStart===null)return;pos=dragPos+(dragStart-x);const w=oneSet();if(w>0){if(pos<0)pos+=w;if(pos>w*sets)pos-=w;}}
+  function ed(){dragStart=null;paused=false;}
+  outer.addEventListener('mousedown',e=>sd(e.clientX));
+  window.addEventListener('mousemove',e=>{if(dragStart!==null)md(e.clientX);});
+  window.addEventListener('mouseup',ed);
+  outer.addEventListener('touchstart',e=>sd(e.touches[0].clientX),{passive:true});
+  outer.addEventListener('touchmove',e=>md(e.touches[0].clientX),{passive:true});
+  outer.addEventListener('touchend',ed);
+}
+
+document.querySelectorAll('.strip-outer[data-wiki]').forEach(async outer=>{
+  try{
+    const urls=await fetchWikiImages(outer.dataset.wiki);
+    if(!urls.length){outer.querySelector('.strip-track').innerHTML='<div class="strip-loading">Brak zdjęć</div>';return;}
+    buildStrip(outer,urls);
+  }catch{outer.querySelector('.strip-track').innerHTML='<div class="strip-loading">Błąd ładowania</div>';}
+});
+</script>
+</body>
+</html>
