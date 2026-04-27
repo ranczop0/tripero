@@ -271,7 +271,7 @@ footer strong{color:var(--gold)}
         &nbsp;&nbsp;
         <a href="https://pl.wikipedia.org/wiki/Ba%C5%82t%C3%B3w" class="lnk" target="_blank">↗ Wikipedia</a>
       </div>
-      <div class="strip-outer" data-wiki="JuraPark Bałtów dinozaury">
+      <div class="strip-outer" data-urls="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Tyranozaur_-_Baltow.JPG/960px-Tyranozaur_-_Baltow.JPG|https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Baltow_-_JuraPark_2011_%283%29.JPG/960px-Baltow_-_JuraPark_2011_%283%29.JPG|https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Baltow_-_Zwierzyniec_Baltowski_%2823%29.JPG/960px-Baltow_-_Zwierzyniec_Baltowski_%2823%29.JPG|https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/School_buses_of_Ba%C5%82t%C3%B3w_Jurassic_Park.JPG/960px-School_buses_of_Ba%C5%82t%C3%B3w_Jurassic_Park.JPG">
         <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
         <div class="strip-count"></div>
         <div class="strip-label"><span class="pl">JuraPark Bałtów</span><span class="en">JuraPark Bałtów</span></div>
@@ -365,6 +365,11 @@ function buildStrip(outer,urls){
   outer.addEventListener('touchmove',e=>md(e.touches[0].clientX),{passive:true});
   outer.addEventListener('touchend',ed);
 }
+
+document.querySelectorAll('.strip-outer[data-urls]').forEach(outer=>{
+  const urls=outer.dataset.urls.split('|').filter(Boolean);
+  if(urls.length) buildStrip(outer,urls);
+});
 
 document.querySelectorAll('.strip-outer[data-wiki]').forEach(async outer=>{
   try{
