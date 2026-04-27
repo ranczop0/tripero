@@ -16,7 +16,6 @@
 html{scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);line-height:1.7}
 
-/* LANG TOGGLE */
 .lang-btn{
   position:fixed;top:14px;right:1rem;z-index:999;
   background:var(--gold);color:white;border:none;
@@ -28,7 +27,6 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);li
 [data-lang="en"] .pl{display:none}
 [data-lang="pl"] .en{display:none}
 
-/* HERO */
 .hero{
   position:relative;min-height:75vh;
   background:linear-gradient(160deg,var(--navy) 0%,#2A5A72 60%,var(--teal) 100%);
@@ -41,109 +39,66 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);li
   opacity:.2;
 }
 .hero-content{position:relative;z-index:1;max-width:680px}
-.hero h1{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(2.6rem,8vw,5rem);color:white;line-height:1.1;margin-bottom:1rem;
-}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.6rem,8vw,5rem);color:white;line-height:1.1;margin-bottom:1rem}
 .hero h1 span{color:var(--gold)}
 .hero .tagline{font-size:1.05rem;color:rgba(255,255,255,.75);margin-bottom:.3rem}
 .hero .tagline.en{font-style:italic;color:rgba(255,255,255,.5);font-size:.95rem}
-.scroll-hint{
-  position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);
-  color:rgba(255,255,255,.4);font-size:.8rem;animation:bounce 2s infinite;
-}
+.scroll-hint{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.4);font-size:.8rem;animation:bounce 2s infinite}
 @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
 
-/* MAP */
 .map-section{background:var(--navy);padding:3.5rem 1.5rem}
 .map-section h2{font-family:'Playfair Display',serif;font-size:1.8rem;color:white;margin-bottom:.3rem}
 .map-section .sub{color:rgba(255,255,255,.5);font-style:italic;margin-bottom:1.5rem;font-size:.9rem}
 #map{height:380px;border-radius:1rem;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)}
 .map-legend{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.25rem}
-.map-legend div{
-  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
-  border-radius:.5rem;padding:.5rem 1rem;color:white;font-size:.85rem;
-}
+.map-legend div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:.5rem;padding:.5rem 1rem;color:white;font-size:.85rem}
 .map-legend strong{color:var(--gold)}
 
-/* SECTIONS */
 section{padding:4rem 1.5rem}
 .container{max-width:880px;margin:0 auto}
 
-/* DAY HEADER */
 .day-header{border-radius:1rem 1rem 0 0;padding:1.75rem 2rem;position:relative;overflow:hidden}
-.day-header::after{
-  content:attr(data-day);
-  position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);
-  font-family:'Playfair Display',serif;font-size:5.5rem;font-weight:700;
-  color:rgba(255,255,255,.07);line-height:1;pointer-events:none;
-}
+.day-header::after{content:attr(data-day);position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-family:'Playfair Display',serif;font-size:5.5rem;font-weight:700;color:rgba(255,255,255,.07);line-height:1;pointer-events:none}
 .day-header .tag{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:600;margin-bottom:.35rem}
 .day-header h2{font-family:'Playfair Display',serif;font-size:1.75rem;color:white;line-height:1.2}
 .day-header .sub{font-size:.9rem;color:rgba(255,255,255,.6);margin-top:.25rem;font-style:italic}
 .d1{background:linear-gradient(135deg,var(--navy),#2A5A72)}
 .d2{background:linear-gradient(135deg,var(--green),#1B5E20)}
 .d3{background:linear-gradient(135deg,var(--purple),#6A1B9A)}
-
 .day-body{background:white;border-radius:0 0 1rem 1rem;box-shadow:0 8px 40px rgba(0,0,0,.08);margin-bottom:3rem;overflow:hidden}
 
-/* ── INFINITE SCROLL GALLERY STRIP ─────────────────────────────────────────── */
-.strip-outer{
-  position:relative;overflow:hidden;height:220px;background:#111;
-  cursor:grab;user-select:none;
-}
+/* ── INFINITE SCROLL STRIP ── */
+.strip-outer{position:relative;overflow:hidden;height:230px;background:#111;cursor:grab;user-select:none}
 .strip-outer:active{cursor:grabbing}
-.strip-track{
-  display:flex;height:100%;width:max-content;
-  will-change:transform;
+.strip-track{display:flex;height:100%;width:max-content;will-change:transform;transition:none}
+.strip-track img{height:100%;width:auto;min-width:260px;max-width:400px;object-fit:cover;margin-right:4px;flex-shrink:0;pointer-events:none;display:block}
+.strip-loading{display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,.4);font-size:.85rem;letter-spacing:.05em}
+.strip-count{
+  position:absolute;top:.6rem;right:.75rem;
+  background:rgba(0,0,0,.5);color:rgba(255,255,255,.7);
+  font-size:.7rem;padding:.2rem .55rem;border-radius:1rem;pointer-events:none;
 }
-.strip-track img{
-  height:100%;width:auto;min-width:260px;max-width:380px;
-  object-fit:cover;margin-right:4px;flex-shrink:0;
-  pointer-events:none;
-}
-.strip-label{
-  position:absolute;bottom:0;left:0;right:0;
-  background:linear-gradient(transparent,rgba(0,0,0,.55));
-  color:rgba(255,255,255,.8);font-size:.75rem;padding:.4rem .85rem 1rem;font-style:italic;
-  pointer-events:none;
-}
+.strip-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.55));color:rgba(255,255,255,.8);font-size:.75rem;padding:.4rem .85rem 1rem;font-style:italic;pointer-events:none}
 
-/* ATTRACTION */
 .attraction{padding:1.4rem 1.75rem 1rem;border-bottom:1px solid #F0F0F0}
 .attraction:last-child{border-bottom:none}
 .attraction-title{display:flex;align-items:center;gap:.5rem;font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:.2rem}
 .gold-line{width:2.5rem;height:3px;background:var(--gold);border-radius:2px;margin:.35rem 0 .7rem}
 .desc{font-size:.93rem;margin-bottom:.3rem}
 .desc.en{color:var(--muted);font-style:italic;margin-bottom:.7rem}
-.tip{
-  display:inline-flex;align-items:center;gap:.4rem;
-  background:#E8F5E9;color:var(--green);font-size:.83rem;font-weight:600;
-  padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem;
-}
-.lnk{
-  color:var(--teal);font-size:.83rem;font-weight:500;text-decoration:none;
-  border-bottom:1px solid transparent;transition:border-color .2s;
-}
+.tip{display:inline-flex;align-items:center;gap:.4rem;background:#E8F5E9;color:var(--green);font-size:.83rem;font-weight:600;padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem}
+.lnk{color:var(--teal);font-size:.83rem;font-weight:500;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
 .lnk:hover{border-color:var(--teal)}
 
-/* ARRIVAL NOTE */
-.arrival-note{
-  background:linear-gradient(135deg,#EBF5FB,#FFF8E7);
-  border-left:4px solid var(--gold);
-  padding:1rem 1.5rem;margin:1.25rem 1.75rem;border-radius:0 .5rem .5rem 0;
-  font-size:.9rem;color:var(--navy);
-}
+.arrival-note{background:linear-gradient(135deg,#EBF5FB,#FFF8E7);border-left:4px solid var(--gold);padding:1rem 1.5rem;margin:1.25rem 1.75rem;border-radius:0 .5rem .5rem 0;font-size:.9rem;color:var(--navy)}
 .arrival-note strong{display:block;margin-bottom:.25rem;color:var(--gold);font-size:.95rem}
 
-/* PRACTICAL */
 .pract-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem}
 .pract-card{background:white;border-radius:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.07);padding:1.4rem}
 .pract-card .icon{font-size:1.8rem;margin-bottom:.6rem}
 .pract-card h3{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.15rem}
 .pract-card p{font-size:.88rem;color:var(--text);line-height:1.6}
 
-/* FOOTER */
 footer{background:var(--navy);color:rgba(255,255,255,.45);text-align:center;padding:1.75rem;font-size:.82rem}
 footer strong{color:var(--gold)}
 
@@ -151,7 +106,7 @@ footer strong{color:var(--gold)}
   .hero h1{font-size:2.4rem}
   .day-header{padding:1.25rem 1.25rem}
   .attraction{padding:1.1rem 1.25rem .8rem}
-  .strip-outer{height:170px}
+  .strip-outer{height:180px}
 }
 </style>
 </head>
@@ -159,7 +114,6 @@ footer strong{color:var(--gold)}
 
 <button class="lang-btn" onclick="toggleLang()">EN 🌐</button>
 
-<!-- HERO -->
 <div class="hero">
   <div class="hero-content">
     <h1>Pieniny<br><span>&</span> Tatry</h1>
@@ -169,7 +123,6 @@ footer strong{color:var(--gold)}
   <div class="scroll-hint">↓</div>
 </div>
 
-<!-- MAP -->
 <div class="map-section" id="mapa">
   <div class="container">
     <h2 class="pl">📍 Plan wycieczki — mapa</h2>
@@ -197,14 +150,12 @@ footer strong{color:var(--gold)}
       <div class="sub en">Castle · Lake Cruise · E-bikes</div>
     </div>
     <div class="day-body">
-
       <div class="arrival-note">
         <strong>🚗 <span class="pl">Przyjazd</span><span class="en">Arrival</span></strong>
         <span class="pl">Przejazd z Połańca do Czorsztyna (~2.5h przez Nowy Sącz). Po przyjeździe zameldowanie i opcjonalne atrakcje:</span>
         <span class="en">Drive from Połaniec to Czorsztyn (~2.5h via Nowy Sącz). After check-in, optional activities:</span>
       </div>
 
-      <!-- Atrakcja: Zamek -->
       <div class="attraction">
         <div class="attraction-title">🏰 <span class="pl">Zamek Czorsztyn</span><span class="en">Czorsztyn Castle</span></div>
         <div class="gold-line"></div>
@@ -212,15 +163,12 @@ footer strong{color:var(--gold)}
         <div class="desc en">14th-century Gothic castle ruins with panoramic views of the lake and Niedzica Castle. ~1.5h visit, partially accessible for seniors.</div>
         <a href="https://zamek-czorsztyn.pl" class="lnk" target="_blank">↗ zamek-czorsztyn.pl</a>
       </div>
-      <div class="strip-outer" data-strip="zamek">
-        <div class="strip-track">
-          <img src="https://v.wpimg.pl/MTE2ZjYxYjUkUCxZdgNvIGcIeAMwWmF2MBBgSHZBfmw9B2hSdh4kOCBAPxo2ViomMEI7HSlWPThqUyoDdg58eyFbKRo1GTR7IF84Dz1XdWEkAmsJbE1gZyZUP0dtS3pkaFBrWmlVfzdyU2tbbx57ZScCeBc" alt="Zamek Czorsztyn">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Czorsztyn_Zamek_fot._1.jpg/960px-Czorsztyn_Zamek_fot._1.jpg" alt="Zamek Czorsztyn 2">
-        </div>
+      <div class="strip-outer" data-wiki="Czorsztyn Castle" data-label-pl="Zamek Czorsztyn" data-label-en="Czorsztyn Castle">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
         <div class="strip-label"><span class="pl">Zamek Czorsztyn</span><span class="en">Czorsztyn Castle</span></div>
       </div>
 
-      <!-- Atrakcja: Rejs -->
       <div class="attraction">
         <div class="attraction-title">⛵ <span class="pl">Rejs po Jeziorze Czorsztyńskim</span><span class="en">Boat Cruise on Lake Czorsztyn</span></div>
         <div class="gold-line"></div>
@@ -228,14 +176,12 @@ footer strong{color:var(--gold)}
         <div class="desc en">Boat cruise with views of both castles and the Tatras. Safe for children, ~45 min. Perfect afternoon after arrival.</div>
         <a href="https://www.pieniny.com/pl" class="lnk" target="_blank">↗ pieniny.com</a>
       </div>
-      <div class="strip-outer" data-strip="rejs">
-        <div class="strip-track">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Jezioro_Czorsztynskie_1.jpg/960px-Jezioro_Czorsztynskie_1.jpg" alt="Jezioro Czorsztyńskie">
-        </div>
+      <div class="strip-outer" data-wiki="Jezioro Czorsztynskie" data-label-pl="Jezioro Czorsztyńskie" data-label-en="Lake Czorsztyn">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
         <div class="strip-label"><span class="pl">Jezioro Czorsztyńskie</span><span class="en">Lake Czorsztyn</span></div>
       </div>
 
-      <!-- Atrakcja: E-rowery -->
       <div class="attraction">
         <div class="attraction-title">🚲 <span class="pl">E-rowery dookoła jeziora</span><span class="en">E-bike Ride Around the Lake</span></div>
         <div class="gold-line"></div>
@@ -243,14 +189,11 @@ footer strong{color:var(--gold)}
         <div class="desc en">~25 km loop around Lake Czorsztyn. Gentle, scenic, for all ages. Rental at the lake — book online in advance.</div>
         <a href="https://www.jezioro-czorsztynskie.pl" class="lnk" target="_blank">↗ jezioro-czorsztynskie.pl</a>
       </div>
-      <div class="strip-outer" data-strip="erowery">
-        <div class="strip-track">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Jezioro_Czorsztynskie_1.jpg/960px-Jezioro_Czorsztynskie_1.jpg" alt="Jezioro - trasa rowerowa">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Czorsztyn_Zamek_fot._1.jpg/960px-Czorsztyn_Zamek_fot._1.jpg" alt="Widok z trasy">
-        </div>
-        <div class="strip-label"><span class="pl">Trasa e-rowerowa dookoła jeziora</span><span class="en">E-bike route around the lake</span></div>
+      <div class="strip-outer" data-wiki="Czorsztyn lake panorama" data-label-pl="Widoki z trasy rowerowej" data-label-en="Views from the cycling route">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label"><span class="pl">Widoki z trasy rowerowej</span><span class="en">Views from the cycling route</span></div>
       </div>
-
     </div>
   </div>
 </section>
@@ -266,8 +209,6 @@ footer strong{color:var(--gold)}
       <div class="sub en">Traditional rafting · Rocky gorge</div>
     </div>
     <div class="day-body">
-
-      <!-- Atrakcja: Spływ -->
       <div class="attraction">
         <div class="attraction-title">🛶 <span class="pl">Spływ Dunajcem</span><span class="en">Dunajec River Rafting</span></div>
         <div class="gold-line"></div>
@@ -276,15 +217,12 @@ footer strong{color:var(--gold)}
         <div class="tip">💡 <span class="pl">Rezerwacja obowiązkowa w sezonie!</span><span class="en">Advance booking essential in summer!</span></div><br>
         <a href="https://www.flisacy.com.pl" class="lnk" target="_blank">↗ flisacy.com.pl</a>
       </div>
-      <div class="strip-outer" data-strip="dunajec">
-        <div class="strip-track">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Sp%C5%82yw_Dunajcem._Pieniny._-_panoramio.jpg/960px-Sp%C5%82yw_Dunajcem._Pieniny._-_panoramio.jpg" alt="Spływ Dunajcem">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Sp%C5%82yw_Dunajcem%2C_tratwa_flisacka.jpg/960px-Sp%C5%82yw_Dunajcem%2C_tratwa_flisacka.jpg" alt="Tratwa flisacka">
-        </div>
+      <div class="strip-outer" data-wiki="Dunajec river rafting Pieniny" data-label-pl="Spływ Dunajcem" data-label-en="Dunajec Rafting">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
         <div class="strip-label"><span class="pl">Spływ Dunajcem przez Przełom Pieniński</span><span class="en">Dunajec rafting through Pieniny Gorge</span></div>
       </div>
 
-      <!-- Atrakcja: Homole -->
       <div class="attraction">
         <div class="attraction-title">🏞️ <span class="pl">Wąwóz Homole</span><span class="en">Homole Gorge</span></div>
         <div class="gold-line"></div>
@@ -292,13 +230,11 @@ footer strong{color:var(--gold)}
         <div class="desc en">Short walk through a rocky gorge (~2 km, ~1h). Vertical cliffs, waterfalls, lush greenery — children love it! Accessible for seniors.</div>
         <a href="https://wawoz-homole.pl" class="lnk" target="_blank">↗ wawoz-homole.pl</a>
       </div>
-      <div class="strip-outer" data-strip="homole">
-        <div class="strip-track">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2011-05_W%C4%85w%C3%B3z_Homole_%281%29.jpg/640px-2011-05_W%C4%85w%C3%B3z_Homole_%281%29.jpg" alt="Wąwóz Homole">
-        </div>
+      <div class="strip-outer" data-wiki="Wąwóz Homole" data-label-pl="Wąwóz Homole" data-label-en="Homole Gorge">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
         <div class="strip-label"><span class="pl">Wąwóz Homole</span><span class="en">Homole Gorge</span></div>
       </div>
-
     </div>
   </div>
 </section>
@@ -313,8 +249,6 @@ footer strong{color:var(--gold)}
       <div class="sub en">Largest Tatra lake · Carriage or shuttle bus</div>
     </div>
     <div class="day-body">
-
-      <!-- Atrakcja: Morskie Oko -->
       <div class="attraction">
         <div class="attraction-title">🏔️ Morskie Oko</div>
         <div class="gold-line"></div>
@@ -323,19 +257,16 @@ footer strong{color:var(--gold)}
         <div class="tip">💡 <span class="pl">Wyjeżdżaj przed 8:00 — unikniesz tłumów!</span><span class="en">Leave before 8:00 AM — avoid the crowds!</span></div><br>
         <a href="https://tpn.pl/odwiedzaj" class="lnk" target="_blank">↗ tpn.pl</a>
       </div>
-      <div class="strip-outer" data-strip="mok">
-        <div class="strip-track">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Panorama-Morskiego-Oka.jpg/1280px-Panorama-Morskiego-Oka.jpg" alt="Morskie Oko panorama">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Morskie_Oko_lake%2C_Poland.jpg/1280px-Morskie_Oko_lake%2C_Poland.jpg" alt="Morskie Oko">
-        </div>
+      <div class="strip-outer" data-wiki="Morskie Oko lake Tatra" data-label-pl="Morskie Oko — Tatrzański Park Narodowy" data-label-en="Morskie Oko — Tatra National Park">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
         <div class="strip-label"><span class="pl">Morskie Oko — Tatrzański Park Narodowy</span><span class="en">Morskie Oko — Tatra National Park</span></div>
       </div>
-
     </div>
   </div>
 </section>
 
-<!-- PRACTICAL (tylko dojazd i ważne) -->
+<!-- PRACTICAL -->
 <section style="padding-top:0">
   <div class="container">
     <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--navy);margin-bottom:1.5rem">
@@ -362,10 +293,10 @@ footer strong{color:var(--gold)}
 <footer>
   <p>🏔️ <strong>Pieniny & Tatry 2025</strong> &nbsp;·&nbsp;
   <span class="pl">Plan wycieczki rodzinnej</span>
-  <span class="en">Family Trip Guide</span></p>
+  <span class="en">Family Trip Guide</span>
+  &nbsp;·&nbsp; <span style="font-size:.75rem">📷 Zdjęcia: Wikimedia Commons (CC)</span></p>
 </footer>
 
-<!-- LEAFLET MAP -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // ── MAP ───────────────────────────────────────────────────────────────────────
@@ -373,102 +304,135 @@ const map = L.map('map').setView([49.7, 20.6], 8);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
   attribution:'© OpenStreetMap contributors', maxZoom:18
 }).addTo(map);
-
 function mkr(lat,lng,color,title,desc){
   const icon = L.divIcon({
     html:`<div style="background:${color};width:14px;height:14px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,.4)"></div>`,
-    iconSize:[14,14], iconAnchor:[7,7], className:''
+    iconSize:[14,14],iconAnchor:[7,7],className:''
   });
   L.marker([lat,lng],{icon}).addTo(map).bindPopup(`<strong>${title}</strong><br>${desc}`);
 }
-mkr(50.430, 21.573,'#C8860A','Połaniec','Baza wypadowa / Base');
-mkr(49.434, 20.323,'#1B3A4B','Czorsztyn','Zamek · Jezioro · E-rowery<br>~2.5h z Połańca');
-mkr(49.408, 20.435,'#2E7D32','Spływ Dunajcem','Sromowce Kąty<br>~2.5h z Połańca');
-mkr(49.200, 20.068,'#4A235A','Morskie Oko','Palenica Białczańska<br>~3h z Połańca');
+mkr(50.430,21.573,'#C8860A','Połaniec','Baza wypadowa / Base');
+mkr(49.434,20.323,'#1B3A4B','Czorsztyn','Zamek · Jezioro · E-rowery<br>~2.5h z Połańca');
+mkr(49.408,20.435,'#2E7D32','Spływ Dunajcem','Sromowce Kąty<br>~2.5h z Połańca');
+mkr(49.200,20.068,'#4A235A','Morskie Oko','Palenica Białczańska<br>~3h z Połańca');
 
-// ── LANGUAGE TOGGLE ───────────────────────────────────────────────────────────
+// ── LANGUAGE ──────────────────────────────────────────────────────────────────
 function toggleLang(){
-  const body = document.body;
-  const btn  = document.querySelector('.lang-btn');
-  if(body.dataset.lang === 'pl'){
-    body.dataset.lang = 'en';
-    btn.textContent = 'PL 🌐';
-  } else {
-    body.dataset.lang = 'pl';
-    btn.textContent = 'EN 🌐';
-  }
+  const body=document.body, btn=document.querySelector('.lang-btn');
+  if(body.dataset.lang==='pl'){body.dataset.lang='en';btn.textContent='PL 🌐';}
+  else{body.dataset.lang='pl';btn.textContent='EN 🌐';}
 }
 
-// ── INFINITE SCROLL STRIPS ────────────────────────────────────────────────────
-document.querySelectorAll('.strip-outer').forEach(outer => {
-  const track = outer.querySelector('.strip-track');
+// ── WIKIMEDIA COMMONS API ─────────────────────────────────────────────────────
+async function fetchWikiImages(query){
+  const params = new URLSearchParams({
+    action:     'query',
+    generator:  'search',
+    gsrsearch:  query,
+    gsrnamespace: 6,
+    gsrlimit:   50,
+    prop:       'imageinfo',
+    iiprop:     'url',
+    iiurlwidth: 960,
+    format:     'json',
+    origin:     '*'
+  });
+  const res  = await fetch(`https://commons.wikimedia.org/w/api.php?${params}`);
+  const data = await res.json();
+  const pages = Object.values(data.query?.pages || {});
+  return pages
+    .filter(p => p.imageinfo && !/\.(svg|gif|tiff|pdf|ogg|webm|ogv|mp4)/i.test(p.title))
+    .map(p => p.imageinfo[0].thumburl || p.imageinfo[0].url)
+    .filter(Boolean);
+}
 
-  // Clone all images to ensure enough content for infinite loop
-  const origImgs = Array.from(track.querySelectorAll('img'));
-  // Fill with enough clones so total width > 3× viewport
-  let cloneRounds = Math.max(6, Math.ceil(2400 / (origImgs.length * 300)));
-  for(let r = 0; r < cloneRounds; r++){
-    origImgs.forEach(img => {
-      const c = img.cloneNode(true);
-      track.appendChild(c);
+// ── STRIP INIT ────────────────────────────────────────────────────────────────
+function buildStrip(outer, urls){
+  const track    = outer.querySelector('.strip-track');
+  const countEl  = outer.querySelector('.strip-count');
+
+  track.innerHTML = '';
+  countEl.textContent = `📷 ${urls.length} zdjęć`;
+
+  // Fill track with enough clones for seamless infinite loop
+  // We need at least 3 full sets so the loop never shows a gap
+  const minSets = Math.max(3, Math.ceil(3000 / (urls.length * 200 + 1)));
+  const totalSets = minSets + 2;
+  for(let s = 0; s < totalSets; s++){
+    urls.forEach(src => {
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = '';
+      img.loading = 'lazy';
+      track.appendChild(img);
     });
   }
 
-  const allImgs = track.querySelectorAll('img');
-  const unitW = () => origImgs.length * (outer.clientWidth / Math.min(origImgs.length, 3) + 4);
-
-  let pos = 0;
-  let speed = 0.4;       // px per frame auto-scroll
-  let paused = false;
+  let pos       = 0;
+  let speed     = 0.45;
+  let paused    = false;
   let dragStart = null;
-  let dragPos = 0;
-  let raf;
+  let dragPos   = 0;
+
+  // Calculate width of one full set (called after images load a bit)
+  function oneSetWidth(){
+    const imgs = track.querySelectorAll('img');
+    if(!imgs.length) return 1;
+    // Approximate: average rendered width × count per set
+    let total = 0;
+    let counted = 0;
+    imgs.forEach((img, i) => {
+      if(i < urls.length){ total += img.offsetWidth + 4; counted++; }
+    });
+    return counted > 0 ? total : urls.length * 290;
+  }
 
   function loop(){
     if(!paused){
       pos += speed;
-      // When we've scrolled one full set of originals, snap back silently
-      const oneSet = origImgs.reduce((acc, img) => acc + img.offsetWidth + 4, 0);
-      if(oneSet > 0 && pos > oneSet) pos -= oneSet;
+      const w = oneSetWidth();
+      if(w > 0 && pos >= w) pos -= w;
     }
     track.style.transform = `translateX(${-pos}px)`;
-    raf = requestAnimationFrame(loop);
+    requestAnimationFrame(loop);
   }
   loop();
 
-  // Pause on hover
   outer.addEventListener('mouseenter', () => { paused = true; });
   outer.addEventListener('mouseleave', () => { paused = false; });
 
-  // Drag to scroll
-  function startDrag(clientX){
-    paused = true;
-    dragStart = clientX;
-    dragPos = pos;
+  function startDrag(x){ paused=true; dragStart=x; dragPos=pos; }
+  function moveDrag(x){
+    if(dragStart===null) return;
+    pos = dragPos + (dragStart - x);
+    const w = oneSetWidth();
+    if(w>0){ if(pos<0) pos+=w; if(pos>w*totalSets) pos-=w; }
   }
-  function moveDrag(clientX){
-    if(dragStart === null) return;
-    const delta = dragStart - clientX;
-    pos = dragPos + delta;
-    const oneSet = origImgs.reduce((acc, img) => acc + img.offsetWidth + 4, 0);
-    if(oneSet > 0){
-      if(pos < 0) pos += oneSet;
-      if(pos > oneSet * cloneRounds) pos -= oneSet;
-    }
-  }
-  function endDrag(){
-    dragStart = null;
-    paused = false;
-  }
+  function endDrag(){ dragStart=null; paused=false; }
 
   outer.addEventListener('mousedown',  e => startDrag(e.clientX));
-  window.addEventListener('mousemove', e => { if(dragStart !== null) moveDrag(e.clientX); });
+  window.addEventListener('mousemove', e => { if(dragStart!==null) moveDrag(e.clientX); });
   window.addEventListener('mouseup',   endDrag);
-
-  // Touch
   outer.addEventListener('touchstart', e => startDrag(e.touches[0].clientX), {passive:true});
   outer.addEventListener('touchmove',  e => moveDrag(e.touches[0].clientX),  {passive:true});
   outer.addEventListener('touchend',   endDrag);
+}
+
+// ── LOAD ALL STRIPS ───────────────────────────────────────────────────────────
+document.querySelectorAll('.strip-outer[data-wiki]').forEach(async outer => {
+  const query = outer.dataset.wiki;
+  try {
+    const urls = await fetchWikiImages(query);
+    if(urls.length === 0){
+      outer.querySelector('.strip-track').innerHTML =
+        '<div class="strip-loading">Brak zdjęć / No photos found</div>';
+      return;
+    }
+    buildStrip(outer, urls);
+  } catch(e) {
+    outer.querySelector('.strip-track').innerHTML =
+      '<div class="strip-loading">Błąd ładowania / Loading error</div>';
+  }
 });
 </script>
 </body>
