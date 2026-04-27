@@ -165,7 +165,7 @@ footer strong{color:var(--gold)}
     <!-- Okolice Krakowa -->
     <a class="trip-card" href="krakow/">
       <div class="trip-card-img">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Wieliczka_Salt_Mine.jpg/960px-Wieliczka_Salt_Mine.jpg" alt="Okolice Krakowa">
+        <img data-wiki="Wieliczka salt mine chapel" alt="Okolice Krakowa">
         <div class="trip-card-badge">#2</div>
         <div class="trip-card-days"><span class="pl">2 dni</span><span class="en">2 days</span></div>
       </div>
@@ -214,6 +214,20 @@ function toggleLang(){
   if(body.dataset.lang==='pl'){body.dataset.lang='en';btn.textContent='PL 🌐';}
   else{body.dataset.lang='pl';btn.textContent='EN 🌐';}
 }
+
+document.querySelectorAll('img[data-wiki]').forEach(async img => {
+  const params = new URLSearchParams({
+    action:'query',generator:'search',gsrsearch:img.dataset.wiki,
+    gsrnamespace:6,gsrlimit:1,prop:'imageinfo',iiprop:'url',
+    iiurlwidth:960,format:'json',origin:'*'
+  });
+  try {
+    const res  = await fetch(`https://commons.wikimedia.org/w/api.php?${params}`);
+    const data = await res.json();
+    const page = Object.values(data.query?.pages || {})[0];
+    if(page?.imageinfo?.[0]?.thumburl) img.src = page.imageinfo[0].thumburl;
+  } catch(e) {}
+});
 </script>
 </body>
 </html>
