@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Słowacki Raj 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B3A4B;--gold:#C8860A;--teal:#2A7F8A;
+  --green:#2E7D32;--blue:#1565C0;
+  --light:#F8F6F2;--white:#fff;--text:#2C2C2C;--muted:#777;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);line-height:1.7}
+
+.back-btn{position:fixed;top:14px;left:1rem;z-index:999;background:rgba(0,0,0,.45);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:600;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:background .2s}
+.back-btn:hover{background:rgba(0,0,0,.7)}
+.lang-btn{position:fixed;top:14px;right:1rem;z-index:999;background:var(--gold);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:700;cursor:pointer;letter-spacing:.05em;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:opacity .2s}
+.lang-btn:hover{opacity:.85}
+[data-lang="en"] .pl{display:none}
+[data-lang="pl"] .en{display:none}
+
+.hero{position:relative;min-height:65vh;background:linear-gradient(160deg,#0D2B0D 0%,#1B5E20 55%,#1B3A4B 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 1.5rem 6rem;overflow:hidden}
+.hero-content{position:relative;z-index:1;max-width:680px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,7vw,4.5rem);color:white;line-height:1.1;margin-bottom:1rem}
+.hero h1 span{color:var(--gold)}
+.hero .tagline{font-size:1.05rem;color:rgba(255,255,255,.75);margin-bottom:.3rem}
+.hero .tagline.en{font-style:italic;color:rgba(255,255,255,.5);font-size:.95rem}
+.scroll-hint{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.4);font-size:.8rem;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+.map-section{background:var(--navy);padding:3.5rem 1.5rem}
+.map-section h2{font-family:'Playfair Display',serif;font-size:1.8rem;color:white;margin-bottom:.3rem}
+.map-section .sub{color:rgba(255,255,255,.5);font-style:italic;margin-bottom:1.5rem;font-size:.9rem}
+#map{height:380px;border-radius:1rem;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.map-legend{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.25rem}
+.map-legend div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:.5rem;padding:.5rem 1rem;color:white;font-size:.85rem}
+.map-legend strong{color:var(--gold)}
+
+section{padding:4rem 1.5rem}
+.container{max-width:880px;margin:0 auto}
+
+.day-header{border-radius:1rem 1rem 0 0;padding:1.75rem 2rem;position:relative;overflow:hidden}
+.day-header::after{content:attr(data-day);position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-family:'Playfair Display',serif;font-size:5.5rem;font-weight:700;color:rgba(255,255,255,.07);line-height:1;pointer-events:none}
+.day-header .tag{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:600;margin-bottom:.35rem}
+.day-header h2{font-family:'Playfair Display',serif;font-size:1.75rem;color:white;line-height:1.2}
+.day-header .sub{font-size:.9rem;color:rgba(255,255,255,.6);margin-top:.25rem;font-style:italic}
+.d1{background:linear-gradient(135deg,#0D2B0D,#2E7D32)}
+.d2{background:linear-gradient(135deg,#1B3A4B,#2A5A72)}
+.day-body{background:white;border-radius:0 0 1rem 1rem;box-shadow:0 8px 40px rgba(0,0,0,.08);margin-bottom:3rem;overflow:hidden}
+
+.options-note{background:#F3F4F6;border-left:4px solid var(--gold);padding:1rem 1.5rem;margin:1.25rem 1.75rem;border-radius:0 .5rem .5rem 0;font-size:.9rem;color:var(--navy)}
+.options-note strong{display:block;margin-bottom:.25rem;color:var(--gold)}
+
+.option-label{display:inline-flex;align-items:center;gap:.4rem;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:.25rem .65rem;border-radius:1rem;margin-bottom:.5rem}
+.option-a{background:#FFEBEE;color:#C62828}
+.option-b{background:#E8F5E9;color:#2E7D32}
+.option-c{background:#E3F2FD;color:#1565C0}
+.option-d{background:#FFF8E1;color:#F57F17}
+
+.strip-outer{position:relative;overflow:hidden;height:230px;background:#111;cursor:grab;user-select:none}
+.strip-outer:active{cursor:grabbing}
+.strip-track{display:flex;height:100%;width:max-content;will-change:transform}
+.strip-track img{height:100%;width:auto;min-width:260px;max-width:400px;object-fit:cover;margin-right:4px;flex-shrink:0;pointer-events:none;display:block}
+.strip-loading{display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,.4);font-size:.85rem}
+.strip-count{position:absolute;top:.6rem;right:.75rem;background:rgba(0,0,0,.5);color:rgba(255,255,255,.7);font-size:.7rem;padding:.2rem .55rem;border-radius:1rem;pointer-events:none}
+.strip-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.55));color:rgba(255,255,255,.8);font-size:.75rem;padding:.4rem .85rem 1rem;font-style:italic;pointer-events:none}
+
+.attraction{padding:1.4rem 1.75rem 1rem;border-bottom:1px solid #F0F0F0}
+.attraction:last-child{border-bottom:none}
+.attraction-title{display:flex;align-items:center;gap:.5rem;font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:.2rem}
+.gold-line{width:2.5rem;height:3px;background:var(--gold);border-radius:2px;margin:.35rem 0 .7rem}
+.desc{font-size:.93rem;margin-bottom:.3rem}
+.desc.en{color:var(--muted);font-style:italic;margin-bottom:.7rem}
+.tip{display:inline-flex;align-items:center;gap:.4rem;background:#E8F5E9;color:var(--green);font-size:.83rem;font-weight:600;padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem}
+.warn{display:inline-flex;align-items:center;gap:.4rem;background:#FFF3E0;color:#E65100;font-size:.83rem;font-weight:600;padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem}
+.lnk{color:var(--teal);font-size:.83rem;font-weight:500;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+.lnk:hover{border-color:var(--teal)}
+
+.pract-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem}
+.pract-card{background:white;border-radius:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.07);padding:1.4rem}
+.pract-card .icon{font-size:1.8rem;margin-bottom:.6rem}
+.pract-card h3{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.15rem}
+.pract-card p{font-size:.88rem;color:var(--text);line-height:1.6}
+
+footer{background:var(--navy);color:rgba(255,255,255,.45);text-align:center;padding:1.75rem;font-size:.82rem}
+footer strong{color:var(--gold)}
+
+@media(max-width:600px){
+  .hero h1{font-size:2rem}
+  .day-header{padding:1.25rem}
+  .attraction{padding:1.1rem 1.25rem .8rem}
+  .strip-outer{height:180px}
+}
+</style>
+</head>
+<body data-lang="pl">
+
+<a class="back-btn" href="../">← <span class="pl">Wycieczki</span><span class="en">All Trips</span></a>
+<button class="lang-btn" onclick="toggleLang()">EN 🌐</button>
+
+<div class="hero">
+  <div class="hero-content">
+    <h1><span>Słowacki</span> Raj</h1>
+    <p class="tagline pl">Wycieczka rodzinna · 2 dni · Słowacja 🇸🇰</p>
+    <p class="tagline en">Family Trip · 2 Days · Slovakia 🇸🇰</p>
+  </div>
+  <div class="scroll-hint">↓</div>
+</div>
+
+<div class="map-section" id="mapa">
+  <div class="container">
+    <h2 class="pl">📍 Plan wycieczki — mapa</h2>
+    <h2 class="en">📍 Trip Map</h2>
+    <p class="sub pl">~3h 45min z Połańca · kliknij znacznik aby zobaczyć więcej</p>
+    <p class="sub en">~3h 45min from Połaniec · click a marker for details</p>
+    <div id="map"></div>
+    <div class="map-legend">
+      <div><strong>🔴 Suchá Belá</strong> — Dzień 1 · dorośli</div>
+      <div><strong>🔵 Jaskinia Lodowa</strong> — Dzień 1 · dzieci + seniorzy</div>
+      <div><strong>🩵 Dedinky</strong> — spotkanie grup · jezioro</div>
+      <div><strong>🟢 Tomášovský výhľad</strong> — Dzień 2 · wszyscy</div>
+      <div><strong>🟡 Zamek Spiski</strong> — opcja popołudniowa</div>
+    </div>
+  </div>
+</div>
+
+<!-- DAY 1 -->
+<section id="day1">
+  <div class="container">
+    <div class="day-header d1" data-day="01">
+      <div class="tag"><span class="pl">Dzień 1</span><span class="en">Day 1</span> · <span class="pl">Podział grupy</span><span class="en">Group split</span></div>
+      <h2 class="pl">Dwie grupy — każdy znajdzie coś dla siebie</h2>
+      <h2 class="en">Two groups — something for everyone</h2>
+      <div class="sub pl">Suchá Belá (dorośli + nastolatkowie) · Jaskinia Lodowa + Dedinky (dzieci + seniorzy)</div>
+      <div class="sub en">Suchá Belá (adults + teens) · Ice Cave + Dedinky (children + seniors)</div>
+    </div>
+    <div class="day-body">
+
+      <div class="options-note">
+        <strong>👥 <span class="pl">Plan podziału grupy</span><span class="en">Group split plan</span></strong>
+        <span class="pl">Dzielimy się na dwie grupy. Dorośli i starsze dzieci (11, 14 lat) idą Suchą Belą — wymagający kanion z drabinami i łańcuchami. Seniorzy i młodsze dzieci jadą do Jaskini Dobšinskiej (UNESCO) — płaski spacer przy przewodniku, ~0°C w środku — <strong>kurtki obowiązkowe!</strong> Po południu obie grupy spotykają się nad jeziorem w Dedinky.</span>
+        <span class="en">We split into two groups. Adults and older children (11, 14) tackle Suchá Belá — a demanding gorge with ladders and chains. Seniors and younger children visit Dobšinská Ice Cave (UNESCO) — a flat guided walk, ~0°C inside — <strong>jackets essential!</strong> In the afternoon both groups meet at Dedinky lake.</span>
+      </div>
+
+      <!-- OPTION A: Suchá Belá -->
+      <div class="attraction">
+        <div class="option-label option-a">🔴 <span class="pl">Opcja A — Dorośli + nastolatkowie (11, 14 lat)</span><span class="en">Option A — Adults + teens (11, 14)</span></div>
+        <div class="attraction-title">🪜 Suchá Belá</div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Najsłynniejszy kanion Słowackiego Raju — wąski wąwóz z drewnianymi drabinami (do 6 m!), łańcuchami i brodami przez potok. Trasa jednokierunkowa ~3,7 km, ok. 3–4 godziny. Start w Čingov. Woda płynie pod nogami, skały zwężają się do kilku metrów — niezapomniane przeżycie dla tych w dobrej kondycji.</div>
+        <div class="desc en">The most famous gorge in Slovak Paradise — a narrow canyon with wooden ladders (up to 6m!), chains and stream crossings. One-way trail ~3.7 km, about 3–4 hours. Start at Čingov. Water flows underfoot, rocks narrow to just a few metres — an unforgettable experience for those in good shape.</div>
+        <div class="warn">⚠️ <span class="pl">Nie dla dzieci poniżej 10 lat ani seniorów. Wymagana dobra kondycja, brak lęku wysokości, odpowiednie buty.</span><span class="en">Not suitable for children under 10 or seniors. Good fitness, no fear of heights, and proper footwear required.</span></div>
+        <div class="warn">⏰ <span class="pl">Start jak najwcześniej (7–8 rano) — po 10:00 długie kolejki przy drabinach!</span><span class="en">Start as early as possible (7–8 AM) — after 10 AM there are long queues at the ladders!</span></div>
+        <br>
+        <a href="https://www.slovenskyraj.sk" class="lnk" target="_blank">↗ slovenskyraj.sk</a>
+        &nbsp;&nbsp;
+        <a href="https://en.wikipedia.org/wiki/Sucha_Bela" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Suchá Belá">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Suchá Belá — Słowacki Raj</div>
+      </div>
+
+      <!-- OPTION B: Dobšinská Ice Cave -->
+      <div class="attraction" style="margin-top:.5rem">
+        <div class="option-label option-b">🟢 <span class="pl">Opcja B — Seniorzy + dzieci</span><span class="en">Option B — Seniors + children</span></div>
+        <div class="attraction-title">🧊 <span class="pl">Jaskinia Dobšinská Lodowa</span><span class="en">Dobšinská Ice Cave</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Jedna z największych jaskinii lodowych w Europie — wpisana na Listę UNESCO. Wewnątrz królestwo lodu: stalaktyty, kolumny i podłogi z czystego lodu grubości kilku metrów. Płaska, oświetlona trasa (~35 min) prowadzona przez przewodnika. Temperatura w środku: od 0 do -3°C przez cały rok — niezależnie od upału na zewnątrz. Tylko ~20 min jazdy od Čingov.</div>
+        <div class="desc en">One of the largest ice caves in Europe — UNESCO World Heritage. Inside: a kingdom of ice with stalactites, columns and floors of pure ice several metres thick. Flat, illuminated guided trail (~35 min). Temperature inside: 0 to -3°C year-round, regardless of summer heat outside. Just ~20 min drive from Čingov.</div>
+        <div class="tip">🧥 <span class="pl">Ciepłe kurtki obowiązkowe nawet w lipcu/sierpniu!</span><span class="en">Warm jackets essential even in July/August!</span></div>
+        <div class="tip">✅ <span class="pl">Trasa płaska — dostępna dla seniorów i wózków dziecięcych</span><span class="en">Flat route — accessible for seniors and pushchairs</span></div>
+        <br>
+        <a href="https://www.ssj.sk/en/dobsinska-ice-cave" class="lnk" target="_blank">↗ ssj.sk</a>
+        &nbsp;&nbsp;
+        <a href="https://en.wikipedia.org/wiki/Dob%C5%A1in%C3%A1_Ice_Cave" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Dobšinská jaskyňa">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label"><span class="pl">Jaskinia Dobšinská Lodowa — UNESCO</span><span class="en">Dobšinská Ice Cave — UNESCO</span></div>
+      </div>
+
+      <!-- Dedinky — spotkanie grup -->
+      <div class="attraction" style="margin-top:.5rem">
+        <div class="attraction-title">🏖️ <span class="pl">Dedinky — spotkanie obu grup</span><span class="en">Dedinky — groups reunite here</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Malownicze jezioro zaporowe Palcmanská Maša u podnóża Słowackiego Raju. Idealne miejsce na popołudniowy relaks, obiad i połączenie obu grup po zakończeniu swoich tras. Przystań z łódkami do wypożyczenia, restauracje z widokiem na wodę, spokojny spacer wzdłuż brzegu.</div>
+        <div class="desc en">The scenic Palcmanská Maša reservoir at the foot of Slovak Paradise. Perfect for afternoon relaxation, lunch and reuniting both groups after their trails. Boat hire, restaurants with lake views, peaceful walk along the shore.</div>
+        <div class="tip">🤝 <span class="pl">Tu spotykają się obie grupy po południu</span><span class="en">This is where both groups meet in the afternoon</span></div>
+      </div>
+      <div class="strip-outer" data-wiki="Dedinky">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Dedinky — Palcmanská Maša</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DAY 2 -->
+<section id="day2" style="padding-top:0">
+  <div class="container">
+    <div class="day-header d2" data-day="02">
+      <div class="tag"><span class="pl">Dzień 2</span><span class="en">Day 2</span> · <span class="pl">Wszyscy razem</span><span class="en">All together</span></div>
+      <h2 class="pl">Tomášovský výhľad + opcje popołudniowe</h2>
+      <h2 class="en">Tomášovský Viewpoint + afternoon options</h2>
+      <div class="sub pl">Łatwy spacer dla wszystkich · Zamek Spiski · Prielom Hornádu</div>
+      <div class="sub en">Easy walk for everyone · Spiš Castle · Hornád Gorge</div>
+    </div>
+    <div class="day-body">
+
+      <div class="options-note">
+        <strong>👨‍👩‍👧‍👦 <span class="pl">Dzień 2 — wszyscy razem</span><span class="en">Day 2 — all together</span></strong>
+        <span class="pl">Rano wszyscy razem na Tomášovský výhľad — krótki, łatwy leśny spacer z jednym z najpiękniejszych widoków w całej Słowacji. Na popołudnie do wyboru: imponujący Zamek Spiski (UNESCO, ~45 min jazdy) albo spokojny spacer Prielomem Hornádu wzdłuż rzeki.</span>
+        <span class="en">Morning — everyone together to Tomášovský viewpoint, a short easy forest walk with one of the finest views in all of Slovakia. For the afternoon, choose between the impressive Spiš Castle (UNESCO, ~45 min drive) or a peaceful walk through the Hornád Gorge along the river.</span>
+      </div>
+
+      <!-- Tomášovský výhľad — main -->
+      <div class="attraction">
+        <div class="attraction-title">🔭 Tomášovský výhľad</div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Najpiękniejszy punkt widokowy Słowackiego Raju — wychodnia skalna nad głębokim kanionem rzeki Hornád. Spacer leśną ścieżką ~2–3 km, bardzo łagodny, dostępny dla seniorów i wszystkich dzieci. Widok na pionowe ściany kanionu opadające ku rzece jest absolutnie spektakularny — jeden z najlepszych widoków w całej Słowacji.</div>
+        <div class="desc en">The finest viewpoint in Slovak Paradise — a rocky promontory above the deep Hornád river canyon. A gentle forest path ~2–3 km, very easy, accessible for seniors and all children. The view of vertical canyon walls dropping to the river is absolutely spectacular — one of the best views in all of Slovakia.</div>
+        <div class="tip">✅ <span class="pl">Dostępne dla wszystkich — seniorzy, dzieci, łatwy szlak</span><span class="en">Suitable for everyone — seniors, children, easy trail</span></div>
+        <br>
+        <a href="https://en.wikipedia.org/wiki/Tom%C3%A1%C5%A1ovsk%C3%BD_v%C3%BDh%C4%BEad" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Tomášovský výhľad">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Tomášovský výhľad — widok na kanion Hornádu</div>
+      </div>
+
+      <!-- Option A: Prielom Hornádu -->
+      <div class="attraction" style="margin-top:.5rem">
+        <div class="option-label option-c">🔵 <span class="pl">Opcja popołudniowa A</span><span class="en">Afternoon option A</span></div>
+        <div class="attraction-title">🌊 <span class="pl">Prielom Hornádu (fragment)</span><span class="en">Hornád Gorge (partial)</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Najdłuższy kanion Słowackiego Raju — rzeka Hornád przepłynęła sobie tunelem przez skalną masę przez tysiące lat, tworząc spektakularny wąwóz (~16 km). Pierwsze 2–3 km od Čingov są względnie płaskie: kładki przymocowane do skał, rzeka poniżej, można zawrócić w dowolnym miejscu. Dobra opcja jeśli ktoś chce zobaczyć coś podobnego do Suchej Beli, ale bez drabin.</div>
+        <div class="desc en">The longest gorge in Slovak Paradise — the Hornád river carved its way through solid rock over thousands of years. The first 2–3 km from Čingov are relatively flat: walkways fixed to the cliff face, river below, you can turn back at any point. A good option for those who want something similar to Suchá Belá but without the ladders.</div>
+        <br>
+        <a href="https://en.wikipedia.org/wiki/Hornád_gorge" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Prielom Hornádu">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Prielom Hornádu</div>
+      </div>
+
+      <!-- Option B: Spišský hrad -->
+      <div class="attraction" style="margin-top:.5rem">
+        <div class="option-label option-d">🟡 <span class="pl">Opcja popołudniowa B</span><span class="en">Afternoon option B</span></div>
+        <div class="attraction-title">🏰 <span class="pl">Zamek Spiski — Spišský hrad</span><span class="en">Spiš Castle — Spišský hrad</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Największy kompleks zamkowy w Europie Środkowej, wpisany na Listę UNESCO. Imponujące ruiny na stromym wulkanicznym wzgórzu — z góry panorama na Wysokie Tatry i rozległą Nizinę Spiską. Dolna część zamku jest dostępna dla seniorów i dzieci. ~45 min jazdy od Słowackiego Raju. Warto połączyć ze zwiedzaniem zabytkowego centrum Lewoczy (kilka km dalej, też UNESCO).</div>
+        <div class="desc en">The largest castle complex in Central Europe, UNESCO World Heritage. Impressive ruins on a steep volcanic hill — from the top, a panorama of the High Tatras and the vast Spiš plain. The lower castle area is accessible for seniors and children. ~45 min drive from Slovak Paradise. Worth combining with a visit to the historic centre of Levoča (a few km further, also UNESCO).</div>
+        <div class="tip">📸 <span class="pl">Widok na Tatry z zamku — idealne zdjęcie na pamiątkę!</span><span class="en">View of the Tatras from the castle — the perfect souvenir photo!</span></div>
+        <br>
+        <a href="https://spisskyhradorig.eu" class="lnk" target="_blank">↗ spisskyhradorig.eu</a>
+        &nbsp;&nbsp;
+        <a href="https://pl.wikipedia.org/wiki/Zamek_Spis" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Spišský hrad">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label"><span class="pl">Zamek Spiski — UNESCO</span><span class="en">Spiš Castle — UNESCO</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PRACTICAL -->
+<section style="padding-top:0">
+  <div class="container">
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--navy);margin-bottom:1.5rem">
+      <span class="pl">ℹ️ Informacje praktyczne</span>
+      <span class="en">ℹ️ Practical Info</span>
+    </h2>
+    <div class="pract-grid">
+      <div class="pract-card">
+        <div class="icon">🚗</div>
+        <h3 class="pl">Dojazd</h3><h3 class="en">Getting there</h3>
+        <p class="pl">Z Połańca do Čingov: ~3h 45min<br>Parking przy Čingov: płatny (~5€)<br>Słowacja — wymagana winieta drogowa!</p>
+        <p class="en">From Połaniec to Čingov: ~3h 45min<br>Čingov car park: paid (~€5)<br>Slovakia — road vignette required!</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">⚠️</div>
+        <h3 class="pl">Suchá Belá</h3><h3 class="en">Suchá Belá</h3>
+        <p class="pl">Start przed 8 rano (kolejki!)<br>Solidne buty trekkingowe<br>Ubranie na mokro + sucha zmiana</p>
+        <p class="en">Start before 8 AM (queues!)<br>Solid trekking shoes<br>Clothes for wet + dry change</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">🧊</div>
+        <h3 class="pl">Jaskinia Lodowa</h3><h3 class="en">Ice Cave</h3>
+        <p class="pl">Rezerwuj bilety online!<br>Kurtki zimowe nawet latem<br>Wycieczka ~35 min z przewodnikiem</p>
+        <p class="en">Book tickets online!<br>Winter jackets even in summer<br>~35 min guided tour</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">💶</div>
+        <h3 class="pl">Waluta i koszty</h3><h3 class="en">Currency & costs</h3>
+        <p class="pl">Słowacja = Euro (€)<br>Jaskinia: ~10€ dorosły, ~6€ dziecko<br>Zamek Spiski: ~10€ dorosły</p>
+        <p class="en">Slovakia = Euro (€)<br>Ice cave: ~€10 adult, ~€6 child<br>Spiš Castle: ~€10 adult</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>🌲 <strong>Słowacki Raj 2025</strong> &nbsp;·&nbsp;
+  <span class="pl">Plan wycieczki rodzinnej</span>
+  <span class="en">Family Trip Guide</span>
+  &nbsp;·&nbsp; <span style="font-size:.75rem">📷 Zdjęcia: Wikimedia Commons (CC)</span></p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map = L.map('map').setView([48.93, 20.52], 10);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(map);
+function mkr(lat,lng,color,title,desc){
+  const icon=L.divIcon({html:`<div style="background:${color};width:14px;height:14px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,.4)"></div>`,iconSize:[14,14],iconAnchor:[7,7],className:''});
+  L.marker([lat,lng],{icon}).addTo(map).bindPopup(`<strong>${title}</strong><br>${desc}`);
+}
+mkr(48.918,20.403,'#C62828','Suchá Belá (Čingov)','Dzień 1 — Opcja A<br>Tylko dorośli i starsze dzieci<br>Start przed 8:00!');
+mkr(48.878,20.280,'#1565C0','Jaskinia Dobšinská Lodowa','Dzień 1 — Opcja B<br>Seniorzy + dzieci<br>UNESCO · ~20 min od Čingov');
+mkr(48.865,20.311,'#2A7F8A','Dedinky','Spotkanie grup po południu<br>Jezioro · Restauracje · Łódki');
+mkr(48.948,20.416,'#2E7D32','Tomášovský výhľad','Dzień 2 — Wszyscy razem<br>Łatwy spacer · Epicki widok na kanion');
+mkr(48.895,20.388,'#1565C0','Prielom Hornádu','Opcja popołudniowa A<br>Spacer kanyonem bez drabin');
+mkr(48.998,20.770,'#F57F17','Zamek Spiski','Opcja popołudniowa B<br>UNESCO · ~45 min jazdy<br>Widok na Tatry');
+
+function toggleLang(){
+  const body=document.body,btn=document.querySelector('.lang-btn');
+  if(body.dataset.lang==='pl'){body.dataset.lang='en';btn.textContent='PL 🌐';}
+  else{body.dataset.lang='pl';btn.textContent='EN 🌐';}
+}
+
+async function fetchWikiImages(query){
+  const params=new URLSearchParams({action:'query',generator:'search',gsrsearch:query,gsrnamespace:6,gsrlimit:50,prop:'imageinfo',iiprop:'url',iiurlwidth:960,format:'json',origin:'*'});
+  const res=await fetch(`https://commons.wikimedia.org/w/api.php?${params}`);
+  const data=await res.json();
+  return Object.values(data.query?.pages||{})
+    .filter(p=>p.imageinfo&&!/\.(svg|gif|tiff|pdf|ogg|webm|ogv|mp4)/i.test(p.title))
+    .map(p=>p.imageinfo[0].thumburl||p.imageinfo[0].url)
+    .filter(Boolean);
+}
+
+function buildStrip(outer,urls){
+  const track=outer.querySelector('.strip-track');
+  const countEl=outer.querySelector('.strip-count');
+  track.innerHTML='';
+  countEl.textContent=`📷 ${urls.length} zdjęć`;
+  const sets=Math.max(3,Math.ceil(3000/(urls.length*200+1)))+2;
+  for(let s=0;s<sets;s++) urls.forEach(src=>{const img=document.createElement('img');img.src=src;img.loading='lazy';track.appendChild(img);});
+  let pos=0,paused=false,dragStart=null,dragPos=0;
+  function oneSet(){let t=0;track.querySelectorAll('img').forEach((img,i)=>{if(i<urls.length)t+=img.offsetWidth+4;});return t||urls.length*290;}
+  function loop(){if(!paused){pos+=0.45;const w=oneSet();if(w>0&&pos>=w)pos-=w;}track.style.transform=`translateX(${-pos}px)`;requestAnimationFrame(loop);}
+  loop();
+  outer.addEventListener('mouseenter',()=>{paused=true;});
+  outer.addEventListener('mouseleave',()=>{paused=false;});
+  function sd(x){paused=true;dragStart=x;dragPos=pos;}
+  function md(x){if(dragStart===null)return;pos=dragPos+(dragStart-x);const w=oneSet();if(w>0){if(pos<0)pos+=w;if(pos>w*sets)pos-=w;}}
+  function ed(){dragStart=null;paused=false;}
+  outer.addEventListener('mousedown',e=>sd(e.clientX));
+  window.addEventListener('mousemove',e=>{if(dragStart!==null)md(e.clientX);});
+  window.addEventListener('mouseup',ed);
+  outer.addEventListener('touchstart',e=>sd(e.touches[0].clientX),{passive:true});
+  outer.addEventListener('touchmove',e=>md(e.touches[0].clientX),{passive:true});
+  outer.addEventListener('touchend',ed);
+}
+
+document.querySelectorAll('.strip-outer[data-urls]').forEach(outer=>{
+  const urls=outer.dataset.urls.split('|').filter(Boolean);
+  if(urls.length) buildStrip(outer,urls);
+});
+
+document.querySelectorAll('.strip-outer[data-wiki]').forEach(async outer=>{
+  try{
+    const urls=await fetchWikiImages(outer.dataset.wiki);
+    if(!urls.length){outer.querySelector('.strip-track').innerHTML='<div class="strip-loading">Brak zdjęć</div>';return;}
+    buildStrip(outer,urls);
+  }catch{outer.querySelector('.strip-track').innerHTML='<div class="strip-loading">Błąd ładowania</div>';}
+});
+</script>
+</body>
+</html>
