@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jánošíkove diery 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B3A4B;--gold:#C8860A;--teal:#2A7F8A;
+  --green:#2E7D32;--blue:#1565C0;
+  --light:#F8F6F2;--white:#fff;--text:#2C2C2C;--muted:#777;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);line-height:1.7}
+
+.back-btn{position:fixed;top:14px;left:1rem;z-index:999;background:rgba(0,0,0,.45);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:600;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:background .2s}
+.back-btn:hover{background:rgba(0,0,0,.7)}
+.lang-btn{position:fixed;top:14px;right:1rem;z-index:999;background:var(--gold);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:700;cursor:pointer;letter-spacing:.05em;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:opacity .2s}
+.lang-btn:hover{opacity:.85}
+[data-lang="en"] .pl{display:none}
+[data-lang="pl"] .en{display:none}
+
+.hero{position:relative;min-height:65vh;background:linear-gradient(160deg,#0B1E0B 0%,#1B5E20 50%,#263238 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 1.5rem 6rem;overflow:hidden}
+.hero-content{position:relative;z-index:1;max-width:680px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,6vw,4rem);color:white;line-height:1.1;margin-bottom:1rem}
+.hero h1 span{color:var(--gold)}
+.hero .tagline{font-size:1.05rem;color:rgba(255,255,255,.75);margin-bottom:.3rem}
+.hero .tagline.en{font-style:italic;color:rgba(255,255,255,.5);font-size:.95rem}
+.scroll-hint{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.4);font-size:.8rem;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+.map-section{background:var(--navy);padding:3.5rem 1.5rem}
+.map-section h2{font-family:'Playfair Display',serif;font-size:1.8rem;color:white;margin-bottom:.3rem}
+.map-section .sub{color:rgba(255,255,255,.5);font-style:italic;margin-bottom:1.5rem;font-size:.9rem}
+#map{height:380px;border-radius:1rem;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.map-legend{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.25rem}
+.map-legend div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:.5rem;padding:.5rem 1rem;color:white;font-size:.85rem}
+.map-legend strong{color:var(--gold)}
+
+section{padding:4rem 1.5rem}
+.container{max-width:880px;margin:0 auto}
+
+.day-header{border-radius:1rem 1rem 0 0;padding:1.75rem 2rem;position:relative;overflow:hidden}
+.day-header::after{content:attr(data-day);position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-family:'Playfair Display',serif;font-size:5.5rem;font-weight:700;color:rgba(255,255,255,.07);line-height:1;pointer-events:none}
+.day-header .tag{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:600;margin-bottom:.35rem}
+.day-header h2{font-family:'Playfair Display',serif;font-size:1.75rem;color:white;line-height:1.2}
+.day-header .sub{font-size:.9rem;color:rgba(255,255,255,.6);margin-top:.25rem;font-style:italic}
+.d1{background:linear-gradient(135deg,#0B1E0B,#2E7D32)}
+.d2{background:linear-gradient(135deg,#1B3A4B,#2A5A72)}
+.day-body{background:white;border-radius:0 0 1rem 1rem;box-shadow:0 8px 40px rgba(0,0,0,.08);margin-bottom:3rem;overflow:hidden}
+
+.options-note{background:#F3F4F6;border-left:4px solid var(--gold);padding:1rem 1.5rem;margin:1.25rem 1.75rem;border-radius:0 .5rem .5rem 0;font-size:.9rem;color:var(--navy)}
+.options-note strong{display:block;margin-bottom:.25rem;color:var(--gold)}
+
+.option-label{display:inline-flex;align-items:center;gap:.4rem;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:.25rem .65rem;border-radius:1rem;margin-bottom:.5rem}
+.option-a{background:#FFEBEE;color:#C62828}
+.option-b{background:#E8F5E9;color:#2E7D32}
+.option-c{background:#E3F2FD;color:#1565C0}
+.option-d{background:#FFF8E1;color:#F57F17}
+
+.strip-outer{position:relative;overflow:hidden;height:230px;background:#111;cursor:grab;user-select:none}
+.strip-outer:active{cursor:grabbing}
+.strip-track{display:flex;height:100%;width:max-content;will-change:transform}
+.strip-track img{height:100%;width:auto;min-width:260px;max-width:400px;object-fit:cover;margin-right:4px;flex-shrink:0;pointer-events:none;display:block}
+.strip-loading{display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,.4);font-size:.85rem}
+.strip-count{position:absolute;top:.6rem;right:.75rem;background:rgba(0,0,0,.5);color:rgba(255,255,255,.7);font-size:.7rem;padding:.2rem .55rem;border-radius:1rem;pointer-events:none}
+.strip-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.55));color:rgba(255,255,255,.8);font-size:.75rem;padding:.4rem .85rem 1rem;font-style:italic;pointer-events:none}
+
+.attraction{padding:1.4rem 1.75rem 1rem;border-bottom:1px solid #F0F0F0}
+.attraction:last-child{border-bottom:none}
+.attraction-title{display:flex;align-items:center;gap:.5rem;font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:.2rem}
+.gold-line{width:2.5rem;height:3px;background:var(--gold);border-radius:2px;margin:.35rem 0 .7rem}
+.desc{font-size:.93rem;margin-bottom:.3rem}
+.desc.en{color:var(--muted);font-style:italic;margin-bottom:.7rem}
+.tip{display:inline-flex;align-items:center;gap:.4rem;background:#E8F5E9;color:var(--green);font-size:.83rem;font-weight:600;padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem}
+.warn{display:inline-flex;align-items:center;gap:.4rem;background:#FFF3E0;color:#E65100;font-size:.83rem;font-weight:600;padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem}
+.lnk{color:var(--teal);font-size:.83rem;font-weight:500;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+.lnk:hover{border-color:var(--teal)}
+
+.pract-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem}
+.pract-card{background:white;border-radius:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.07);padding:1.4rem}
+.pract-card .icon{font-size:1.8rem;margin-bottom:.6rem}
+.pract-card h3{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.15rem}
+.pract-card p{font-size:.88rem;color:var(--text);line-height:1.6}
+
+footer{background:var(--navy);color:rgba(255,255,255,.45);text-align:center;padding:1.75rem;font-size:.82rem}
+footer strong{color:var(--gold)}
+
+@media(max-width:600px){
+  .hero h1{font-size:1.9rem}
+  .day-header{padding:1.25rem}
+  .attraction{padding:1.1rem 1.25rem .8rem}
+  .strip-outer{height:180px}
+}
+</style>
+</head>
+<body data-lang="pl">
+
+<a class="back-btn" href="../">← <span class="pl">Wycieczki</span><span class="en">All Trips</span></a>
+<button class="lang-btn" onclick="toggleLang()">EN 🌐</button>
+
+<div class="hero">
+  <div class="hero-content">
+    <h1><span>Jánošíkove</span> diery</h1>
+    <p class="tagline pl">Wycieczka rodzinna · 2 dni · Malá Fatra, Słowacja 🇸🇰</p>
+    <p class="tagline en">Family Trip · 2 Days · Malá Fatra, Slovakia 🇸🇰</p>
+  </div>
+  <div class="scroll-hint">↓</div>
+</div>
+
+<div class="map-section" id="mapa">
+  <div class="container">
+    <h2 class="pl">📍 Plan wycieczki — mapa</h2>
+    <h2 class="en">📍 Trip Map</h2>
+    <p class="sub pl">~4h 15min z Połańca · kliknij znacznik aby zobaczyć więcej</p>
+    <p class="sub en">~4h 15min from Połaniec · click a marker for details</p>
+    <div id="map"></div>
+    <div class="map-legend">
+      <div><strong>🟠 Połaniec</strong> — baza (~4h 15min)</div>
+      <div><strong>🔴 Jánošíkove diery</strong> — Dzień 1 · dorośli</div>
+      <div><strong>🟢 Vrátna + Terchová</strong> — Dzień 1 · dzieci + seniorzy</div>
+      <div><strong>⚫ Rozsutec</strong> — Dzień 2 · tylko fit dorośli</div>
+      <div><strong>🟡 Zamek Orawski</strong> — Dzień 2 · wszyscy</div>
+      <div><strong>🔵 Aquapark Bešeňová</strong> — Dzień 2 · relaks</div>
+    </div>
+  </div>
+</div>
+
+<!-- DAY 1 -->
+<section id="day1">
+  <div class="container">
+    <div class="day-header d1" data-day="01">
+      <div class="tag"><span class="pl">Dzień 1</span><span class="en">Day 1</span> · <span class="pl">Podział grupy</span><span class="en">Group split</span></div>
+      <h2 class="pl">Diery (dorośli) · Vrátna + Terchová (dzieci & seniorzy)</h2>
+      <h2 class="en">Gorges (adults) · Vrátna + Terchová (children & seniors)</h2>
+      <div class="sub pl">Kanionry z drabinami · Kolejka linowa · Legenda Jánošíka</div>
+      <div class="sub en">Ladder gorges · Cable car · The legend of Jánošík</div>
+    </div>
+    <div class="day-body">
+
+      <div class="options-note">
+        <strong>👥 <span class="pl">Plan podziału grupy</span><span class="en">Group split plan</span></strong>
+        <span class="pl">Fit dorośli i starsze dzieci (11, 14 lat) idą przez kanionry Jánošíkových dier z drabinami i łańcuchami. Seniorzy i młodsze dzieci wyruszają do Vrátnej doliny — kolejka linowa na grzbiet z panoramą całej Małej Fatry, potem Terchová: wioska Jánošíka i jego monumentalny pomnik.</span>
+        <span class="en">Fit adults and older children (11, 14) tackle the Jánošíkove diery gorges with ladders and chains. Seniors and younger children head to Vrátna valley — cable car up to the ridge with a panorama of all of Malá Fatra, then Terchová: Jánošík's village and his monumental statue.</span>
+      </div>
+
+      <!-- OPTION A: Jánošíkove diery -->
+      <div class="attraction">
+        <div class="option-label option-a">🔴 <span class="pl">Opcja A — Dorośli + nastolatkowie (11, 14 lat)</span><span class="en">Option A — Adults + teens (11, 14)</span></div>
+        <div class="attraction-title">🪜 Jánošíkove diery — <span class="pl">Dolné + Stredné diery</span><span class="en">Lower + Middle Gorges</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Trzy kanionry wyryte przez potok Šútovka w masywie Małej Fatry. Dolné diery (Dolne) — najbardziej dostępne: drewniane kładki, drabiny i łańcuchy nad wodospadami, ~2 km, ok. 2h. Jeśli zostanie siły i czasu — Stredné diery są bardziej wymagające i dziksze. Jedna z najpiękniejszych tras górskich Słowacji.</div>
+        <div class="desc en">Three gorges carved by the Šútovka stream in the Malá Fatra massif. Dolné diery (Lower) — the most accessible: wooden walkways, ladders and chains above waterfalls, ~2 km, ~2h. If energy and time allow — Stredné diery are more demanding and wilder. One of Slovakia's finest mountain trails.</div>
+        <div class="warn">⚠️ <span class="pl">Nie dla seniorów ani małych dzieci. Wymagane dobre buty i brak lęku wysokości.</span><span class="en">Not for seniors or young children. Good footwear and no fear of heights required.</span></div>
+        <div class="warn">⏰ <span class="pl">Start wcześnie — trasy robią się tłoczne po 10:00.</span><span class="en">Start early — trails get crowded after 10 AM.</span></div>
+        <br>
+        <a href="https://sk.wikipedia.org/wiki/J%C3%A1no%C5%A1%C3%ADkove_diery" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Jánošíkove diery">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Jánošíkove diery — Malá Fatra</div>
+      </div>
+
+      <!-- OPTION B part 1: Vrátna dolina + cable car -->
+      <div class="attraction" style="margin-top:.5rem">
+        <div class="option-label option-b">🟢 <span class="pl">Opcja B — Seniorzy + dzieci</span><span class="en">Option B — Seniors + children</span></div>
+        <div class="attraction-title">🚡 <span class="pl">Vrátna dolina — kolejka linowa na Chleb</span><span class="en">Vrátna Valley — cable car to Chleb</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Piękna dolina w sercu Małej Fatry z kolejką linową wjeżdżającą na grzbiet Chleb (1646 m n.p.m.). Na górze: rozległa panorama Małej i Wielkiej Fatry, Tatr oraz Beskidów — jeden z najpiękniejszych widoków w słowackich górach. Dostępne dla seniorów — kolejka robi całą pracę. Zimą narty, latem letnie trasy.</div>
+        <div class="desc en">Beautiful valley in the heart of Malá Fatra with a cable car up to the Chleb ridge (1,646 m a.s.l.). At the top: sweeping panorama of Malá Fatra, Veľká Fatra, the Tatras and Beskydy — one of Slovakia's finest mountain views. Accessible for seniors — the cable car does all the work. Skiing in winter, summer trails in summer.</div>
+        <div class="tip">✅ <span class="pl">Kolejka dostępna dla seniorów — widoki z poziomu 1646 m bez wchodzenia</span><span class="en">Cable car accessible for seniors — 1,646 m views without hiking</span></div>
+        <br>
+        <a href="https://www.vratna.sk" class="lnk" target="_blank">↗ vratna.sk</a>
+        &nbsp;&nbsp;
+        <a href="https://sk.wikipedia.org/wiki/Vr%C3%A1tna_dolina" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Vrátna dolina">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Vrátna dolina — Malá Fatra</div>
+      </div>
+
+      <!-- OPTION B part 2: Terchová -->
+      <div class="attraction" style="margin-top:.5rem">
+        <div class="attraction-title">🦸 <span class="pl">Terchová — wioska Jánošíka</span><span class="en">Terchová — Jánošík's village</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Terchová to rodzinna miejscowość legendarnego słowackiego zbójnika Juraja Jánošíka — słowackiego Robina Hooda. Przy wejściu do miejscowości stoi jeden z największych pomników w Europie Środkowej — stalowa sylwetka Jánošíka na skale. W centrum: muzeum i etnograficzna ekspozycja, tradycyjne rzemiosło. Idealne uzupełnienie dnia dla grupy B.</div>
+        <div class="desc en">Terchová is the home village of the legendary Slovak outlaw Juraj Jánošík — Slovakia's Robin Hood. At the village entrance stands one of the largest statues in Central Europe — a steel silhouette of Jánošík on a rock. In the centre: museum and ethnographic exhibition, traditional crafts. A perfect complement to the day for group B.</div>
+        <div class="tip">💡 <span class="pl">Tylko 5 min od wejścia do Jánošíkových dier — idealne miejsce na kawę i obiad</span><span class="en">Just 5 min from the Jánošíkove diery entrance — perfect for coffee and lunch</span></div>
+        <br>
+        <a href="https://sk.wikipedia.org/wiki/Terchov%C3%A1" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Terchová Slovakia">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Terchová — pomnik Jánošíka</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DAY 2 -->
+<section id="day2" style="padding-top:0">
+  <div class="container">
+    <div class="day-header d2" data-day="02">
+      <div class="tag"><span class="pl">Dzień 2</span><span class="en">Day 2</span> · <span class="pl">Do wyboru</span><span class="en">Your choice</span></div>
+      <h2 class="pl">Rozsutec · Zamek Orawski · Aquapark</h2>
+      <h2 class="en">Rozsutec · Orava Castle · Aquapark</h2>
+      <div class="sub pl">Ekstremalne góry · Zamek na skale · Termy z widokiem na Tatry</div>
+      <div class="sub en">Extreme mountains · Castle on a cliff · Thermal baths with Tatra views</div>
+    </div>
+    <div class="day-body">
+
+      <div class="options-note">
+        <strong>🗳️ <span class="pl">Wybierzcie opcję na dzień 2</span><span class="en">Pick your Day 2 option</span></strong>
+        <span class="pl">Trzy różne nastroje: adrenalina na Rozsutcu (tylko dla fit dorosłych), kultura i historia w Zamku Orawskim (wszyscy), albo relaks w termach z widokiem na Tatry (wszyscy). Zamek i Skansen można połączyć w jeden dzień.</span>
+        <span class="en">Three different moods: adrenaline on Rozsutec (fit adults only), culture and history at Orava Castle (everyone), or thermal bath relaxation with Tatra views (everyone). The castle and open-air museum can be combined in one day.</span>
+      </div>
+
+      <!-- OPTION A: Rozsutec -->
+      <div class="attraction">
+        <div class="option-label option-a">🔴 <span class="pl">Opcja A — tylko fit dorośli</span><span class="en">Option A — fit adults only</span></div>
+        <div class="attraction-title">⛰️ Rozsutec <span style="font-size:.85rem;font-weight:400;color:var(--muted)">1610 m n.p.m.</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Jeden z najpiękniejszych i najbardziej charakterystycznych szczytów Słowacji — pionowe skalne ściany, spektakularne widoki na Małą i Wielką Fatrę, Tatry i Beskydy. Trasa z Štefanovej: ~3,5 km w górę, ok. 4–5 godzin w obie strony, przewyższenie ~900 m. W wyższych partiach łańcuchy i ekspozycja — poważna górska wycieczka.</div>
+        <div class="desc en">One of Slovakia's most beautiful and distinctive peaks — vertical rock faces, spectacular views of Malá Fatra, Veľká Fatra, the Tatras and Beskydy. Route from Štefanová: ~3.5 km up, ~4–5 hours return, ~900 m elevation gain. Higher sections have chains and exposure — a serious mountain outing.</div>
+        <div class="warn">⚠️ <span class="pl">Tylko dla dorosłych w bardzo dobrej kondycji. Ekspozycja, łańcuchy, strome zejście.</span><span class="en">Fit adults only. Exposure, chains, steep descent.</span></div>
+        <div class="tip">📸 <span class="pl">Widoki ze szczytu — absolutnie niesamowite zdjęcia</span><span class="en">Summit views — absolutely jaw-dropping photos</span></div>
+        <br>
+        <a href="https://sk.wikipedia.org/wiki/Rozsutec" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Rozsutec">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Rozsutec — Malá Fatra</div>
+      </div>
+
+      <!-- OPTION B: Oravský hrad + Zuberec -->
+      <div class="attraction" style="margin-top:.5rem">
+        <div class="option-label option-d">🟡 <span class="pl">Opcja B — wszyscy</span><span class="en">Option B — everyone</span></div>
+        <div class="attraction-title">🏰 <span class="pl">Zamek Orawski — Oravský hrad</span><span class="en">Orava Castle — Oravský hrad</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Jeden z najefektowniejszych zamków Europy Środkowej — wznosi się pionowo ponad rzeką Orawą na 112-metrowej skale, tworząc jeden z najbardziej widowiskowych widoków na Słowacji. Zamek jest trójdzielny (dolny, środkowy, górny), każda część z innej epoki. ~45 min jazdy od Terchowej. Dolna część dostępna dla seniorów.</div>
+        <div class="desc en">One of the most dramatic castles in Central Europe — rising vertically above the Orava river on a 112-metre rock, creating one of Slovakia's most spectacular sights. The castle is divided into three sections (lower, middle, upper), each from a different era. ~45 min drive from Terchová. Lower section accessible for seniors.</div>
+        <div class="tip">🎬 <span class="pl">Nakręcono tu fragmenty klasycznego Nosferatu (1922)!</span><span class="en">Parts of the classic Nosferatu (1922) were filmed here!</span></div>
+        <br>
+        <a href="https://www.oravskyhrad.sk" class="lnk" target="_blank">↗ oravskyhrad.sk</a>
+        &nbsp;&nbsp;
+        <a href="https://pl.wikipedia.org/wiki/Zamek_Orawski" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Oravský hrad">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label"><span class="pl">Zamek Orawski</span><span class="en">Orava Castle</span></div>
+      </div>
+
+      <!-- Zuberec bonus -->
+      <div class="attraction" style="margin-top:.5rem">
+        <div class="attraction-title">🏘️ <span class="pl">Skansen Zuberec — Múzeum oravskej dediny</span><span class="en">Zuberec Open-Air Museum</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">30 min jazdy od Zamku Orawskiego — skansen z autentycznymi drewnianymi chatami, kościółkami i zabudowaniami gospodarczymi przeniesionymi z całej Orawy. Jedno z najpiękniejszych muzeów w plenerze na Słowacji, w dramatycznej górskiej scenerii. Idealne dla dzieci i seniorów — płaski teren, spacer między chatami.</div>
+        <div class="desc en">30 min drive from Orava Castle — an open-air museum with authentic wooden cottages, chapels and farm buildings relocated from across the Orava region. One of Slovakia's finest outdoor museums in dramatic mountain scenery. Great for children and seniors — flat grounds, strolling between the cottages.</div>
+        <div class="tip">💡 <span class="pl">Połącz z Zamkiem Orawskim w jeden dzień — idealna para atrakcji</span><span class="en">Pair with Orava Castle for a perfect full-day combo</span></div>
+        <br>
+        <a href="https://www.zuberec.sk" class="lnk" target="_blank">↗ zuberec.sk</a>
+        &nbsp;&nbsp;
+        <a href="https://sk.wikipedia.org/wiki/M%C3%BAzeum_oravskej_dediny" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Múzeum oravskej dediny">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Skansen Zuberec — Múzeum oravskej dediny</div>
+      </div>
+
+      <!-- OPTION C: Aquapark -->
+      <div class="attraction" style="margin-top:.5rem">
+        <div class="option-label option-c">🔵 <span class="pl">Opcja C — wszyscy · relaks</span><span class="en">Option C — everyone · relaxation</span></div>
+        <div class="attraction-title">♨️ <span class="pl">Aquapark Bešeňová — termy z widokiem na Tatry</span><span class="en">Bešeňová Aquapark — thermal baths with Tatra views</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Jeden z najlepszych aquaparków na Słowacji — geotermalne baseny o temperaturze do 38°C z widokiem na Wysokie Tatry. Baseny zewnętrzne i wewnętrzne, zjeżdżalnie dla dzieci i dorosłych, sauny, strefa relaksu. ~1h jazdy od Terchowej. Idealne po intensywnym Dniu 1, gdy nogi potrzebują odpoczynku.</div>
+        <div class="desc en">One of Slovakia's best aquaparks — geothermal pools up to 38°C with views of the High Tatras. Outdoor and indoor pools, slides for children and adults, saunas, relaxation zone. ~1h drive from Terchová. Perfect after an intense Day 1 when legs need a rest.</div>
+        <div class="tip">💡 <span class="pl">Woda geotermalna — lecznicza, seniorzy szczególnie doceniają</span><span class="en">Geothermal water — therapeutic, especially appreciated by seniors</span></div>
+        <br>
+        <a href="https://www.besenova.sk" class="lnk" target="_blank">↗ besenova.sk</a>
+      </div>
+      <div class="strip-outer" data-wiki="Bešeňová aquapark">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Aquapark Bešeňová</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PRACTICAL -->
+<section style="padding-top:0">
+  <div class="container">
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--navy);margin-bottom:1.5rem">
+      <span class="pl">ℹ️ Informacje praktyczne</span>
+      <span class="en">ℹ️ Practical Info</span>
+    </h2>
+    <div class="pract-grid">
+      <div class="pract-card">
+        <div class="icon">🚗</div>
+        <h3 class="pl">Dojazd</h3><h3 class="en">Getting there</h3>
+        <p class="pl">Z Połańca do Terchowej: ~4h 15min<br>Parking przy dierach: płatny (~4€)<br>Słowacja — wymagana winieta!</p>
+        <p class="en">From Połaniec to Terchová: ~4h 15min<br>Gorge car park: paid (~€4)<br>Slovakia — road vignette required!</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">🪜</div>
+        <h3 class="pl">Jánošíkove diery</h3><h3 class="en">Jánošíkove diery</h3>
+        <p class="pl">Start przed 8:00 (tłumy!)<br>Mocne buty trekkingowe<br>Możliwość zamoczenia nóg</p>
+        <p class="en">Start before 8 AM (crowds!)<br>Sturdy trekking boots<br>Possibility of wet feet</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">🚡</div>
+        <h3 class="pl">Vrátna kolejka</h3><h3 class="en">Vrátna cable car</h3>
+        <p class="pl">Sprawdź godziny przed wyjazdem<br>Na górze ~10°C chłodniej<br>Warto zabrać kurtki</p>
+        <p class="en">Check times before departing<br>~10°C cooler at the top<br>Worth bringing jackets</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">💶</div>
+        <h3 class="pl">Waluta i koszty</h3><h3 class="en">Currency & costs</h3>
+        <p class="pl">Słowacja = Euro (€)<br>Diery: wejście wolne<br>Zamek Orawski: ~10€ dorosły</p>
+        <p class="en">Slovakia = Euro (€)<br>Gorges: free entry<br>Orava Castle: ~€10 adult</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>🌲 <strong>Jánošíkove diery 2025</strong> &nbsp;·&nbsp;
+  <span class="pl">Plan wycieczki rodzinnej</span>
+  <span class="en">Family Trip Guide</span>
+  &nbsp;·&nbsp; <span style="font-size:.75rem">📷 Zdjęcia: Wikimedia Commons (CC)</span></p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map = L.map('map');
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(map);
+const _bounds=[];
+function mkr(lat,lng,color,title,desc,big){
+  const s=big?18:14;
+  const icon=L.divIcon({html:`<div style="background:${color};width:${s}px;height:${s}px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,.4)"></div>`,iconSize:[s,s],iconAnchor:[s/2,s/2],className:''});
+  L.marker([lat,lng],{icon}).addTo(map).bindPopup(`<strong>${title}</strong><br>${desc}`);
+  _bounds.push([lat,lng]);
+}
+mkr(50.430,21.573,'#C8860A','Połaniec','Baza wypadowa / Home base<br>~4h 15min jazdy',true);
+mkr(49.249,18.909,'#C62828','Jánošíkove diery','Dzień 1 — Opcja A<br>Dorośli + nastolatkowie<br>Dolné + Stredné diery');
+mkr(49.215,18.999,'#2E7D32','Vrátna dolina — kolejka','Dzień 1 — Opcja B<br>Seniorzy + dzieci<br>Kolejka na Chleb 1646m');
+mkr(49.249,18.909,'#1B1B1B','Terchová','Opcja B — Wioska Jánošíka<br>Pomnik + muzeum<br>5 min od dier');
+mkr(49.243,19.017,'#37474F','Rozsutec 1610m','Dzień 2 — Opcja A<br>Tylko fit dorośli<br>Jeden z najpiękniejszych szczytów SK');
+mkr(49.406,19.310,'#F57F17','Zamek Orawski','Dzień 2 — Opcja B<br>Wszyscy · ~45 min od Terchowej<br>Zamek na 112m skale');
+mkr(49.285,19.564,'#8D6E63','Skansen Zuberec','Dzień 2 — Opcja B (combo)<br>Muzeum drewnianej architektury<br>30 min od Zamku Orawskiego');
+mkr(49.153,19.597,'#1565C0','Aquapark Bešeňová','Dzień 2 — Opcja C<br>Termy do 38°C · Widok na Tatry<br>~1h od Terchowej');
+map.fitBounds(_bounds,{padding:[30,30]});
+
+function toggleLang(){
+  const body=document.body,btn=document.querySelector('.lang-btn');
+  if(body.dataset.lang==='pl'){body.dataset.lang='en';btn.textContent='PL 🌐';}
+  else{body.dataset.lang='pl';btn.textContent='EN 🌐';}
+}
+
+async function fetchWikiImages(query){
+  const params=new URLSearchParams({action:'query',generator:'search',gsrsearch:query,gsrnamespace:6,gsrlimit:50,prop:'imageinfo',iiprop:'url',iiurlwidth:960,format:'json',origin:'*'});
+  const res=await fetch(`https://commons.wikimedia.org/w/api.php?${params}`);
+  const data=await res.json();
+  return Object.values(data.query?.pages||{})
+    .filter(p=>p.imageinfo&&!/\.(svg|gif|tiff|pdf|ogg|webm|ogv|mp4)/i.test(p.title))
+    .map(p=>p.imageinfo[0].thumburl||p.imageinfo[0].url)
+    .filter(Boolean);
+}
+
+function buildStrip(outer,urls){
+  const track=outer.querySelector('.strip-track');
+  const countEl=outer.querySelector('.strip-count');
+  track.innerHTML='';
+  countEl.textContent=`📷 ${urls.length} zdjęć`;
+  const sets=Math.max(3,Math.ceil(3000/(urls.length*200+1)))+2;
+  for(let s=0;s<sets;s++) urls.forEach(src=>{const img=document.createElement('img');img.src=src;img.loading='lazy';track.appendChild(img);});
+  let pos=0,paused=false,dragStart=null,dragPos=0;
+  function oneSet(){let t=0;track.querySelectorAll('img').forEach((img,i)=>{if(i<urls.length)t+=img.offsetWidth+4;});return t||urls.length*290;}
+  function loop(){if(!paused){pos+=0.45;const w=oneSet();if(w>0&&pos>=w)pos-=w;}track.style.transform=`translateX(${-pos}px)`;requestAnimationFrame(loop);}
+  loop();
+  outer.addEventListener('mouseenter',()=>{paused=true;});
+  outer.addEventListener('mouseleave',()=>{paused=false;});
+  function sd(x){paused=true;dragStart=x;dragPos=pos;}
+  function md(x){if(dragStart===null)return;pos=dragPos+(dragStart-x);const w=oneSet();if(w>0){if(pos<0)pos+=w;if(pos>w*sets)pos-=w;}}
+  function ed(){dragStart=null;paused=false;}
+  outer.addEventListener('mousedown',e=>sd(e.clientX));
+  window.addEventListener('mousemove',e=>{if(dragStart!==null)md(e.clientX);});
+  window.addEventListener('mouseup',ed);
+  outer.addEventListener('touchstart',e=>sd(e.touches[0].clientX),{passive:true});
+  outer.addEventListener('touchmove',e=>md(e.touches[0].clientX),{passive:true});
+  outer.addEventListener('touchend',ed);
+}
+
+document.querySelectorAll('.strip-outer[data-urls]').forEach(outer=>{
+  const urls=outer.dataset.urls.split('|').filter(Boolean);
+  if(urls.length) buildStrip(outer,urls);
+});
+
+document.querySelectorAll('.strip-outer[data-wiki]').forEach(async outer=>{
+  try{
+    const urls=await fetchWikiImages(outer.dataset.wiki);
+    if(!urls.length){outer.querySelector('.strip-track').innerHTML='<div class="strip-loading">Brak zdjęć</div>';return;}
+    buildStrip(outer,urls);
+  }catch{outer.querySelector('.strip-track').innerHTML='<div class="strip-loading">Błąd ładowania</div>';}
+});
+</script>
+</body>
+</html>
