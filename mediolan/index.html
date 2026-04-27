@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Włochy — Mediolan & Północ 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B3A4B;--gold:#C8860A;--teal:#2A7F8A;
+  --green:#2E7D32;--blue:#1565C0;--red:#C62828;
+  --light:#F8F6F2;--white:#fff;--text:#2C2C2C;--muted:#777;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);line-height:1.7}
+
+.back-btn{position:fixed;top:14px;left:1rem;z-index:999;background:rgba(0,0,0,.45);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:600;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:background .2s}
+.back-btn:hover{background:rgba(0,0,0,.7)}
+.lang-btn{position:fixed;top:14px;right:1rem;z-index:999;background:var(--gold);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:700;cursor:pointer;letter-spacing:.05em;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:opacity .2s}
+.lang-btn:hover{opacity:.85}
+[data-lang="en"] .pl{display:none}
+[data-lang="pl"] .en{display:none}
+
+.hero{position:relative;min-height:65vh;background:linear-gradient(160deg,#0D1B2A 0%,#1B4F72 55%,#2E86C1 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 1.5rem 6rem;overflow:hidden}
+.hero-content{position:relative;z-index:1;max-width:720px}
+.hero .sub-title{font-size:.95rem;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;font-weight:500;margin-bottom:.6rem}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,6vw,4rem);color:white;line-height:1.1;margin-bottom:.75rem}
+.hero h1 span{color:var(--gold)}
+.hero .tagline{font-size:1rem;color:rgba(255,255,255,.75);margin-bottom:.3rem}
+.hero .tagline.en{font-style:italic;color:rgba(255,255,255,.5);font-size:.93rem}
+.scroll-hint{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.4);font-size:.8rem;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+/* FLIGHT BOX */
+.flight-section{background:linear-gradient(135deg,#003087,#0050B3);padding:2.5rem 1.5rem}
+.flight-box{max-width:760px;margin:0 auto;background:white;border-radius:1rem;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.3)}
+.flight-header{background:#003087;color:white;padding:.75rem 1.5rem;display:flex;align-items:center;gap:.75rem;font-weight:700;font-size:.9rem}
+.flight-header .logo{font-size:1.1rem;letter-spacing:-.02em}
+.flight-leg{display:grid;grid-template-columns:80px 1fr 1fr 1fr 80px;align-items:center;padding:1.1rem 1.5rem;gap:.5rem;border-bottom:1px solid #F0F0F0}
+.flight-leg:last-child{border-bottom:none}
+.fl-date{font-size:1.5rem;font-weight:700;color:#003087;line-height:1}
+.fl-date span{display:block;font-size:.72rem;font-weight:400;color:var(--muted);margin-top:.1rem}
+.fl-time{font-size:1.3rem;font-weight:700;color:var(--text)}
+.fl-city{font-size:.8rem;color:var(--muted);margin-top:.15rem}
+.fl-arrow{text-align:center;color:var(--muted);font-size:.85rem;position:relative}
+.fl-arrow::before{content:'';display:block;height:2px;background:#E0E0E0;margin:.5rem 0}
+.fl-num{font-size:.75rem;color:var(--muted)}
+.fl-dur{font-size:.72rem;color:var(--teal);font-weight:600}
+.fl-right{text-align:right}
+.flight-footer{background:#F8F9FA;padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;font-size:.85rem}
+.flight-footer .pax{color:var(--navy);font-weight:600}
+.flight-footer .price{font-size:1.1rem;font-weight:700;color:#003087}
+.flight-footer .price span{font-size:.75rem;font-weight:400;color:var(--muted);display:block}
+
+/* MAP */
+.map-section{background:var(--navy);padding:3.5rem 1.5rem}
+.map-section h2{font-family:'Playfair Display',serif;font-size:1.8rem;color:white;margin-bottom:.3rem}
+.map-section .sub{color:rgba(255,255,255,.5);font-style:italic;margin-bottom:1.5rem;font-size:.9rem}
+#map{height:380px;border-radius:1rem;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.map-legend{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.25rem}
+.map-legend div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:.5rem;padding:.5rem 1rem;color:white;font-size:.85rem}
+.map-legend strong{color:var(--gold)}
+
+/* WHERE TO STAY */
+.base-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:1.5rem}
+.base-card{background:white;border-radius:1rem;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.09)}
+.base-card-img{height:180px;overflow:hidden}
+.base-card-img img{width:100%;height:100%;object-fit:cover;display:block}
+.base-card-body{padding:1.25rem 1.4rem 1.4rem}
+.base-card-label{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:.22rem .6rem;border-radius:1rem;display:inline-block;margin-bottom:.5rem}
+.label-green{background:#E8F5E9;color:#2E7D32}
+.label-blue{background:#E3F2FD;color:#1565C0}
+.label-gold{background:#FFF8E1;color:#F57F17}
+.base-card h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--navy);margin-bottom:.5rem}
+.base-card p{font-size:.88rem;color:var(--text);line-height:1.6;margin-bottom:.75rem}
+.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.8rem}
+.pros{color:#2E7D32}
+.cons{color:#C62828}
+.pros li,.cons li{list-style:none;padding:.1rem 0}
+.pros li::before{content:'✓ '}
+.cons li::before{content:'✗ '}
+
+/* DAY SECTIONS */
+section{padding:4rem 1.5rem}
+.container{max-width:880px;margin:0 auto}
+.day-header{border-radius:1rem 1rem 0 0;padding:1.75rem 2rem;position:relative;overflow:hidden}
+.day-header::after{content:attr(data-day);position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-family:'Playfair Display',serif;font-size:5.5rem;font-weight:700;color:rgba(255,255,255,.07);line-height:1;pointer-events:none}
+.day-header .tag{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:600;margin-bottom:.35rem}
+.day-header h2{font-family:'Playfair Display',serif;font-size:1.75rem;color:white;line-height:1.2}
+.day-header .sub{font-size:.9rem;color:rgba(255,255,255,.6);margin-top:.25rem;font-style:italic}
+.d-italy{background:linear-gradient(135deg,#1B3A1B,#2E7D32)}
+.day-body{background:white;border-radius:0 0 1rem 1rem;box-shadow:0 8px 40px rgba(0,0,0,.08);margin-bottom:2rem;overflow:hidden}
+
+.options-note{background:#F3F4F6;border-left:4px solid var(--gold);padding:1rem 1.5rem;margin:1.25rem 1.75rem;border-radius:0 .5rem .5rem 0;font-size:.9rem;color:var(--navy)}
+.options-note strong{display:block;margin-bottom:.25rem;color:var(--gold)}
+
+.attraction{padding:1.4rem 1.75rem 1rem;border-bottom:1px solid #F0F0F0}
+.attraction:last-child{border-bottom:none}
+.attraction-title{display:flex;align-items:center;gap:.5rem;font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:.2rem}
+.gold-line{width:2.5rem;height:3px;background:var(--gold);border-radius:2px;margin:.35rem 0 .7rem}
+.desc{font-size:.93rem;margin-bottom:.3rem}
+.desc.en{color:var(--muted);font-style:italic;margin-bottom:.7rem}
+.tip{display:inline-flex;align-items:center;gap:.4rem;background:#E8F5E9;color:var(--green);font-size:.83rem;font-weight:600;padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem}
+.warn{display:inline-flex;align-items:center;gap:.4rem;background:#FFF3E0;color:#E65100;font-size:.83rem;font-weight:600;padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem}
+.lnk{color:var(--teal);font-size:.83rem;font-weight:500;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+.lnk:hover{border-color:var(--teal)}
+
+.strip-outer{position:relative;overflow:hidden;height:230px;background:#111;cursor:grab;user-select:none}
+.strip-outer:active{cursor:grabbing}
+.strip-track{display:flex;height:100%;width:max-content;will-change:transform}
+.strip-track img{height:100%;width:auto;min-width:260px;max-width:400px;object-fit:cover;margin-right:4px;flex-shrink:0;pointer-events:none;display:block}
+.strip-loading{display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,.4);font-size:.85rem}
+.strip-count{position:absolute;top:.6rem;right:.75rem;background:rgba(0,0,0,.5);color:rgba(255,255,255,.7);font-size:.7rem;padding:.2rem .55rem;border-radius:1rem;pointer-events:none}
+.strip-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.55));color:rgba(255,255,255,.8);font-size:.75rem;padding:.4rem .85rem 1rem;font-style:italic;pointer-events:none}
+
+.pract-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem}
+.pract-card{background:white;border-radius:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.07);padding:1.4rem}
+.pract-card .icon{font-size:1.8rem;margin-bottom:.6rem}
+.pract-card h3{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.15rem}
+.pract-card p{font-size:.88rem;color:var(--text);line-height:1.6}
+
+footer{background:var(--navy);color:rgba(255,255,255,.45);text-align:center;padding:1.75rem;font-size:.82rem}
+footer strong{color:var(--gold)}
+
+@media(max-width:600px){
+  .hero h1{font-size:1.9rem}
+  .flight-leg{grid-template-columns:60px 1fr 1fr;gap:.3rem}
+  .fl-arrow,.fl-right{display:none}
+  .base-grid{grid-template-columns:1fr}
+  .strip-outer{height:180px}
+}
+</style>
+</head>
+<body data-lang="pl">
+
+<a class="back-btn" href="../">← <span class="pl">Wycieczki</span><span class="en">All Trips</span></a>
+<button class="lang-btn" onclick="toggleLang()">EN 🌐</button>
+
+<div class="hero">
+  <div class="hero-content">
+    <div class="sub-title">Kraków → Mediolan-Bergamo ✈️</div>
+    <h1>Włochy — <span>Północ</span></h1>
+    <p class="tagline pl">Wycieczka lotnicza · 6 nocy · 13 osób 🇮🇹</p>
+    <p class="tagline en">Flight trip · 6 nights · 13 people 🇮🇹</p>
+  </div>
+  <div class="scroll-hint">↓</div>
+</div>
+
+<!-- FLIGHT INFO -->
+<div class="flight-section">
+  <div class="flight-box">
+    <div class="flight-header">
+      <span class="logo">✈ RYANAIR</span>
+      <span class="pl">Wybrane loty · w dwie strony · 13 osób</span>
+      <span class="en">Selected flights · return · 13 passengers</span>
+    </div>
+    <div class="flight-leg">
+      <div>
+        <div class="fl-date">24 <span>CZE</span></div>
+      </div>
+      <div>
+        <div class="fl-time">08:20</div>
+        <div class="fl-city">Kraków (KRK)</div>
+      </div>
+      <div class="fl-arrow">
+        FR 889<br>
+        <span class="fl-dur">1h 45min</span>
+      </div>
+      <div class="fl-right">
+        <div class="fl-time">10:05</div>
+        <div class="fl-city">Mediolan-Bergamo (BGY)</div>
+      </div>
+      <div style="text-align:right;font-size:.7rem;color:var(--muted)">Malta Air</div>
+    </div>
+    <div class="flight-leg">
+      <div>
+        <div class="fl-date">30 <span>CZE</span></div>
+      </div>
+      <div>
+        <div class="fl-time">09:20</div>
+        <div class="fl-city">Mediolan-Bergamo (BGY)</div>
+      </div>
+      <div class="fl-arrow">
+        FR 888<br>
+        <span class="fl-dur">1h 45min</span>
+      </div>
+      <div class="fl-right">
+        <div class="fl-time">11:05</div>
+        <div class="fl-city">Kraków (KRK)</div>
+      </div>
+      <div style="text-align:right;font-size:.7rem;color:var(--muted)">Malta Air</div>
+    </div>
+    <div class="flight-footer">
+      <span class="pax">👥 13 <span class="pl">osób</span><span class="en">passengers</span> · 6 <span class="pl">nocy</span><span class="en">nights</span></span>
+      <span class="price">3 030,30 zł <span class="pl">same loty (bez bagażu)</span><span class="en">flights only (no baggage)</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- MAP -->
+<div class="map-section" id="mapa">
+  <div class="container">
+    <h2 class="pl">📍 Mapa regionu</h2>
+    <h2 class="en">📍 Regional Map</h2>
+    <p class="sub pl">Wszystkie opcje w promieniu ~2h od lotniska Bergamo · kliknij znacznik</p>
+    <p class="sub en">All options within ~2h of Bergamo airport · click a marker</p>
+    <div id="map"></div>
+    <div class="map-legend">
+      <div><strong>✈️ Bergamo BGY</strong> — lotnisko</div>
+      <div><strong>🟢 Jezioro Garda</strong> — baza rodzinna ⭐</div>
+      <div><strong>🔵 Jezioro Como</strong> — baza romantyczna</div>
+      <div><strong>🟡 Mediolan</strong> — baza miejska</div>
+      <div><strong>🔴 Werona</strong> — wycieczka jednodniowa</div>
+    </div>
+  </div>
+</div>
+
+<!-- WHERE TO STAY -->
+<section id="baza">
+  <div class="container">
+    <h2 style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--navy);margin-bottom:.4rem">
+      <span class="pl">🏨 Gdzie się zatrzymać?</span>
+      <span class="en">🏨 Where to stay?</span>
+    </h2>
+    <p style="color:var(--muted);font-size:.93rem;margin-bottom:1.5rem">
+      <span class="pl">Trzy różne klimaty — każdy z lotniska Bergamo w max. 1,5h. Moja rekomendacja: Jezioro Garda.</span>
+      <span class="en">Three different vibes — all within 1.5h of Bergamo airport. My recommendation: Lake Garda.</span>
+    </p>
+    <div class="base-grid">
+
+      <!-- GARDA -->
+      <div class="base-card">
+        <div class="base-card-img">
+          <img data-wiki="Lago di Garda Sirmione" alt="Jezioro Garda">
+        </div>
+        <div class="base-card-body">
+          <div class="base-card-label label-green">⭐ <span class="pl">Rekomendowane</span><span class="en">Recommended</span></div>
+          <h3><span class="pl">Jezioro Garda</span><span class="en">Lake Garda</span></h3>
+          <p class="pl">Największe jezioro Włoch. Plaże, Gardaland (!), zamek Sirmione, Werona 30 min. Najbardziej rodzinne z całej trójki.</p>
+          <p class="en">Italy's largest lake. Beaches, Gardaland (!), Sirmione castle, Verona 30 min away. The most family-friendly of the three.</p>
+          <div class="pros-cons">
+            <ul class="pros">
+              <li>Gardaland dla dzieci</li>
+              <li>Plaże + pływanie</li>
+              <li>Dostępne dla seniorów</li>
+              <li>Werona w pobliżu</li>
+              <li>Dobre ceny noclegów</li>
+            </ul>
+            <ul class="cons">
+              <li>Tłoczne w czerwcu</li>
+              <li>Mniej "romantyczne"</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMO -->
+      <div class="base-card">
+        <div class="base-card-img">
+          <img data-wiki="Lake Como Bellagio" alt="Jezioro Como">
+        </div>
+        <div class="base-card-body">
+          <div class="base-card-label label-blue"><span class="pl">Najbardziej spektakularne</span><span class="en">Most spectacular</span></div>
+          <h3><span class="pl">Jezioro Como</span><span class="en">Lake Como</span></h3>
+          <p class="pl">Wille, góry w wodzie, Bellagio, wille Clooneya. Najbardziej fotogeniczne jezioro w Europie. Trudniejsze dla seniorów.</p>
+          <p class="en">Villas, mountains reflected in water, Bellagio, Clooney's villa. Europe's most photogenic lake. Harder for seniors.</p>
+          <div class="pros-cons">
+            <ul class="pros">
+              <li>Niesamowite widoki</li>
+              <li>Bellagio + łodzie</li>
+              <li>Blisko Bergamo</li>
+            </ul>
+            <ul class="cons">
+              <li>Strome uliczki</li>
+              <li>Trudne dla seniorów</li>
+              <li>Bardzo drogie</li>
+              <li>Małe miejscowości</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- MILAN -->
+      <div class="base-card">
+        <div class="base-card-img">
+          <img data-wiki="Milan Cathedral Duomo" alt="Mediolan">
+        </div>
+        <div class="base-card-body">
+          <div class="base-card-label label-gold"><span class="pl">Baza miejska</span><span class="en">City base</span></div>
+          <h3>Mediolan</h3>
+          <p class="pl">Duomo, Galleria, The Last Supper, moda. Świetne dla starszych dzieci i dorosłych, mniej dla małych dzieci i seniorów.</p>
+          <p class="en">Duomo, Galleria, The Last Supper, fashion. Great for older children and adults, less ideal for young children and seniors.</p>
+          <div class="pros-cons">
+            <ul class="pros">
+              <li>Ikonowe zabytki</li>
+              <li>Świetne jedzenie</li>
+              <li>Życie nocne</li>
+            </ul>
+            <ul class="cons">
+              <li>Gorąco + tłok</li>
+              <li>Bardzo drogie</li>
+              <li>Mało dla dzieci</li>
+              <li>Bez natury</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DAY PLAN - GARDA -->
+<section id="plan" style="padding-top:0">
+  <div class="container">
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--navy);margin-bottom:.3rem">
+      <span class="pl">📅 Propozycja 6 dni — baza Jezioro Garda</span>
+      <span class="en">📅 6-day plan — Lake Garda base</span>
+    </h2>
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:2rem">
+      <span class="pl">Baza: Sirmione lub Desenzano del Garda · wycieczki jednodniowe do Werony i Mediolanu</span>
+      <span class="en">Base: Sirmione or Desenzano del Garda · day trips to Verona and Milan</span>
+    </p>
+
+    <!-- D1 -->
+    <div class="day-header d-italy" data-day="01">
+      <div class="tag">24 CZE · <span class="pl">Dzień 1</span><span class="en">Day 1</span></div>
+      <h2 class="pl">Przylot → Transfer → Sirmione</h2>
+      <h2 class="en">Arrival → Transfer → Sirmione</h2>
+      <div class="sub pl">Bergamo BGY · 45 min do Brescii · pierwsze gelato</div>
+      <div class="sub en">Bergamo BGY · 45 min to Brescia · first gelato</div>
+    </div>
+    <div class="day-body">
+      <div class="attraction">
+        <div class="attraction-title">🛬 <span class="pl">Przylot 10:05 → wynajem aut → Sirmione</span><span class="en">Land 10:05 → car hire → Sirmione</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Lotnisko Bergamo Orio al Serio (BGY) — mały, sprawny port lotniczy. Po odbiorze bagażu: odbiór 2–3 wynajętych samochodów i jazda na Jezioro Garda (~1h 10min). Zameldowanie w Sirmione lub Desenzano. Popołudnie: spacer po Sirmione — wąska szpula lądu wchodząca w jezioro, średniowieczny zamek Scaligero tuż przy wodzie. Wieczorem pierwsze prawdziwe włoskie jedzenie.</div>
+        <div class="desc en">Bergamo Orio al Serio Airport (BGY) — small, efficient airport. After baggage: pick up 2–3 hire cars and drive to Lake Garda (~1h 10min). Check in to Sirmione or Desenzano. Afternoon: stroll around Sirmione — a narrow spit of land jutting into the lake, the medieval Scaligero Castle right on the water. Evening: first proper Italian meal.</div>
+        <div class="tip">🚗 <span class="pl">13 osób = 2 duże vany (7+7) lub 3 standardowe auta — zarezerwuj wcześniej!</span><span class="en">13 people = 2 large vans (7+7) or 3 standard cars — book well in advance!</span></div>
+      </div>
+      <div class="strip-outer" data-wiki="Sirmione Lake Garda">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Sirmione — Jezioro Garda</div>
+      </div>
+    </div>
+
+    <!-- D2 -->
+    <div class="day-header d-italy" data-day="02" style="margin-top:0">
+      <div class="tag">25 CZE · <span class="pl">Dzień 2</span><span class="en">Day 2</span></div>
+      <h2>🎢 Gardaland</h2>
+      <div class="sub pl">Jeden z największych parków rozrywki we Włoszech · dzieci muszą tu być!</div>
+      <div class="sub en">One of Italy's biggest theme parks · the kids need this!</div>
+    </div>
+    <div class="day-body">
+      <div class="attraction">
+        <div class="attraction-title">🎠 Gardaland</div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Największy park rozrywki we Włoszech, bezpośrednio nad Jeziorem Garda — rollercoastery, wodne atrakcje, strefy tematyczne, Legoland Discovery (oddzielnie). Australijczycy (11 i 14 lat) będą w siódmym niebie. Warto podzielić grupę: aktywni w parku, seniorzy mogą odpocząć w kawiarni lub zwiedzić pobliskie Peschiera del Garda (~10 min).</div>
+        <div class="desc en">Italy's largest theme park, right on Lake Garda — roller coasters, water rides, themed zones, Legoland Discovery (separate ticket). The Australian kids (11 and 14) will be in heaven. Worth splitting: active group in the park, seniors can relax at a café or visit nearby Peschiera del Garda (~10 min).</div>
+        <div class="warn">🎟️ <span class="pl">Kup bilety online z wyprzedzeniem — kolejki do kas są ogromne!</span><span class="en">Buy tickets online in advance — queues at the gate are massive!</span></div>
+        <br>
+        <a href="https://www.gardaland.it" class="lnk" target="_blank">↗ gardaland.it</a>
+      </div>
+      <div class="strip-outer" data-wiki="Gardaland">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Gardaland</div>
+      </div>
+    </div>
+
+    <!-- D3 -->
+    <div class="day-header d-italy" data-day="03" style="margin-top:0">
+      <div class="tag">26 CZE · <span class="pl">Dzień 3</span><span class="en">Day 3</span></div>
+      <h2 class="pl">Sirmione — zamek, termy, jezioro</h2>
+      <h2 class="en">Sirmione — castle, thermal baths, lake</h2>
+      <div class="sub pl">Dzień relaksu przy jeziorze · Grotte di Catullo</div>
+      <div class="sub en">Relaxation day by the lake · Grotte di Catullo</div>
+    </div>
+    <div class="day-body">
+      <div class="attraction">
+        <div class="attraction-title">🏰 <span class="pl">Zamek Scaligero + Grotte di Catullo</span><span class="en">Scaligero Castle + Grotte di Catullo</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Zamek Scaligero (XIII w.) stoi dosłownie w wodzie — jeden z najlepiej zachowanych zamków średniowiecznych w północnych Włoszech. Na końcu półwyspu Sirmione: Grotte di Catullo — ruiny ogromnej willi z I w. n.e., z tarasami nad jeziorem. Popołudnie: kąpiel w jeziorze (ciepłe, czyste) lub naturalne termy przy brzegu (woda geotermalna!).</div>
+        <div class="desc en">The Scaligero Castle (13th c.) stands literally in the water — one of the best-preserved medieval castles in northern Italy. At the tip of the Sirmione peninsula: Grotte di Catullo — ruins of a huge 1st-century AD Roman villa, with terraces over the lake. Afternoon: swim in the lake (warm, clean) or the natural thermal beach (geothermal water!).</div>
+        <div class="tip">♨️ <span class="pl">Sirmione ma naturalne termalne źródło — woda ciepła przez cały rok!</span><span class="en">Sirmione has a natural thermal spring — warm water year round!</span></div>
+      </div>
+      <div class="strip-outer" data-wiki="Sirmione castle Garda">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Sirmione — Zamek Scaligero</div>
+      </div>
+    </div>
+
+    <!-- D4 -->
+    <div class="day-header d-italy" data-day="04" style="margin-top:0">
+      <div class="tag">27 CZE · <span class="pl">Dzień 4</span><span class="en">Day 4</span></div>
+      <h2 class="pl">Werona — Romeo i Julia</h2>
+      <h2 class="en">Verona — Romeo and Juliet</h2>
+      <div class="sub pl">~30 min od Gardy · Arena · Balkon Julii</div>
+      <div class="sub en">~30 min from Garda · Arena · Juliet's Balcony</div>
+    </div>
+    <div class="day-body">
+      <div class="attraction">
+        <div class="attraction-title">🎭 <span class="pl">Werona — wycieczka jednodniowa</span><span class="en">Verona — day trip</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Tylko 30 min jazdy od Jeziora Garda — Werona to jedno z najpiękniejszych miast Włoch. Arena di Verona (amfiteatr z I w. n.e., latem odbywają się opery!), Piazza delle Erbe z kolorowymi kamienicami, Balkon Julii (wszyscy wiedzą, że to fikcja, ale i tak robią zdjęcia), wieża Torre dei Lamberti. Dla nastolatków: Romeo i Julia to tu. Dostępne dla seniorów — centrum jest płaskie.</div>
+        <div class="desc en">Just 30 min drive from Lake Garda — Verona is one of Italy's most beautiful cities. Arena di Verona (1st-century amphitheatre, operas are staged here in summer!), Piazza delle Erbe with colourful buildings, Juliet's Balcony (everyone knows it's fiction but takes photos anyway), Torre dei Lamberti tower. For the teenagers: Romeo and Juliet was set here. Accessible for seniors — the centre is flat.</div>
+        <div class="tip">🎵 <span class="pl">Koniec czerwca — sezon operowy w Arenie! Sprawdź bilety na arenadi verona.it</span><span class="en">Late June — opera season at the Arena! Check arenadi verona.it for tickets</span></div>
+        <br>
+        <a href="https://pl.wikipedia.org/wiki/Werona" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Verona Arena Italy">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Werona — Arena di Verona</div>
+      </div>
+    </div>
+
+    <!-- D5 -->
+    <div class="day-header d-italy" data-day="05" style="margin-top:0">
+      <div class="tag">28 CZE · <span class="pl">Dzień 5</span><span class="en">Day 5</span></div>
+      <h2>Mediolan — Duomo & Galleria</h2>
+      <div class="sub pl">~1h 15min od Gardy · wycieczka jednodniowa</div>
+      <div class="sub en">~1h 15min from Garda · day trip</div>
+    </div>
+    <div class="day-body">
+      <div class="attraction">
+        <div class="attraction-title">⛪ <span class="pl">Mediolan — wycieczka jednodniowa</span><span class="en">Milan — day trip</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Duomo di Milano — gotycka katedra z 135 iglicami, jedna z największych na świecie. Wejście na dach (windy!) z widokiem na Alpy w pogodny dzień. Obok: Galleria Vittorio Emanuele II — najstarsza galeria handlowa świata (1877), ze szklaną kopułą. Piazza del Duomo na kawę i gelato. Opcjonalnie: Castello Sforzesco i park Parco Sempione — idealne dla zmęczonych dzieci i seniorów.</div>
+        <div class="desc en">Duomo di Milano — Gothic cathedral with 135 spires, one of the world's largest. Roof access (lifts available!) with views to the Alps on a clear day. Next door: Galleria Vittorio Emanuele II — world's oldest shopping gallery (1877), with glass dome. Piazza del Duomo for coffee and gelato. Optional: Castello Sforzesco and Parco Sempione park — ideal for tired children and seniors.</div>
+        <div class="warn">🎟️ <span class="pl">Wejście do Duomo i na dach — rezerwuj bilety online! Kolejki są ogromne.</span><span class="en">Entry to the Duomo and rooftop — book online! Queues are enormous.</span></div>
+      </div>
+      <div class="strip-outer" data-wiki="Duomo di Milano">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Mediolan — Duomo di Milano</div>
+      </div>
+    </div>
+
+    <!-- D6 -->
+    <div class="day-header d-italy" data-day="06" style="margin-top:0">
+      <div class="tag">29 CZE · <span class="pl">Dzień 6</span><span class="en">Day 6</span></div>
+      <h2 class="pl">Wolny dzień nad jeziorem</h2>
+      <h2 class="en">Free day by the lake</h2>
+      <div class="sub pl">Rejs statkiem · Jezioro Como opcjonalnie · pamiątki · relaks</div>
+      <div class="sub en">Boat cruise · Lake Como optional · souvenirs · relaxation</div>
+    </div>
+    <div class="day-body">
+      <div class="attraction">
+        <div class="attraction-title">⛵ <span class="pl">Rejs po Jeziorze Garda lub wypad na Como</span><span class="en">Lake Garda cruise or trip to Como</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Ostatni pełny dzień — dwa warianty. <strong>Opcja A (relaks):</strong> rejs statkiem po Jeziorze Garda z Peschiera lub Desenzano — panorama jeziora z wody, postój w Gardone Riviera lub Limone sul Garda. <strong>Opcja B (aktywni):</strong> wypad na Jezioro Como (~1h od Gardy) — prom do Bellagio, najbardziej widowiskowego miasteczka jeziora, i powrót.</div>
+        <div class="desc en">Last full day — two variants. <strong>Option A (relax):</strong> lake cruise from Peschiera or Desenzano — panoramic views from the water, stop at Gardone Riviera or Limone sul Garda. <strong>Option B (active):</strong> trip to Lake Como (~1h from Garda) — ferry to Bellagio, the lake's most spectacular village, and back.</div>
+        <div class="tip">💡 <span class="pl">Wieczór: kolacja pożegnalna w restauracji nad wodą — obowiązkowo!</span><span class="en">Evening: farewell dinner at a waterfront restaurant — absolutely essential!</span></div>
+      </div>
+      <div class="strip-outer" data-wiki="Lago di Garda boat">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Jezioro Garda — rejs</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PRACTICAL -->
+<section style="padding-top:0">
+  <div class="container">
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--navy);margin-bottom:1.5rem">
+      <span class="pl">ℹ️ Informacje praktyczne</span>
+      <span class="en">ℹ️ Practical Info</span>
+    </h2>
+    <div class="pract-grid">
+      <div class="pract-card">
+        <div class="icon">✈️</div>
+        <h3 class="pl">Dojazd na lotnisko</h3><h3 class="en">Getting to the airport</h3>
+        <p class="pl">Połaniec → Kraków: ~1,5h<br>Przylot min. 2h przed odlotem<br>Odlot 08:20 → wyjedź o 5:00!</p>
+        <p class="en">Połaniec → Kraków: ~1.5h<br>Arrive min. 2h before departure<br>Flight 08:20 → leave at 5:00 AM!</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">🚗</div>
+        <h3 class="pl">Transport we Włoszech</h3><h3 class="en">Transport in Italy</h3>
+        <p class="pl">13 osób: 2 vany lub 3 auta<br>Rezerwuj auto z wyprzedzeniem<br>Autostrady płatne — przygotuj gotówkę/kartę</p>
+        <p class="en">13 people: 2 vans or 3 cars<br>Book hire cars well in advance<br>Toll motorways — cash or card</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">💶</div>
+        <h3 class="pl">Koszty</h3><h3 class="en">Costs</h3>
+        <p class="pl">Włochy = Euro (€)<br>Noclegi w Sirmione: drogie<br>Desenzano/Peschiera: 2x taniej</p>
+        <p class="en">Italy = Euro (€)<br>Accommodation in Sirmione: pricey<br>Desenzano/Peschiera: 2x cheaper</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">☀️</div>
+        <h3 class="pl">Czerwiec w Włoszech</h3><h3 class="en">June in Italy</h3>
+        <p class="pl">~28–32°C w dzień<br>Jezioro do kąpieli od połowy czerwca<br>Krem z filtrem i nakrycia głowy!</p>
+        <p class="en">~28–32°C during the day<br>Lake swimmable from mid-June<br>Sun cream and hats essential!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>🇮🇹 <strong>Włochy — Północ 2025</strong> &nbsp;·&nbsp;
+  <span class="pl">Plan wycieczki lotniczej</span>
+  <span class="en">Flight Trip Guide</span>
+  &nbsp;·&nbsp; <span style="font-size:.75rem">📷 Zdjęcia: Wikimedia Commons (CC)</span></p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map = L.map('map');
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(map);
+const _bounds=[];
+function mkr(lat,lng,color,title,desc,big){
+  const s=big?18:14;
+  const icon=L.divIcon({html:`<div style="background:${color};width:${s}px;height:${s}px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,.4)"></div>`,iconSize:[s,s],iconAnchor:[s/2,s/2],className:''});
+  L.marker([lat,lng],{icon}).addTo(map).bindPopup(`<strong>${title}</strong><br>${desc}`);
+  _bounds.push([lat,lng]);
+}
+mkr(45.673,9.704,'#003087','✈ Bergamo BGY','Lotnisko Orio al Serio<br>Przylot 10:05 · Odlot 09:20',true);
+mkr(45.632,10.608,'#2E7D32','Jezioro Garda — Sirmione','⭐ Rekomendowana baza<br>Zamek · Termy · Plaże<br>~1h 10min od Bergamo');
+mkr(45.476,10.714,'#C62828','Gardaland','Dzień 2 — Park rozrywki<br>Rollercoastery · Atrakcje wodne<br>Kup bilety online!');
+mkr(45.438,10.992,'#E65100','Werona','Dzień 4 — Wycieczka jednodniowa<br>Arena · Romeo i Julia<br>~30 min od Gardy');
+mkr(45.464,9.189,'#F57F17','Mediolan — Duomo','Dzień 5 — Wycieczka jednodniowa<br>Duomo · Galleria · Castello<br>~1h 15min od Gardy');
+mkr(45.984,9.261,'#1565C0','Jezioro Como — Bellagio','Opcja Dzień 6<br>Najbardziej spektakularne jezioro<br>Promem z Como do Bellagio');
+map.fitBounds(_bounds,{padding:[30,30]});
+
+function toggleLang(){
+  const body=document.body,btn=document.querySelector('.lang-btn');
+  if(body.dataset.lang==='pl'){body.dataset.lang='en';btn.textContent='PL 🌐';}
+  else{body.dataset.lang='pl';btn.textContent='EN 🌐';}
+}
+
+async function fetchWikiImages(query){
+  const params=new URLSearchParams({action:'query',generator:'search',gsrsearch:query,gsrnamespace:6,gsrlimit:50,prop:'imageinfo',iiprop:'url',iiurlwidth:960,format:'json',origin:'*'});
+  const res=await fetch(`https://commons.wikimedia.org/w/api.php?${params}`);
+  const data=await res.json();
+  return Object.values(data.query?.pages||{})
+    .filter(p=>p.imageinfo&&!/\.(svg|gif|tiff|pdf|ogg|webm|ogv|mp4)/i.test(p.title))
+    .map(p=>p.imageinfo[0].thumburl||p.imageinfo[0].url)
+    .filter(Boolean);
+}
+
+function buildStrip(outer,urls){
+  const track=outer.querySelector('.strip-track');
+  const countEl=outer.querySelector('.strip-count');
+  track.innerHTML='';
+  countEl.textContent=`📷 ${urls.length} zdjęć`;
+  const sets=Math.max(3,Math.ceil(3000/(urls.length*200+1)))+2;
+  for(let s=0;s<sets;s++) urls.forEach(src=>{const img=document.createElement('img');img.src=src;img.loading='lazy';track.appendChild(img);});
+  let pos=0,paused=false,dragStart=null,dragPos=0;
+  function oneSet(){let t=0;track.querySelectorAll('img').forEach((img,i)=>{if(i<urls.length)t+=img.offsetWidth+4;});return t||urls.length*290;}
+  function loop(){if(!paused){pos+=0.45;const w=oneSet();if(w>0&&pos>=w)pos-=w;}track.style.transform=`translateX(${-pos}px)`;requestAnimationFrame(loop);}
+  loop();
+  outer.addEventListener('mouseenter',()=>{paused=true;});
+  outer.addEventListener('mouseleave',()=>{paused=false;});
+  function sd(x){paused=true;dragStart=x;dragPos=pos;}
+  function md(x){if(dragStart===null)return;pos=dragPos+(dragStart-x);const w=oneSet();if(w>0){if(pos<0)pos+=w;if(pos>w*sets)pos-=w;}}
+  function ed(){dragStart=null;paused=false;}
+  outer.addEventListener('mousedown',e=>sd(e.clientX));
+  window.addEventListener('mousemove',e=>{if(dragStart!==null)md(e.clientX);});
+  window.addEventListener('mouseup',ed);
+  outer.addEventListener('touchstart',e=>sd(e.touches[0].clientX),{passive:true});
+  outer.addEventListener('touchmove',e=>md(e.touches[0].clientX),{passive:true});
+  outer.addEventListener('touchend',ed);
+}
+
+document.querySelectorAll('.strip-outer[data-urls]').forEach(outer=>{
+  const urls=outer.dataset.urls.split('|').filter(Boolean);
+  if(urls.length) buildStrip(outer,urls);
+});
+
+document.querySelectorAll('.strip-outer[data-wiki]').forEach(async outer=>{
+  try{
+    const urls=await fetchWikiImages(outer.dataset.wiki);
+    if(!urls.length){outer.querySelector('.strip-track').innerHTML='<div class="strip-loading">Brak zdjęć</div>';return;}
+    buildStrip(outer,urls);
+  }catch{outer.querySelector('.strip-track').innerHTML='<div class="strip-loading">Błąd ładowania</div>';}
+});
+
+document.querySelectorAll('img[data-wiki]').forEach(async img=>{
+  const params=new URLSearchParams({action:'query',generator:'search',gsrsearch:img.dataset.wiki,gsrnamespace:6,gsrlimit:1,prop:'imageinfo',iiprop:'url',iiurlwidth:960,format:'json',origin:'*'});
+  try{
+    const res=await fetch(`https://commons.wikimedia.org/w/api.php?${params}`);
+    const data=await res.json();
+    const page=Object.values(data.query?.pages||{})[0];
+    if(page?.imageinfo?.[0]?.thumburl) img.src=page.imageinfo[0].thumburl;
+  }catch(e){}
+});
+</script>
+</body>
+</html>
