@@ -226,7 +226,7 @@ footer strong{color:var(--gold)}
         &nbsp;&nbsp;
         <a href="https://pl.wikipedia.org/wiki/Termy_Choch%C3%B3%C5%82owskie" class="lnk" target="_blank">↗ Wikipedia</a>
       </div>
-      <div class="strip-outer" data-wiki="Chochołów">
+      <div class="strip-outer" data-urls="https://www.chocholowskietermy.pl/wp-content/uploads/2022/11/MG_8157.jpg|https://www.chocholowskietermy.pl/wp-content/uploads/2022/11/MG_8937.jpg">
         <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
         <div class="strip-count"></div>
         <div class="strip-label"><span class="pl">Termy Chochołowskie</span><span class="en">Chochołów Thermal Baths</span></div>
@@ -346,6 +346,11 @@ document.querySelectorAll('.strip-outer[data-wiki]').forEach(async outer=>{
     if(!urls.length){outer.querySelector('.strip-track').innerHTML='<div class="strip-loading">Brak zdjęć</div>';return;}
     buildStrip(outer,urls);
   }catch{outer.querySelector('.strip-track').innerHTML='<div class="strip-loading">Błąd ładowania</div>';}
+});
+
+document.querySelectorAll('.strip-outer[data-urls]').forEach(outer=>{
+  const urls=outer.dataset.urls.split('|').filter(Boolean);
+  if(urls.length) buildStrip(outer,urls);
 });
 </script>
 </body>
