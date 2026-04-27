@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skalne Miasto — Adršpach 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B3A4B;--gold:#C8860A;--teal:#2A7F8A;
+  --green:#2E7D32;--blue:#1565C0;
+  --light:#F8F6F2;--white:#fff;--text:#2C2C2C;--muted:#777;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);line-height:1.7}
+
+.back-btn{position:fixed;top:14px;left:1rem;z-index:999;background:rgba(0,0,0,.45);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:600;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:background .2s}
+.back-btn:hover{background:rgba(0,0,0,.7)}
+.lang-btn{position:fixed;top:14px;right:1rem;z-index:999;background:var(--gold);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:700;cursor:pointer;letter-spacing:.05em;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:opacity .2s}
+.lang-btn:hover{opacity:.85}
+[data-lang="en"] .pl{display:none}
+[data-lang="pl"] .en{display:none}
+
+.hero{position:relative;min-height:65vh;background:linear-gradient(160deg,#1C0D00 0%,#4E342E 50%,#263238 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 1.5rem 6rem;overflow:hidden}
+.hero-content{position:relative;z-index:1;max-width:720px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,6vw,4rem);color:white;line-height:1.1;margin-bottom:.5rem}
+.hero h1 span{color:var(--gold)}
+.hero .sub-title{font-size:1rem;color:rgba(255,255,255,.5);letter-spacing:.08em;text-transform:uppercase;font-weight:500;margin-bottom:.75rem}
+.hero .tagline{font-size:1rem;color:rgba(255,255,255,.75);margin-bottom:.3rem}
+.hero .tagline.en{font-style:italic;color:rgba(255,255,255,.5);font-size:.95rem}
+.scroll-hint{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.4);font-size:.8rem;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+.map-section{background:var(--navy);padding:3.5rem 1.5rem}
+.map-section h2{font-family:'Playfair Display',serif;font-size:1.8rem;color:white;margin-bottom:.3rem}
+.map-section .sub{color:rgba(255,255,255,.5);font-style:italic;margin-bottom:1.5rem;font-size:.9rem}
+#map{height:380px;border-radius:1rem;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.map-legend{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.25rem}
+.map-legend div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:.5rem;padding:.5rem 1rem;color:white;font-size:.85rem}
+.map-legend strong{color:var(--gold)}
+
+section{padding:4rem 1.5rem}
+.container{max-width:880px;margin:0 auto}
+
+.day-header{border-radius:1rem 1rem 0 0;padding:1.75rem 2rem;position:relative;overflow:hidden}
+.day-header::after{content:attr(data-day);position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-family:'Playfair Display',serif;font-size:5.5rem;font-weight:700;color:rgba(255,255,255,.07);line-height:1;pointer-events:none}
+.day-header .tag{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:600;margin-bottom:.35rem}
+.day-header h2{font-family:'Playfair Display',serif;font-size:1.75rem;color:white;line-height:1.2}
+.day-header .sub{font-size:.9rem;color:rgba(255,255,255,.6);margin-top:.25rem;font-style:italic}
+.d1{background:linear-gradient(135deg,#2D1B00,#6D4C41)}
+.d2{background:linear-gradient(135deg,#1A2F1A,#2E7D32)}
+.day-body{background:white;border-radius:0 0 1rem 1rem;box-shadow:0 8px 40px rgba(0,0,0,.08);margin-bottom:3rem;overflow:hidden}
+
+.options-note{background:#F3F4F6;border-left:4px solid var(--gold);padding:1rem 1.5rem;margin:1.25rem 1.75rem;border-radius:0 .5rem .5rem 0;font-size:.9rem;color:var(--navy)}
+.options-note strong{display:block;margin-bottom:.25rem;color:var(--gold)}
+
+.option-label{display:inline-flex;align-items:center;gap:.4rem;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:.25rem .65rem;border-radius:1rem;margin-bottom:.5rem}
+.option-a{background:#FFEBEE;color:#C62828}
+.option-b{background:#E8F5E9;color:#2E7D32}
+.option-c{background:#E3F2FD;color:#1565C0}
+.option-d{background:#FFF3E0;color:#E65100}
+
+.strip-outer{position:relative;overflow:hidden;height:230px;background:#111;cursor:grab;user-select:none}
+.strip-outer:active{cursor:grabbing}
+.strip-track{display:flex;height:100%;width:max-content;will-change:transform}
+.strip-track img{height:100%;width:auto;min-width:260px;max-width:400px;object-fit:cover;margin-right:4px;flex-shrink:0;pointer-events:none;display:block}
+.strip-loading{display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,.4);font-size:.85rem}
+.strip-count{position:absolute;top:.6rem;right:.75rem;background:rgba(0,0,0,.5);color:rgba(255,255,255,.7);font-size:.7rem;padding:.2rem .55rem;border-radius:1rem;pointer-events:none}
+.strip-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.55));color:rgba(255,255,255,.8);font-size:.75rem;padding:.4rem .85rem 1rem;font-style:italic;pointer-events:none}
+
+.attraction{padding:1.4rem 1.75rem 1rem;border-bottom:1px solid #F0F0F0}
+.attraction:last-child{border-bottom:none}
+.attraction-title{display:flex;align-items:center;gap:.5rem;font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:.2rem}
+.gold-line{width:2.5rem;height:3px;background:var(--gold);border-radius:2px;margin:.35rem 0 .7rem}
+.desc{font-size:.93rem;margin-bottom:.3rem}
+.desc.en{color:var(--muted);font-style:italic;margin-bottom:.7rem}
+.tip{display:inline-flex;align-items:center;gap:.4rem;background:#E8F5E9;color:var(--green);font-size:.83rem;font-weight:600;padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem}
+.warn{display:inline-flex;align-items:center;gap:.4rem;background:#FFF3E0;color:#E65100;font-size:.83rem;font-weight:600;padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem}
+.lnk{color:var(--teal);font-size:.83rem;font-weight:500;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+.lnk:hover{border-color:var(--teal)}
+
+.pract-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem}
+.pract-card{background:white;border-radius:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.07);padding:1.4rem}
+.pract-card .icon{font-size:1.8rem;margin-bottom:.6rem}
+.pract-card h3{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.15rem}
+.pract-card p{font-size:.88rem;color:var(--text);line-height:1.6}
+
+footer{background:var(--navy);color:rgba(255,255,255,.45);text-align:center;padding:1.75rem;font-size:.82rem}
+footer strong{color:var(--gold)}
+
+@media(max-width:600px){
+  .hero h1{font-size:1.9rem}
+  .day-header{padding:1.25rem}
+  .attraction{padding:1.1rem 1.25rem .8rem}
+  .strip-outer{height:180px}
+}
+</style>
+</head>
+<body data-lang="pl">
+
+<a class="back-btn" href="../">← <span class="pl">Wycieczki</span><span class="en">All Trips</span></a>
+<button class="lang-btn" onclick="toggleLang()">EN 🌐</button>
+
+<div class="hero">
+  <div class="hero-content">
+    <div class="sub-title">Adršpach · Góry Stołowe</div>
+    <h1><span>Skalne</span> Miasto</h1>
+    <p class="tagline pl">Wycieczka rodzinna · 2 dni · Czechy & Polska 🇨🇿🇵🇱</p>
+    <p class="tagline en">Family Trip · 2 Days · Czech Republic & Poland 🇨🇿🇵🇱</p>
+  </div>
+  <div class="scroll-hint">↓</div>
+</div>
+
+<div class="map-section" id="mapa">
+  <div class="container">
+    <h2 class="pl">📍 Plan wycieczki — mapa</h2>
+    <h2 class="en">📍 Trip Map</h2>
+    <p class="sub pl">~4h 30min z Połańca · kliknij znacznik aby zobaczyć więcej</p>
+    <p class="sub en">~4h 30min from Połaniec · click a marker for details</p>
+    <div id="map"></div>
+    <div class="map-legend">
+      <div><strong>🟠 Połaniec</strong> — baza (~4h 30min)</div>
+      <div><strong>🟤 Adršpach</strong> — Dzień 1 · wszyscy</div>
+      <div><strong>⚫ Teplice</strong> — Dzień 1 · opcja extra</div>
+      <div><strong>🔴 Szczeliniec Wielki</strong> — Dzień 2 · aktywni</div>
+      <div><strong>🟢 Błędne Skały</strong> — Dzień 2 · wszyscy</div>
+      <div><strong>🔵 Kudowa-Zdrój</strong> — Dzień 2 · relaks</div>
+    </div>
+  </div>
+</div>
+
+<!-- DAY 1 -->
+<section id="day1">
+  <div class="container">
+    <div class="day-header d1" data-day="01">
+      <div class="tag"><span class="pl">Dzień 1</span><span class="en">Day 1</span> · Adršpach · Czechy 🇨🇿</div>
+      <h2 class="pl">Skalne Miasto — wszyscy razem</h2>
+      <h2 class="en">Rock City — all together</h2>
+      <div class="sub pl">Wieże piaskowca · Jezioro z łódkami · Wodospad · Labirynt skalny</div>
+      <div class="sub en">Sandstone towers · Lake with rowboats · Waterfall · Rock labyrinth</div>
+    </div>
+    <div class="day-body">
+
+      <div class="options-note">
+        <strong>👨‍👩‍👧‍👦 <span class="pl">Dzień 1 — wszyscy razem w Adršpach</span><span class="en">Day 1 — all together in Adršpach</span></strong>
+        <span class="pl">Adršpach to rzadki przypadek, gdy jedno miejsce zachwyca absolutnie wszystkich — seniorów, małe dzieci, nastolatków i dorosłych. Ścieżka przez skalne miasto jest w większości płaska, wiedzie przez wąskie szczeliny między 100-metrowymi skałami, przy jeziorku z łódkami i wodospadzie. Po południu opcjonalnie Teplice Rocks dla aktywniejszych.</span>
+        <span class="en">Adršpach is a rare case where one place impresses absolutely everyone — seniors, young children, teenagers and adults. The rock city trail is mostly flat, winding through narrow gaps between 100-metre sandstone towers, past a lake with rowboats and a waterfall. Optional afternoon extension to Teplice Rocks for the more active.</span>
+      </div>
+
+      <!-- Adršpach Rocks -->
+      <div class="attraction">
+        <div class="attraction-title">🪨 <span class="pl">Adršpašské skály — Skalní město</span><span class="en">Adršpach Rocks — Rock City</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Jeden z największych kompleksów skalnych w Europie Środkowej — las piaskowcowych wież i iglic, z których najwyższe sięgają 100 m. Okrężna trasa przez „Skalní město" (~2,5 km) wiedzie przez wąskie szczeliny, obok jeziorka z możliwością wypożyczenia łódek, obok wodospadu i przez punkty widokowe. Niezapomniane dla dzieci — poczucie odkrywania innego świata. Seniorzy dają radę — przewaga płaskiego terenu, nieliczne schody.</div>
+        <div class="desc en">One of the largest rock complexes in Central Europe — a forest of sandstone towers and spires, the tallest reaching 100 m. The circular "Rock City" trail (~2.5 km) winds through narrow gaps, past a lake where rowboats can be hired, past a waterfall and viewpoints. Unforgettable for children — the feeling of discovering another world. Seniors can manage — mostly flat, only a few steps.</div>
+        <div class="tip">🚣 <span class="pl">Jeziorko Adršpašské — łódki do wypożyczenia, hit dla dzieci!</span><span class="en">Adršpach lake — rowboats for hire, kids absolutely love it!</span></div>
+        <div class="warn">⏰ <span class="pl">Parking wypełnia się przed 9:00 w sezonie! Przyjedź wcześnie lub zamów parking online.</span><span class="en">Car park fills up before 9 AM in season! Arrive early or book parking online.</span></div>
+        <br>
+        <a href="https://www.skaly-adrspach.cz" class="lnk" target="_blank">↗ skaly-adrspach.cz</a>
+        &nbsp;&nbsp;
+        <a href="https://pl.wikipedia.org/wiki/Ska%C5%82y_Adr%C5%A1pasko-Teplickie" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Adršpach rocks">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Adršpašské skály — Skalní město</div>
+      </div>
+
+      <!-- Teplice Rocks - opcja dla aktywnych -->
+      <div class="attraction" style="margin-top:.5rem">
+        <div class="option-label option-a">🔴 <span class="pl">Opcja extra — aktywni dorośli</span><span class="en">Extra option — active adults</span></div>
+        <div class="attraction-title">🌲 <span class="pl">Teplické skály — dzikszy brat Adršpach</span><span class="en">Teplice Rocks — Adršpach's wilder sibling</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Mniej znana, dzika część kompleksu — połączona z Adršpach szlakiem (~7 km łącznie). Bardziej wymagająca, mniej turystów, głębsze szczeliny, inny charakter. Jeśli po Adršpach zostanie energii i czasu, warto zajrzeć przynajmniej w pierwsze kilometry. Można wrócić tym samym szlakiem.</div>
+        <div class="desc en">The less-known, wilder section of the complex — connected to Adršpach by trail (~7 km combined). More demanding, fewer tourists, deeper gaps, different character. If energy and time allow after Adršpach, worth exploring at least the first few kilometres. Return along the same trail.</div>
+        <br>
+        <a href="https://pl.wikipedia.org/wiki/Ska%C5%82y_Teplickie" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Teplice rocks sandstone">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Teplické skály</div>
+      </div>
+
+      <!-- Broumov Monastery bonus -->
+      <div class="attraction" style="margin-top:.5rem">
+        <div class="attraction-title">⛪ <span class="pl">Klasztor w Broumowie — opcja wieczorna</span><span class="en">Broumov Monastery — evening option</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Tylko 10 min jazdy od Adršpach — jeden z najpiękniejszych klasztorów barokowych w Czechach, projekt braci Dientzenhoferów. Monumentalna bryła, ogrody, piękne wnętrza. Dobre miejsce na przerwę i kawę przed powrotem do noclegu. Centrum Broumowa też warte spaceru.</div>
+        <div class="desc en">Just 10 min drive from Adršpach — one of the finest Baroque monasteries in Czechia, designed by the Dientzenhofer brothers. Monumental architecture, gardens, beautiful interiors. A good place for a break and coffee before returning to accommodation. Broumov town centre is also worth a stroll.</div>
+        <div class="tip">💡 <span class="pl">Idealne na relaks po intensywnym dniu skalnym</span><span class="en">Perfect for winding down after an intense rocky day</span></div>
+        <br>
+        <a href="https://pl.wikipedia.org/wiki/Klasztor_w_Broumowie" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Broumov monastery">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Klasztor Broumów</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DAY 2 -->
+<section id="day2" style="padding-top:0">
+  <div class="container">
+    <div class="day-header d2" data-day="02">
+      <div class="tag"><span class="pl">Dzień 2</span><span class="en">Day 2</span> · Góry Stołowe · Polska 🇵🇱</div>
+      <h2 class="pl">Szczeliniec · Błędne Skały · Kudowa</h2>
+      <h2 class="en">Szczeliniec · Błędne Skały · Kudowa</h2>
+      <div class="sub pl">Widoki z Góry Stołowej · Labirynt skalny · Uzdrowisko</div>
+      <div class="sub en">Table Mountain views · Rock labyrinth · Spa town</div>
+    </div>
+    <div class="day-body">
+
+      <div class="options-note">
+        <strong>🗳️ <span class="pl">Opcje na dzień 2 — po polskiej stronie</span><span class="en">Day 2 options — on the Polish side</span></div></strong>
+        <span class="pl">Dzień 2 przenosimy się do polskich Gór Stołowych — zaledwie 30 min jazdy. Aktywni mogą wejść na Szczeliniec Wielki (schody, łańcuchy, panorama). Dla wszystkich: Błędne Skały — bajkowy labirynt skalny płaski jak stół. Opcja relaksacyjna: Kudowa-Zdrój z urokliwą Kaplicą Czaszek.</span>
+        <span class="en">Day 2 we cross into the Polish Góry Stołowe — just 30 min drive. Active visitors can climb Szczeliniec Wielki (steps, chains, panorama). For everyone: Błędne Skały — a magical flat rock labyrinth. Relaxation option: Kudowa-Zdrój with the quirky Chapel of Skulls.</span>
+      </div>
+
+      <!-- Szczeliniec Wielki -->
+      <div class="attraction">
+        <div class="option-label option-a">🔴 <span class="pl">Opcja A — aktywni dorośli + nastolatkowie</span><span class="en">Option A — active adults + teens</span></div>
+        <div class="attraction-title">⛰️ Szczeliniec Wielki <span style="font-size:.85rem;font-weight:400;color:var(--muted)">919 m n.p.m.</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Najwyższy punkt Gór Stołowych — wychodnia piaskowca z płaskim szczytem otoczonym pionowymi ścianami. Trasa na szczyt to drewniany schody i kilka sekcji z łańcuchami (~1,5 km w górę, 45 min). Na szczycie labirynt wąskich korytarzy między skałami i panorama 360° na Kotlinę Kłodzką, Śnieżkę i — przy dobrej widoczności — Tatry. Dostępna dla nastolatków i dorosłych w średniej kondycji.</div>
+        <div class="desc en">The highest point of Góry Stołowe — a sandstone outcrop with a flat summit surrounded by vertical walls. The route to the top uses wooden steps and a few chain sections (~1.5 km up, 45 min). At the summit: a labyrinth of narrow corridors between rocks and a 360° panorama over the Kłodzko Valley, Śnieżka and — on a clear day — the Tatras. Accessible for teens and adults of moderate fitness.</div>
+        <div class="tip">📸 <span class="pl">Widok na Tatry w dobry dzień — 200 km w linii prostej!</span><span class="en">Tatra views on a clear day — 200 km in a straight line!</span></div>
+        <br>
+        <a href="https://pl.wikipedia.org/wiki/Szczeliniec_Wielki" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Szczeliniec Wielki">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Szczeliniec Wielki — Góry Stołowe</div>
+      </div>
+
+      <!-- Błędne Skały -->
+      <div class="attraction" style="margin-top:.5rem">
+        <div class="option-label option-b">🟢 <span class="pl">Opcja B — wszyscy</span><span class="en">Option B — everyone</span></div>
+        <div class="attraction-title">🌀 <span class="pl">Błędne Skały — skalny labirynt</span><span class="en">Błędne Skały — rock labyrinth</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Jeden z najbardziej unikalnych tworów skalnych w Polsce — labirynt szczelin, korytarzy i komnat między piaskowcowymi blokami na płaskowyżu Gór Stołowych. Trasa jest niemal pozioma (~1,5 km pętla), wygodne ścieżki — idealne dla seniorów i małych dzieci. Atmosfera jest absolutnie bajkowa: wąskie szczeliny otwierają się na małe „pokoje" i ukryte przejścia.</div>
+        <div class="desc en">One of Poland's most unique rock formations — a labyrinth of crevices, corridors and chambers between sandstone blocks on the Góry Stołowe plateau. The trail is almost level (~1.5 km loop), comfortable paths — ideal for seniors and young children. The atmosphere is truly magical: narrow gaps open into small "rooms" and hidden passages.</div>
+        <div class="tip">✅ <span class="pl">Płaski teren — jeden z najlepszych skalnych szlaków dla seniorów w Polsce</span><span class="en">Flat ground — one of the best rocky trails for seniors in Poland</span></div>
+        <br>
+        <a href="https://pl.wikipedia.org/wiki/B%C5%82%C4%99dne_Ska%C5%82y" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Błędne Skały">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Błędne Skały — Góry Stołowe</div>
+      </div>
+
+      <!-- Kudowa-Zdrój -->
+      <div class="attraction" style="margin-top:.5rem">
+        <div class="option-label option-c">🔵 <span class="pl">Opcja C — wszyscy · relaks i ciekawostki</span><span class="en">Option C — everyone · relaxation & curiosities</span></div>
+        <div class="attraction-title">💀 <span class="pl">Kudowa-Zdrój — Kaplica Czaszek + uzdrowisko</span><span class="en">Kudowa-Zdrój — Chapel of Skulls + spa</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Słynne polskie uzdrowisko przy granicy czeskiej — z absolutnie unikalną atrakcją: <strong>Kaplicą Czaszek w Czermnej</strong>, wyłożoną kośćmi i czaszkami ok. 3000 ofiar wojen i epidemii z XVII–XVIII w. Makabryczna i niesamowita — dzieci i nastolatkowie będą w szoku (pozytywnym). W samym Kudowie: park zdrojowy, pijalnia wód mineralnych, spacer główną ulicą, lody.</div>
+        <div class="desc en">Famous Polish spa town on the Czech border — with a completely unique attraction: <strong>the Chapel of Skulls in Czermna</strong>, lined with the bones and skulls of some 3,000 victims of 17th–18th century wars and epidemics. Macabre and utterly fascinating — children and teens will be gobsmacked. In Kudowa itself: spa park, mineral water fountain, stroll down the main street, ice cream.</div>
+        <div class="tip">💡 <span class="pl">Kaplica Czaszek to jedna z 3 takich kaplic w Europie — absolutnie unikalna</span><span class="en">The Chapel of Skulls is one of only 3 such chapels in Europe — absolutely unique</span></div>
+        <br>
+        <a href="https://pl.wikipedia.org/wiki/Kaplica_czaszek_w_Czermnej" class="lnk" target="_blank">↗ Kaplica Czaszek</a>
+        &nbsp;&nbsp;
+        <a href="https://pl.wikipedia.org/wiki/Kudowa-Zdr%C3%B3j" class="lnk" target="_blank">↗ Kudowa-Zdrój</a>
+      </div>
+      <div class="strip-outer" data-wiki="Kudowa-Zdrój">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label">Kudowa-Zdrój — Kaplica Czaszek w Czermnej</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PRACTICAL -->
+<section style="padding-top:0">
+  <div class="container">
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--navy);margin-bottom:1.5rem">
+      <span class="pl">ℹ️ Informacje praktyczne</span>
+      <span class="en">ℹ️ Practical Info</span>
+    </h2>
+    <div class="pract-grid">
+      <div class="pract-card">
+        <div class="icon">🚗</div>
+        <h3 class="pl">Dojazd</h3><h3 class="en">Getting there</h3>
+        <p class="pl">Z Połańca do Adršpach: ~4h 30min<br>Przez Wrocław i Kłodzko<br>Czechy i Polska — brak wiz (Schengen)</p>
+        <p class="en">From Połaniec to Adršpach: ~4h 30min<br>Via Wrocław and Kłodzko<br>Czech Rep. & Poland — no visa (Schengen)</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">💴</div>
+        <h3 class="pl">Waluta</h3><h3 class="en">Currency</h3>
+        <p class="pl">Czechy = Korona Czeska (CZK)<br>~25 CZK = 1 PLN (orientacyjnie)<br>Polskie atrakcje — PLN</p>
+        <p class="en">Czech Rep. = Czech Koruna (CZK)<br>~25 CZK = 1 PLN (approximate)<br>Polish attractions — PLN</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">⏰</div>
+        <h3 class="pl">Adršpach — parking</h3><h3 class="en">Adršpach — parking</h3>
+        <p class="pl">Przyjedź przed 8:30!<br>Latem parking pełny do 9:00<br>Możliwość rezerwacji online</p>
+        <p class="en">Arrive before 8:30 AM!<br>In summer car park full by 9 AM<br>Online reservation available</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">🎟️</div>
+        <h3 class="pl">Bilety wstępu</h3><h3 class="en">Entry tickets</h3>
+        <p class="pl">Adršpach: ~120 CZK dorosły<br>Szczeliniec: ~20 PLN dorosły<br>Błędne Skały: ~15 PLN dorosły</p>
+        <p class="en">Adršpach: ~120 CZK adult<br>Szczeliniec: ~20 PLN adult<br>Błędne Skały: ~15 PLN adult</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>🪨 <strong>Skalne Miasto — Adršpach 2025</strong> &nbsp;·&nbsp;
+  <span class="pl">Plan wycieczki rodzinnej</span>
+  <span class="en">Family Trip Guide</span>
+  &nbsp;·&nbsp; <span style="font-size:.75rem">📷 Zdjęcia: Wikimedia Commons (CC)</span></p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map = L.map('map');
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(map);
+const _bounds=[];
+function mkr(lat,lng,color,title,desc,big){
+  const s=big?18:14;
+  const icon=L.divIcon({html:`<div style="background:${color};width:${s}px;height:${s}px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,.4)"></div>`,iconSize:[s,s],iconAnchor:[s/2,s/2],className:''});
+  L.marker([lat,lng],{icon}).addTo(map).bindPopup(`<strong>${title}</strong><br>${desc}`);
+  _bounds.push([lat,lng]);
+}
+mkr(50.430,21.573,'#C8860A','Połaniec','Baza wypadowa / Home base<br>~4h 30min jazdy',true);
+mkr(50.617,16.338,'#795548','Adršpach — Skalní město','Dzień 1 — Wszyscy razem<br>Jezioro z łódkami · Wodospad · Wieże skalne');
+mkr(50.597,16.365,'#37474F','Teplické skály','Dzień 1 — Opcja extra dla aktywnych<br>Dzikszy, mniej turystów');
+mkr(50.585,16.337,'#6D4C41','Klasztor Broumów','Opcja wieczorna<br>Barok · 10 min od Adršpach');
+mkr(50.486,16.342,'#C62828','Szczeliniec Wielki 919m','Dzień 2 — Opcja A<br>Schody + łańcuchy + panorama 360°<br>Aktywni dorośli i nastolatkowie');
+mkr(50.510,16.356,'#2E7D32','Błędne Skały','Dzień 2 — Opcja B<br>Skalny labirynt · Płaski · Wszyscy<br>Idealne dla seniorów i dzieci');
+mkr(50.438,16.246,'#1565C0','Kudowa-Zdrój','Dzień 2 — Opcja C<br>Kaplica Czaszek · Park Zdrojowy<br>Relaks · Uzdrowisko');
+map.fitBounds(_bounds,{padding:[30,30]});
+
+function toggleLang(){
+  const body=document.body,btn=document.querySelector('.lang-btn');
+  if(body.dataset.lang==='pl'){body.dataset.lang='en';btn.textContent='PL 🌐';}
+  else{body.dataset.lang='pl';btn.textContent='EN 🌐';}
+}
+
+async function fetchWikiImages(query){
+  const params=new URLSearchParams({action:'query',generator:'search',gsrsearch:query,gsrnamespace:6,gsrlimit:50,prop:'imageinfo',iiprop:'url',iiurlwidth:960,format:'json',origin:'*'});
+  const res=await fetch(`https://commons.wikimedia.org/w/api.php?${params}`);
+  const data=await res.json();
+  return Object.values(data.query?.pages||{})
+    .filter(p=>p.imageinfo&&!/\.(svg|gif|tiff|pdf|ogg|webm|ogv|mp4)/i.test(p.title))
+    .map(p=>p.imageinfo[0].thumburl||p.imageinfo[0].url)
+    .filter(Boolean);
+}
+
+function buildStrip(outer,urls){
+  const track=outer.querySelector('.strip-track');
+  const countEl=outer.querySelector('.strip-count');
+  track.innerHTML='';
+  countEl.textContent=`📷 ${urls.length} zdjęć`;
+  const sets=Math.max(3,Math.ceil(3000/(urls.length*200+1)))+2;
+  for(let s=0;s<sets;s++) urls.forEach(src=>{const img=document.createElement('img');img.src=src;img.loading='lazy';track.appendChild(img);});
+  let pos=0,paused=false,dragStart=null,dragPos=0;
+  function oneSet(){let t=0;track.querySelectorAll('img').forEach((img,i)=>{if(i<urls.length)t+=img.offsetWidth+4;});return t||urls.length*290;}
+  function loop(){if(!paused){pos+=0.45;const w=oneSet();if(w>0&&pos>=w)pos-=w;}track.style.transform=`translateX(${-pos}px)`;requestAnimationFrame(loop);}
+  loop();
+  outer.addEventListener('mouseenter',()=>{paused=true;});
+  outer.addEventListener('mouseleave',()=>{paused=false;});
+  function sd(x){paused=true;dragStart=x;dragPos=pos;}
+  function md(x){if(dragStart===null)return;pos=dragPos+(dragStart-x);const w=oneSet();if(w>0){if(pos<0)pos+=w;if(pos>w*sets)pos-=w;}}
+  function ed(){dragStart=null;paused=false;}
+  outer.addEventListener('mousedown',e=>sd(e.clientX));
+  window.addEventListener('mousemove',e=>{if(dragStart!==null)md(e.clientX);});
+  window.addEventListener('mouseup',ed);
+  outer.addEventListener('touchstart',e=>sd(e.touches[0].clientX),{passive:true});
+  outer.addEventListener('touchmove',e=>md(e.touches[0].clientX),{passive:true});
+  outer.addEventListener('touchend',ed);
+}
+
+document.querySelectorAll('.strip-outer[data-urls]').forEach(outer=>{
+  const urls=outer.dataset.urls.split('|').filter(Boolean);
+  if(urls.length) buildStrip(outer,urls);
+});
+
+document.querySelectorAll('.strip-outer[data-wiki]').forEach(async outer=>{
+  try{
+    const urls=await fetchWikiImages(outer.dataset.wiki);
+    if(!urls.length){outer.querySelector('.strip-track').innerHTML='<div class="strip-loading">Brak zdjęć</div>';return;}
+    buildStrip(outer,urls);
+  }catch{outer.querySelector('.strip-track').innerHTML='<div class="strip-loading">Błąd ładowania</div>';}
+});
+</script>
+</body>
+</html>
