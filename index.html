@@ -119,6 +119,58 @@ main{max-width:960px;margin:0 auto;padding:3rem 1.5rem 5rem}
 footer{background:var(--navy);color:rgba(255,255,255,.4);text-align:center;padding:1.5rem;font-size:.8rem}
 footer strong{color:var(--gold)}
 
+/* ── REZERWACJE ─────────────────────────────── */
+.bookings-section{background:#fff;border-bottom:2px solid #EEE;padding:2.5rem 1.5rem}
+.bookings-inner{max-width:960px;margin:0 auto}
+
+.booking-card{border-radius:1.1rem;overflow:hidden;box-shadow:0 6px 32px rgba(0,0,0,.1);border:1px solid #E4E4E4}
+
+.booking-top{background:var(--navy);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.6rem}
+.booking-confirmed{background:#2E7D32;color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .85rem;border-radius:2rem}
+.booking-top-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:#fff}
+.booking-top-title a{color:var(--gold);text-decoration:none}
+.booking-top-title a:hover{text-decoration:underline}
+.booking-dates-badge{background:var(--gold);color:#fff;font-size:.78rem;font-weight:700;padding:.3rem .9rem;border-radius:2rem}
+
+.booking-body{display:grid;grid-template-columns:300px 1fr;min-height:220px}
+.booking-photo img{width:300px;height:100%;object-fit:cover;display:block}
+
+.booking-info{padding:1.4rem 1.6rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem 1.5rem;align-content:start;background:var(--light)}
+.b-block h4{font-size:.65rem;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);font-weight:700;margin-bottom:.3rem}
+.b-block p,.b-block a{font-size:.88rem;color:var(--text);line-height:1.65;text-decoration:none}
+.b-block a{color:var(--teal)}
+.b-block a:hover{text-decoration:underline}
+.b-price{background:var(--navy);border-radius:.75rem;padding:1rem 1.25rem;text-align:center;color:#fff}
+.b-price .p-main{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--gold);line-height:1}
+.b-price .p-sub{font-size:.75rem;color:rgba(255,255,255,.55);margin-top:.3rem;line-height:1.5}
+
+.booking-photos{display:flex;overflow-x:auto;gap:4px;background:#111;scrollbar-width:none}
+.booking-photos::-webkit-scrollbar{display:none}
+.booking-photos img{height:160px;width:auto;min-width:220px;object-fit:cover;flex-shrink:0;cursor:pointer;transition:opacity .2s}
+.booking-photos img:hover{opacity:.85}
+
+.booking-extra{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid #EEE}
+.booking-rooms{padding:1.25rem 1.6rem;background:#fff;font-size:.85rem;line-height:1.7;border-right:1px solid #EEE}
+.booking-rooms h4{font-size:.65rem;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);font-weight:700;margin-bottom:.6rem}
+.booking-rooms .floor{font-weight:700;color:var(--navy);font-size:.82rem;margin-top:.5rem}
+.booking-rooms ul{margin-left:.5rem}
+.booking-rooms li{list-style:none;padding:.05rem 0}
+.booking-rooms li::before{content:'· ';color:var(--gold)}
+.booking-food{padding:1.25rem 1.6rem;background:#fff;font-size:.85rem;line-height:1.7}
+.booking-food h4{font-size:.65rem;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);font-weight:700;margin-bottom:.6rem}
+
+.booking-map{border-top:1px solid #EEE}
+.booking-map iframe{width:100%;height:200px;border:none;display:block}
+
+@media(max-width:680px){
+  .booking-body{grid-template-columns:1fr}
+  .booking-photo img{width:100%;height:200px}
+  .booking-info{grid-template-columns:1fr}
+  .booking-extra{grid-template-columns:1fr}
+  .booking-rooms{border-right:none;border-bottom:1px solid #EEE}
+}
+/* ── END REZERWACJE ─────────────────────────── */
+
 @media(max-width:500px){
   .hero-logo{font-size:2.2rem}
   .trips-grid{grid-template-columns:1fr}
@@ -134,6 +186,149 @@ footer strong{color:var(--gold)}
     <div class="hero-logo">trip<span>mate</span> 🦘</div>
   </div>
 </div>
+
+<!-- ══════════ REZERWACJE ══════════ -->
+<section class="bookings-section">
+  <div class="bookings-inner">
+    <div class="section-label" style="margin-bottom:1.25rem">
+      <span class="pl">📋 Rezerwacje</span><span class="en">📋 Bookings</span>
+    </div>
+
+    <!-- Dom pod Jemiołą -->
+    <div class="booking-card">
+
+      <div class="booking-top">
+        <span class="booking-confirmed">✅ <span class="pl">Potwierdzone</span><span class="en">Confirmed</span></span>
+        <span class="booking-top-title">
+          <a href="https://www.dompodjemiola.pl/" target="_blank">Dom pod Jemiołą</a>
+          <span style="color:rgba(255,255,255,.5);font-family:'Inter',sans-serif;font-size:.85rem;font-weight:400"> — Szczawnica</span>
+        </span>
+        <span class="booking-dates-badge">28 Cze – 1 Lip 2026 · 3 <span class="pl">noce</span><span class="en">nights</span></span>
+      </div>
+
+      <div class="booking-body">
+        <div class="booking-photo">
+          <img src="https://www.dompodjemiola.pl/files/1-20.jpg" alt="Dom pod Jemiołą">
+        </div>
+        <div class="booking-info">
+
+          <div class="b-block b-price" style="grid-column:1/-1">
+            <div class="p-main">5 700 zł</div>
+            <div class="p-sub">
+              <span class="pl">całość za 3 noce · 712 zł/os dorosła · dzieci gratis 🎉</span>
+              <span class="en">total for 3 nights · 712 PLN/adult · children free 🎉</span>
+            </div>
+          </div>
+
+          <div class="b-block">
+            <h4>📍 <span class="pl">Adres</span><span class="en">Address</span></h4>
+            <p>Św. Krzyża 49<br>34-460 Szczawnica</p>
+            <a href="https://www.google.com/maps?ll=49.42851,20.495895&z=14&q=49.42851,20.495895" target="_blank">↗ <span class="pl">Otwórz w Google Maps</span><span class="en">Open in Google Maps</span></a>
+          </div>
+
+          <div class="b-block">
+            <h4>📞 <span class="pl">Kontakt</span><span class="en">Contact</span></h4>
+            <p><a href="tel:+48503119520">503 119 520</a><br>
+            <a href="mailto:biuro@dompodjemiola.pl">biuro@dompodjemiola.pl</a></p>
+          </div>
+
+          <div class="b-block">
+            <h4>🚗 <span class="pl">Dojazd z Połańca</span><span class="en">Drive from Połaniec</span></h4>
+            <p class="pl">~2,5h · przez Nowy Sącz<br>Parking przy domku</p>
+            <p class="en">~2.5h · via Nowy Sącz<br>Parking on site</p>
+          </div>
+
+          <div class="b-block">
+            <h4>🍽️ <span class="pl">Jedzenie z dowozu</span><span class="en">Food delivery</span></h4>
+            <p class="pl">Obiad 45 zł/os · Śniadanie 400 zł/wszyscy<br><em style="font-size:.8rem;color:var(--muted)">Zamówienie dzień wcześniej</em></p>
+            <p class="en">Lunch 45 PLN/pp · Breakfast 400 PLN/all<br><em style="font-size:.8rem;color:var(--muted)">Order the day before</em></p>
+            <a href="https://www.dompodjemiola.pl/kuchnia.html" target="_blank" style="font-size:.8rem">↗ <span class="pl">Menu i szczegóły</span><span class="en">Menu & details</span></a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Photo strip -->
+      <div class="booking-photos">
+        <img src="https://www.dompodjemiola.pl/files/46o.jpg" alt="">
+        <img src="https://www.dompodjemiola.pl/files/1-6.jpg" alt="">
+        <img src="https://www.dompodjemiola.pl/files/31s.jpg" alt="">
+        <img src="https://www.dompodjemiola.pl/files/42s.jpg" alt="">
+        <img src="https://www.dompodjemiola.pl/files/22w.jpg" alt="">
+        <img src="https://www.dompodjemiola.pl/files/1-20.jpg" alt="">
+      </div>
+
+      <!-- Room layout + food -->
+      <div class="booking-extra">
+        <div class="booking-rooms">
+          <h4>🏠 <span class="pl">Układ willi (4 sypialnie)</span><span class="en">Villa layout (4 bedrooms)</span></h4>
+          <div class="floor pl">Piwnica</div>
+          <ul><li>Pralnia · kącik dla dzieci</li></ul>
+          <div class="floor pl">Parter</div>
+          <ul>
+            <li>Sypialnia (2 dorosłych + 1 dziecko) · wanna</li>
+            <li>Salon z antresolą i kominkiem · taras</li>
+            <li>Kuchnia z jadalnią</li>
+            <li>Garaż: ping-pong · dart</li>
+          </ul>
+          <div class="floor pl">1. piętro</div>
+          <ul>
+            <li>Główna sypialnia + łazienka + garderoba (2 os.)</li>
+            <li>Sypialnia z PS5 (maks. 4 os.)</li>
+            <li>Sypialnia (2 dorosłych + 2 dzieci)</li>
+            <li>Łazienka z prysznicem</li>
+          </ul>
+          <div class="floor en">Basement</div>
+          <ul class="en"><li>Laundry · kids' corner</li></ul>
+          <div class="floor en">Ground floor</div>
+          <ul class="en">
+            <li>Bedroom (2 adults + 1 child) · bathtub</li>
+            <li>Living room with mezzanine + fireplace · terrace</li>
+            <li>Kitchen + dining area</li>
+            <li>Garage: ping-pong · darts</li>
+          </ul>
+          <div class="floor en">1st floor</div>
+          <ul class="en">
+            <li>Master bedroom + bathroom + wardrobe (2 pp)</li>
+            <li>Bedroom with PS5 (max 4 pp)</li>
+            <li>Bedroom (2 adults + 2 children)</li>
+            <li>Shower bathroom</li>
+          </ul>
+        </div>
+        <div class="booking-food">
+          <h4>📅 <span class="pl">Plan wycieczki</span><span class="en">Trip plan</span></h4>
+          <p class="pl" style="line-height:2">
+            <strong>D1 — 28 Cze</strong> · Przyjazd ~15:00<br>
+            <strong>D2 — 29 Cze</strong> · 🏔️ Morskie Oko<br>
+            <strong>D3 — 30 Cze</strong> · 🛶 Spływ Dunajcem<br>
+            <strong>D4 — 1 Lip</strong> · 🪨 Wąwóz Homole · wyjazd
+          </p>
+          <p class="en" style="line-height:2">
+            <strong>D1 — 28 Jun</strong> · Arrival ~3pm<br>
+            <strong>D2 — 29 Jun</strong> · 🏔️ Morskie Oko<br>
+            <strong>D3 — 30 Jun</strong> · 🛶 Dunajec rafting<br>
+            <strong>D4 — 1 Jul</strong> · 🪨 Homole Gorge · depart
+          </p>
+          <a href="pieniny/" style="display:inline-block;margin-top:.75rem;background:var(--navy);color:white;padding:.45rem 1.1rem;border-radius:2rem;font-size:.82rem;font-weight:700;text-decoration:none">
+            <span class="pl">→ Szczegóły wycieczki</span><span class="en">→ Trip details</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Map -->
+      <div class="booking-map">
+        <iframe
+          src="https://maps.google.com/maps?q=49.428510,20.495895&z=15&output=embed&hl=pl"
+          allowfullscreen loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Dom pod Jemiołą — Szczawnica">
+        </iframe>
+      </div>
+
+    </div><!-- /booking-card -->
+  </div>
+</section>
+<!-- ══════════ END REZERWACJE ══════════ -->
 
 <main>
   <div class="section-label pl">Wycieczki / Trips</div>
