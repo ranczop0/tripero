@@ -3,57 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pieniny & Tatry 2025</title>
+<title>Pieniny & Tatry — Czerwiec 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --navy:#1B3A4B;--gold:#C8860A;--teal:#2A7F8A;
-  --green:#2E7D32;--purple:#4A235A;
+  --green:#2E7D32;--purple:#4A235A;--red:#C62828;
   --light:#F8F6F2;--white:#fff;--text:#2C2C2C;--muted:#777;
 }
 html{scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);line-height:1.7}
 
-.back-btn{
-  position:fixed;top:14px;left:1rem;z-index:999;
-  background:rgba(0,0,0,.45);color:white;border:none;
-  padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:600;
-  cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3);
-  transition:background .2s;
-}
+.back-btn{position:fixed;top:14px;left:1rem;z-index:999;background:rgba(0,0,0,.45);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:600;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:background .2s}
 .back-btn:hover{background:rgba(0,0,0,.7)}
-.lang-btn{
-  position:fixed;top:14px;right:1rem;z-index:999;
-  background:var(--gold);color:white;border:none;
-  padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:700;
-  cursor:pointer;letter-spacing:.05em;box-shadow:0 2px 8px rgba(0,0,0,.3);
-  transition:opacity .2s;
-}
+.lang-btn{position:fixed;top:14px;right:1rem;z-index:999;background:var(--gold);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:700;cursor:pointer;letter-spacing:.05em;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:opacity .2s}
 .lang-btn:hover{opacity:.85}
 [data-lang="en"] .pl{display:none}
 [data-lang="pl"] .en{display:none}
 
-.hero{
-  position:relative;min-height:75vh;
-  background:linear-gradient(160deg,var(--navy) 0%,#2A5A72 60%,var(--teal) 100%);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:4rem 1.5rem 6rem;overflow:hidden;
-}
-.hero::before{
-  content:'';position:absolute;inset:0;
-  background:url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Jezioro_Czorsztynskie_1.jpg/1280px-Jezioro_Czorsztynskie_1.jpg') center/cover;
-  opacity:.2;
-}
+/* HERO */
+.hero{position:relative;min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 1.5rem 6rem;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Jezioro_Czorsztynskie_1.jpg/1280px-Jezioro_Czorsztynskie_1.jpg') center/cover;opacity:.22}
+.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(10,30,50,.8) 0%,rgba(20,60,80,.65) 55%,rgba(10,40,30,.75) 100%)}
 .hero-content{position:relative;z-index:1;max-width:680px}
-.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.6rem,8vw,5rem);color:white;line-height:1.1;margin-bottom:1rem}
+.hero .sub-title{font-size:.9rem;color:rgba(255,255,255,.5);letter-spacing:.12em;text-transform:uppercase;font-weight:500;margin-bottom:.6rem}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,7vw,4.5rem);color:white;line-height:1.1;margin-bottom:.8rem}
 .hero h1 span{color:var(--gold)}
-.hero .tagline{font-size:1.05rem;color:rgba(255,255,255,.75);margin-bottom:.3rem}
-.hero .tagline.en{font-style:italic;color:rgba(255,255,255,.5);font-size:.95rem}
+.hero .tagline{font-size:1rem;color:rgba(255,255,255,.75);margin-bottom:.3rem}
+.hero .tagline.en{font-style:italic;color:rgba(255,255,255,.5);font-size:.93rem}
 .scroll-hint{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.4);font-size:.8rem;animation:bounce 2s infinite}
 @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
 
+/* ACCOMMODATION REFERENCE */
+.accom-ref{background:white;border-bottom:1px solid #EEE;padding:1.25rem 1.5rem}
+.accom-ref-inner{max-width:880px;margin:0 auto;display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap}
+.accom-ref img{width:72px;height:72px;object-fit:cover;border-radius:.6rem;flex-shrink:0}
+.accom-ref-body{flex:1;min-width:180px}
+.accom-ref-body h4{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.15rem}
+.accom-ref-body p{font-size:.82rem;color:var(--muted);line-height:1.5}
+.accom-ref-link{flex-shrink:0;background:var(--navy);color:white;text-decoration:none;padding:.45rem 1.1rem;border-radius:2rem;font-size:.8rem;font-weight:700;transition:background .2s;white-space:nowrap}
+.accom-ref-link:hover{background:var(--gold)}
+
+/* MAP */
 .map-section{background:var(--navy);padding:3.5rem 1.5rem}
 .map-section h2{font-family:'Playfair Display',serif;font-size:1.8rem;color:white;margin-bottom:.3rem}
 .map-section .sub{color:rgba(255,255,255,.5);font-style:italic;margin-bottom:1.5rem;font-size:.9rem}
@@ -62,31 +55,25 @@ body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);li
 .map-legend div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:.5rem;padding:.5rem 1rem;color:white;font-size:.85rem}
 .map-legend strong{color:var(--gold)}
 
+/* DAY SECTIONS */
 section{padding:4rem 1.5rem}
 .container{max-width:880px;margin:0 auto}
-
 .day-header{border-radius:1rem 1rem 0 0;padding:1.75rem 2rem;position:relative;overflow:hidden}
 .day-header::after{content:attr(data-day);position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-family:'Playfair Display',serif;font-size:5.5rem;font-weight:700;color:rgba(255,255,255,.07);line-height:1;pointer-events:none}
 .day-header .tag{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:600;margin-bottom:.35rem}
 .day-header h2{font-family:'Playfair Display',serif;font-size:1.75rem;color:white;line-height:1.2}
 .day-header .sub{font-size:.9rem;color:rgba(255,255,255,.6);margin-top:.25rem;font-style:italic}
-.d1{background:linear-gradient(135deg,var(--navy),#2A5A72)}
-.d2{background:linear-gradient(135deg,var(--green),#1B5E20)}
-.d3{background:linear-gradient(135deg,var(--purple),#6A1B9A)}
-.day-body{background:white;border-radius:0 0 1rem 1rem;box-shadow:0 8px 40px rgba(0,0,0,.08);margin-bottom:3rem;overflow:hidden}
+.d1{background:linear-gradient(135deg,#1B3A4B,#2A5A72)}
+.d2{background:linear-gradient(135deg,#1a237e,#283593)}
+.d3{background:linear-gradient(135deg,var(--green),#1B5E20)}
+.d4{background:linear-gradient(135deg,#4A1942,#7B1FA2)}
+.day-body{background:white;border-radius:0 0 1rem 1rem;box-shadow:0 8px 40px rgba(0,0,0,.08);margin-bottom:2rem;overflow:hidden}
 
-/* ── INFINITE SCROLL STRIP ── */
-.strip-outer{position:relative;overflow:hidden;height:230px;background:#111;cursor:grab;user-select:none}
-.strip-outer:active{cursor:grabbing}
-.strip-track{display:flex;height:100%;width:max-content;will-change:transform;transition:none}
-.strip-track img{height:100%;width:auto;min-width:260px;max-width:400px;object-fit:cover;margin-right:4px;flex-shrink:0;pointer-events:none;display:block}
-.strip-loading{display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,.4);font-size:.85rem;letter-spacing:.05em}
-.strip-count{
-  position:absolute;top:.6rem;right:.75rem;
-  background:rgba(0,0,0,.5);color:rgba(255,255,255,.7);
-  font-size:.7rem;padding:.2rem .55rem;border-radius:1rem;pointer-events:none;
-}
-.strip-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.55));color:rgba(255,255,255,.8);font-size:.75rem;padding:.4rem .85rem 1rem;font-style:italic;pointer-events:none}
+.options-note{background:#F3F4F6;border-left:4px solid var(--gold);padding:1rem 1.5rem;margin:1.25rem 1.75rem;border-radius:0 .5rem .5rem 0;font-size:.9rem;color:var(--navy)}
+.options-note strong{display:block;margin-bottom:.25rem;color:var(--gold)}
+.tag-senior{display:inline-flex;align-items:center;gap:.3rem;background:#E3F2FD;color:#1565C0;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:.35rem;margin-right:.3rem}
+.tag-active{display:inline-flex;align-items:center;gap:.3rem;background:#FCE4EC;color:#C62828;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:.35rem;margin-right:.3rem}
+.tag-all{display:inline-flex;align-items:center;gap:.3rem;background:#E8F5E9;color:#2E7D32;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:.35rem;margin-right:.3rem}
 
 .attraction{padding:1.4rem 1.75rem 1rem;border-bottom:1px solid #F0F0F0}
 .attraction:last-child{border-bottom:none}
@@ -95,13 +82,19 @@ section{padding:4rem 1.5rem}
 .desc{font-size:.93rem;margin-bottom:.3rem}
 .desc.en{color:var(--muted);font-style:italic;margin-bottom:.7rem}
 .tip{display:inline-flex;align-items:center;gap:.4rem;background:#E8F5E9;color:var(--green);font-size:.83rem;font-weight:600;padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem}
+.warn{display:inline-flex;align-items:center;gap:.4rem;background:#FFF3E0;color:#E65100;font-size:.83rem;font-weight:600;padding:.3rem .75rem;border-radius:.35rem;margin-bottom:.7rem}
 .lnk{color:var(--teal);font-size:.83rem;font-weight:500;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
 .lnk:hover{border-color:var(--teal)}
 
-.arrival-note{background:linear-gradient(135deg,#EBF5FB,#FFF8E7);border-left:4px solid var(--gold);padding:1rem 1.5rem;margin:1.25rem 1.75rem;border-radius:0 .5rem .5rem 0;font-size:.9rem;color:var(--navy)}
-.arrival-note strong{display:block;margin-bottom:.25rem;color:var(--gold);font-size:.95rem}
+.strip-outer{position:relative;overflow:hidden;height:230px;background:#111;cursor:grab;user-select:none}
+.strip-outer:active{cursor:grabbing}
+.strip-track{display:flex;height:100%;width:max-content;will-change:transform}
+.strip-track img{height:100%;width:auto;min-width:260px;max-width:400px;object-fit:cover;margin-right:4px;flex-shrink:0;pointer-events:none;display:block}
+.strip-loading{display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,.4);font-size:.85rem}
+.strip-count{position:absolute;top:.6rem;right:.75rem;background:rgba(0,0,0,.5);color:rgba(255,255,255,.7);font-size:.7rem;padding:.2rem .55rem;border-radius:1rem;pointer-events:none}
+.strip-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.55));color:rgba(255,255,255,.8);font-size:.75rem;padding:.4rem .85rem 1rem;font-style:italic;pointer-events:none}
 
-.pract-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem}
+.pract-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
 .pract-card{background:white;border-radius:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.07);padding:1.4rem}
 .pract-card .icon{font-size:1.8rem;margin-bottom:.6rem}
 .pract-card h3{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.15rem}
@@ -111,9 +104,8 @@ footer{background:var(--navy);color:rgba(255,255,255,.45);text-align:center;padd
 footer strong{color:var(--gold)}
 
 @media(max-width:600px){
-  .hero h1{font-size:2.4rem}
-  .day-header{padding:1.25rem 1.25rem}
-  .attraction{padding:1.1rem 1.25rem .8rem}
+  .hero h1{font-size:2.2rem}
+  .accom-ref img{display:none}
   .strip-outer{height:180px}
 }
 </style>
@@ -123,163 +115,252 @@ footer strong{color:var(--gold)}
 <a class="back-btn" href="../">← <span class="pl">Wycieczki</span><span class="en">All Trips</span></a>
 <button class="lang-btn" onclick="toggleLang()">EN 🌐</button>
 
+<!-- HERO -->
 <div class="hero">
   <div class="hero-content">
+    <div class="sub-title">28 Cze – 1 Lip 2026 · Szczawnica</div>
     <h1>Pieniny<br><span>&</span> Tatry</h1>
-    <p class="tagline pl">Wycieczka rodzinna · 3 dni · czerwiec 2025</p>
-    <p class="tagline en">Family Trip · 3 Days · June 2025</p>
+    <p class="tagline pl">Wycieczka rodzinna · 3 noce · 4 dni · 13 osób 🏔️</p>
+    <p class="tagline en">Family trip · 3 nights · 4 days · 13 people 🏔️</p>
   </div>
   <div class="scroll-hint">↓</div>
 </div>
 
+<!-- ACCOMMODATION REFERENCE -->
+<div class="accom-ref">
+  <div class="accom-ref-inner">
+    <img src="https://www.dompodjemiola.pl/files/1-20.jpg" alt="Dom pod Jemiołą">
+    <div class="accom-ref-body">
+      <h4>🏡 Dom pod Jemiołą — Szczawnica</h4>
+      <p class="pl">28 Cze – 1 Lip 2026 · 3 noce · 4 sypialnie · 13 osób · 5 700 zł ✅ Potwierdzone</p>
+      <p class="en">28 Jun – 1 Jul 2026 · 3 nights · 4 bedrooms · 13 people · 5,700 PLN ✅ Confirmed</p>
+    </div>
+    <a class="accom-ref-link" href="../dompodjemiola/">
+      <span class="pl">→ Szczegóły noclegu</span>
+      <span class="en">→ Accommodation details</span>
+    </a>
+  </div>
+</div>
+
+<!-- MAP -->
 <div class="map-section" id="mapa">
   <div class="container">
-    <h2 class="pl">📍 Plan wycieczki — mapa</h2>
+    <h2 class="pl">📍 Mapa wycieczki</h2>
     <h2 class="en">📍 Trip Map</h2>
-    <p class="sub pl">Odległości z Połańca · kliknij znacznik aby zobaczyć więcej</p>
-    <p class="sub en">Distances from Połaniec · click a marker for details</p>
+    <p class="sub pl">Szczawnica jako baza · kliknij znacznik aby zobaczyć więcej</p>
+    <p class="sub en">Szczawnica as base · click a marker for details</p>
     <div id="map"></div>
     <div class="map-legend">
-      <div><strong>🟠 Połaniec</strong> — baza / base</div>
-      <div><strong>🔵 Czorsztyn</strong> — ~2.5h</div>
-      <div><strong>🟢 Spływ Dunajcem</strong> — ~2.5h</div>
-      <div><strong>🟣 Morskie Oko</strong> — ~3h</div>
+      <div><strong>🟠 Połaniec</strong> — <span class="pl">start</span><span class="en">start</span></div>
+      <div><strong>🏡 Szczawnica</strong> — <span class="pl">baza</span><span class="en">base</span></div>
+      <div><strong>🔵 D2 — Morskie Oko</strong></div>
+      <div><strong>🟢 D3 — Spływ Dunajcem</strong></div>
+      <div><strong>🟣 D4 — Wąwóz Homole</strong></div>
     </div>
   </div>
 </div>
 
-<!-- DAY 1 -->
+<!-- D1 -->
 <section id="day1">
   <div class="container">
     <div class="day-header d1" data-day="01">
-      <div class="tag"><span class="pl">Dzień 1</span><span class="en">Day 1</span> · Czorsztyn</div>
-      <h2 class="pl">Przyjazd & Czorsztyn</h2>
-      <h2 class="en">Arrival & Czorsztyn</h2>
-      <div class="sub pl">Zamek · Rejs · E-rowery</div>
-      <div class="sub en">Castle · Lake Cruise · E-bikes</div>
+      <div class="tag">28 CZE · <span class="pl">Dzień 1</span><span class="en">Day 1</span></div>
+      <h2 class="pl">Przyjazd — Szczawnica</h2>
+      <h2 class="en">Arrival — Szczawnica</h2>
+      <div class="sub pl">Wyjazd ~12:30 · zameldowanie od 15:00 · wolny wieczór</div>
+      <div class="sub en">Leave ~12:30 · check-in from 3pm · free evening</div>
     </div>
     <div class="day-body">
-      <div class="arrival-note">
-        <strong>🚗 <span class="pl">Przyjazd</span><span class="en">Arrival</span></strong>
-        <span class="pl">Przejazd z Połańca do Czorsztyna (~2.5h przez Nowy Sącz). Po przyjeździe zameldowanie i opcjonalne atrakcje:</span>
-        <span class="en">Drive from Połaniec to Czorsztyn (~2.5h via Nowy Sącz). After check-in, optional activities:</span>
+      <div class="attraction">
+        <div class="attraction-title">🚗 <span class="pl">Transfer z Połańca</span><span class="en">Drive from Połaniec</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Połaniec → Szczawnica przez Nowy Sącz (~2,5h). Wyjazd ok. 12:30, przyjazd ~15:00. Po zameldowaniu wolny wieczór — spacer po Szczawnicy, kolacja, pierwszy rzut oka na Pieniny.</div>
+        <div class="desc en">Połaniec → Szczawnica via Nowy Sącz (~2.5h). Leave at ~12:30, arrive ~15:00. After check-in, a free evening — walk around Szczawnica, dinner, first glimpse of the Pieniny.</div>
+        <div class="tip">🏡 <span class="pl">Nocleg: Dom pod Jemiołą — zameldowanie od 15:00</span><span class="en">Accommodation: Dom pod Jemiołą — check-in from 3pm</span></div>
+      </div>
+
+      <div class="options-note">
+        <strong class="pl">Opcje na popołudnie — jeśli energia pozwala</strong>
+        <strong class="en">Afternoon options — if energy allows</strong>
+        <span class="pl">Dzień przyjazdowy jest lekki. Poniżej dwie opcje dla chętnych.</span>
+        <span class="en">Arrival day is relaxed. Two options below for those who want more.</span>
       </div>
 
       <div class="attraction">
-        <div class="attraction-title">🏰 <span class="pl">Zamek Czorsztyn</span><span class="en">Czorsztyn Castle</span></div>
+        <div class="attraction-title">🏰 <span class="pl">Zamek Niedzica</span><span class="en">Niedzica Castle</span></div>
         <div class="gold-line"></div>
-        <div class="desc pl">Ruiny gotyckiego zamku z XIV w. z panoramą na jezioro i zamek Niedzica. Zwiedzanie ok. 1.5h, częściowo dostępne dla seniorów.</div>
-        <div class="desc en">14th-century Gothic castle ruins with panoramic views of the lake and Niedzica Castle. ~1.5h visit, partially accessible for seniors.</div>
-        <a href="https://zamek-czorsztyn.pl" class="lnk" target="_blank">↗ zamek-czorsztyn.pl</a>
+        <span class="tag-all">👨‍👩‍👧 <span class="pl">dla wszystkich</span><span class="en">for all</span></span>
+        <br><br>
+        <div class="desc pl">Jeden z najpiękniejszych zamków w Polsce, wzniesiony bezpośrednio nad Jeziorem Czorsztyńskim (~20 min jazdy od Szczawnicy). Dobrze zachowany, z muzeum i widokiem na Tatry. Łatwy spacer po terenie — odpowiedni dla seniorów i dzieci.</div>
+        <div class="desc en">One of Poland's finest castles, built directly above Lake Czorsztyn (~20 min drive from Szczawnica). Well-preserved, with a museum and Tatra views. Easy walk around the grounds — suitable for seniors and children.</div>
+        <div class="warn">🎟️ <span class="pl">Kup bilety online z wyprzedzeniem!</span><span class="en">Buy tickets online in advance!</span></div>
+        <a href="https://zamekniedzica.pl/" class="lnk" target="_blank">↗ zamekniedzica.pl</a>
         &nbsp;&nbsp;
-        <a href="https://pl.wikipedia.org/wiki/Zamek_w_Czorsztynie" class="lnk" target="_blank">↗ Wikipedia</a>
+        <a href="https://pl.wikipedia.org/wiki/Zamek_w_Niedzicy" class="lnk" target="_blank">↗ Wikipedia</a>
       </div>
-      <div class="strip-outer" data-wiki="Czorsztyn Castle" data-label-pl="Zamek Czorsztyn" data-label-en="Czorsztyn Castle">
+      <div class="strip-outer" data-wiki="Niedzica Castle Poland">
         <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
         <div class="strip-count"></div>
-        <div class="strip-label"><span class="pl">Zamek Czorsztyn</span><span class="en">Czorsztyn Castle</span></div>
+        <div class="strip-label"><span class="pl">Zamek Niedzica</span><span class="en">Niedzica Castle</span></div>
       </div>
 
       <div class="attraction">
-        <div class="attraction-title">⛵ <span class="pl">Rejs po Jeziorze Czorsztyńskim</span><span class="en">Boat Cruise on Lake Czorsztyn</span></div>
+        <div class="attraction-title">⛵ <span class="pl">Rejs po Jeziorze Czorsztyńskim</span><span class="en">Boat cruise on Lake Czorsztyn</span></div>
         <div class="gold-line"></div>
-        <div class="desc pl">Rejs stateczkiem z widokiem na oba zamki i Tatry. Bezpieczne dla dzieci, ok. 45 min. Idealne popołudnie po przyjeździe.</div>
-        <div class="desc en">Boat cruise with views of both castles and the Tatras. Safe for children, ~45 min. Perfect afternoon after arrival.</div>
-        <a href="https://www.pieniny.com/pl" class="lnk" target="_blank">↗ pieniny.com</a>
-        &nbsp;&nbsp;
+        <span class="tag-all">👨‍👩‍👧 <span class="pl">dla wszystkich</span><span class="en">for all</span></span>
+        <span class="tag-senior">🧓 <span class="pl">seniorzy OK</span><span class="en">seniors OK</span></span>
+        <br><br>
+        <div class="desc pl">Spokojny rejs stateczkiem z widokiem na oba zamki (Niedzica i Czorsztyn) oraz Tatry w tle. ~45 min, bezpieczne dla małych dzieci. Idealne popołudniowe zajęcie dla całej grupy.</div>
+        <div class="desc en">Peaceful boat cruise with views of both castles (Niedzica and Czorsztyn) and the Tatras in the background. ~45 min, safe for small children. Perfect afternoon activity for the whole group.</div>
         <a href="https://pl.wikipedia.org/wiki/Jezioro_Czorsztynskie" class="lnk" target="_blank">↗ Wikipedia</a>
       </div>
-      <div class="strip-outer" data-wiki="Jezioro Czorsztynskie" data-label-pl="Jezioro Czorsztyńskie" data-label-en="Lake Czorsztyn">
+      <div class="strip-outer" data-wiki="Czorsztyn lake panorama">
         <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
         <div class="strip-count"></div>
         <div class="strip-label"><span class="pl">Jezioro Czorsztyńskie</span><span class="en">Lake Czorsztyn</span></div>
       </div>
 
       <div class="attraction">
-        <div class="attraction-title">🚲 <span class="pl">E-rowery dookoła jeziora</span><span class="en">E-bike Ride Around the Lake</span></div>
+        <div class="attraction-title">🚲 <span class="pl">Trasa rowerowa dookoła jeziora</span><span class="en">Cycling around the lake</span></div>
         <div class="gold-line"></div>
-        <div class="desc pl">Pętla ~25 km wokół Jeziora Czorsztyńskiego. Łagodna, widokowa, dla całej rodziny. Wypożyczalnia przy jeziorze — rezerwacja online.</div>
-        <div class="desc en">~25 km loop around Lake Czorsztyn. Gentle, scenic, for all ages. Rental at the lake — book online in advance.</div>
-        <a href="https://www.jezioro-czorsztynskie.pl" class="lnk" target="_blank">↗ jezioro-czorsztynskie.pl</a>
-      </div>
-      <div class="strip-outer" data-wiki="Czorsztyn lake panorama" data-label-pl="Widoki z trasy rowerowej" data-label-en="Views from the cycling route">
-        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
-        <div class="strip-count"></div>
-        <div class="strip-label"><span class="pl">Widoki z trasy rowerowej</span><span class="en">Views from the cycling route</span></div>
+        <span class="tag-active">🔴 <span class="pl">aktywni</span><span class="en">active group</span></span>
+        <br><br>
+        <div class="desc pl">Pętla ~24 km wokół Jeziora Czorsztyńskiego — łagodna, widokowa trasa po szutrowcach i asfalcie. Wypożyczalnia e-rowerów przy jeziorze (rezerwacja online). Dla aktywniejszej części grupy, seniorzy i małe dzieci mogą odpocząć lub wybrać rejs.</div>
+        <div class="desc en">~24 km loop around Lake Czorsztyn — gentle, scenic route on gravel and asphalt. E-bike rental at the lake (book online). For the more active group; seniors and small children can rest or take the boat cruise instead.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- DAY 2 -->
+<!-- D2 -->
 <section id="day2" style="padding-top:0">
   <div class="container">
     <div class="day-header d2" data-day="02">
-      <div class="tag"><span class="pl">Dzień 2</span><span class="en">Day 2</span></div>
-      <h2 class="pl">Spływ Dunajcem & Wąwóz Homole</h2>
-      <h2 class="en">Dunajec Rafting & Homole Gorge</h2>
-      <div class="sub pl">Tratwa flisacka · Wąwóz skalny</div>
-      <div class="sub en">Traditional rafting · Rocky gorge</div>
+      <div class="tag">29 CZE · <span class="pl">Dzień 2</span><span class="en">Day 2</span></div>
+      <h2>🏔️ Morskie Oko</h2>
+      <div class="sub pl">Wczesna pobudka · ~35 min · Palenica Białczańska · E-Bus</div>
+      <div class="sub en">Early start · ~35 min · Palenica Białczańska · E-Bus</div>
     </div>
     <div class="day-body">
       <div class="attraction">
-        <div class="attraction-title">🛶 <span class="pl">Spływ Dunajcem</span><span class="en">Dunajec River Rafting</span></div>
+        <div class="attraction-title">🚌 <span class="pl">E-Bus na Morskie Oko</span><span class="en">E-Bus to Morskie Oko</span></div>
         <div class="gold-line"></div>
-        <div class="desc pl">Tradycyjny spływ tratwą z Sromowiec Kątów do Szczawnicy (~18 km, 2–3h). Przez malowniczy Przełom Pieniński. Bezpieczny dla całej rodziny, bez doświadczenia.</div>
-        <div class="desc en">Traditional raft ride from Sromowce Kąty to Szczawnica (~18 km, 2–3h). Through the scenic Pieniny Gorge. Safe for the whole family, no experience required.</div>
-        <div class="tip">💡 <span class="pl">Rezerwacja obowiązkowa w sezonie!</span><span class="en">Advance booking essential in summer!</span></div><br>
-        <a href="https://www.flisacy.com.pl" class="lnk" target="_blank">↗ flisacy.com.pl</a>
+        <span class="tag-all">👨‍👩‍👧 <span class="pl">dla wszystkich</span><span class="en">for all</span></span>
+        <br><br>
+        <div class="desc pl">Parking przy Palenicy Białczańskiej (~35 min od Szczawnicy). Stąd jeździ elektryczny bus do schroniska (ok. 7 km). Bilety do kupienia online na stronie TPN. Po busie ~2 km spacer pod samo Morskie Oko — schronisko PTTK nad brzegiem jeziora.</div>
+        <div class="desc en">Park at Palenica Białczańska (~35 min from Szczawnica). Electric bus runs from here to the refuge (~7 km). Buy tickets online on the TPN website. From the bus stop, ~2 km walk to Morskie Oko itself — PTTK refuge right on the lake shore.</div>
+        <div class="warn">⏰ <span class="pl">Wyjedź przed 7:30 — parking zapełnia się bardzo szybko!</span><span class="en">Leave before 7:30am — the car park fills up very quickly!</span></div>
+        <div class="warn">🎟️ <span class="pl">E-bus: kup bilety online na tpn.gov.pl!</span><span class="en">E-bus: buy tickets online at tpn.gov.pl!</span></div>
+        <a href="https://tpn.gov.pl/e-busy-do-morskiego-oka" class="lnk" target="_blank">↗ Bilety e-bus — tpn.gov.pl</a>
         &nbsp;&nbsp;
-        <a href="https://pl.wikipedia.org/wiki/Prze%C5%82om_Dunajca_przez_Pieniny" class="lnk" target="_blank">↗ Wikipedia</a>
+        <a href="https://pl.wikipedia.org/wiki/Morskie_Oko" class="lnk" target="_blank">↗ Wikipedia</a>
       </div>
-      <div class="strip-outer" data-wiki="Dunajec river rafting Pieniny" data-label-pl="Spływ Dunajcem" data-label-en="Dunajec Rafting">
+      <div class="strip-outer" data-wiki="Morskie Oko lake Tatra">
         <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
         <div class="strip-count"></div>
-        <div class="strip-label"><span class="pl">Spływ Dunajcem przez Przełom Pieniński</span><span class="en">Dunajec rafting through Pieniny Gorge</span></div>
+        <div class="strip-label">Morskie Oko — Tatrzański Park Narodowy</div>
+      </div>
+
+      <div class="options-note">
+        <strong class="pl">Podział grupy — dwie opcje po dotarciu nad jezioro</strong>
+        <strong class="en">Group split — two options after reaching the lake</strong>
       </div>
 
       <div class="attraction">
-        <div class="attraction-title">🏞️ <span class="pl">Wąwóz Homole</span><span class="en">Homole Gorge</span></div>
+        <div class="attraction-title">🚶 <span class="pl">Obejście Morskiego Oka</span><span class="en">Circuit of Morskie Oko</span></div>
         <div class="gold-line"></div>
-        <div class="desc pl">Krótki spacer przez wąwóz skalny (~2 km, ok. 1h). Pionowe skały, wodospady, bujna roślinność — dzieci zachwycone! Dostępny dla seniorów.</div>
-        <div class="desc en">Short walk through a rocky gorge (~2 km, ~1h). Vertical cliffs, waterfalls, lush greenery — children love it! Accessible for seniors.</div>
-        <a href="https://wawoz-homole.pl" class="lnk" target="_blank">↗ wawoz-homole.pl</a>
-        &nbsp;&nbsp;
-        <a href="https://pl.wikipedia.org/wiki/W%C4%85w%C3%B3z_Homole" class="lnk" target="_blank">↗ Wikipedia</a>
+        <span class="tag-all">👨‍👩‍👧 <span class="pl">dla wszystkich</span><span class="en">for all</span></span>
+        <span class="tag-senior">🧓 <span class="pl">seniorzy OK</span><span class="en">seniors OK</span></span>
+        <br><br>
+        <div class="desc pl">Obejście całego jeziora ~1h. Ścieżka wybrukowana, stosunkowo płaska. Niesamowite odbicia Mięguszowieckich Szczytów w tafli wody. Schronisko PTTK — zupa, herbata, pierogi — obowiązkowo!</div>
+        <div class="desc en">Full lake circuit ~1h. Paved path, relatively flat. Incredible reflections of the Mięguszowieckie Peaks in the water surface. PTTK refuge — soup, tea, dumplings — a must!</div>
+        <div class="tip">☕ <span class="pl">Zupa w schronisku PTTK to rytuał — nie pomijaj!</span><span class="en">Soup at the PTTK refuge is a ritual — don't skip it!</span></div>
       </div>
-      <div class="strip-outer" data-wiki="Wąwóz Homole" data-label-pl="Wąwóz Homole" data-label-en="Homole Gorge">
+
+      <div class="attraction">
+        <div class="attraction-title">⛰️ <span class="pl">Czarny Staw pod Rysami</span><span class="en">Czarny Staw pod Rysami</span></div>
+        <div class="gold-line"></div>
+        <span class="tag-active">🔴 <span class="pl">aktywni · +1–2h</span><span class="en">active · +1–2h</span></span>
+        <br><br>
+        <div class="desc pl">Z Morskiego Oka szlak wznosi się stromym trawersem na Czarny Staw pod Rysami (1583 m) — +390 m przewyższenia, ~1h w górę. Drugie, mroczniejsze jezioro z widokiem na Rysy (najwyższy szczyt Polski). Australijczycy (11 i 14 lat) dadzą radę spokojnie 🦘</div>
+        <div class="desc en">From Morskie Oko the trail climbs steeply to Czarny Staw pod Rysami (1583 m) — +390 m elevation gain, ~1h up. A second, darker lake with views of Rysy (Poland's highest peak). The Australian kids (11 and 14) will manage it easily 🦘</div>
+        <div class="warn">⚠️ <span class="pl">Szlak stromy — dobre buty i kijki wskazane. Seniorzy i mali czekają na dole.</span><span class="en">Steep trail — good shoes and poles recommended. Seniors and young children wait below.</span></div>
+        <a href="https://pl.wikipedia.org/wiki/Czarny_Staw_pod_Rysami" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Czarny Staw Rysy Tatry">
         <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
         <div class="strip-count"></div>
-        <div class="strip-label"><span class="pl">Wąwóz Homole</span><span class="en">Homole Gorge</span></div>
+        <div class="strip-label"><span class="pl">Czarny Staw pod Rysami</span><span class="en">Czarny Staw pod Rysami</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- DAY 3 -->
+<!-- D3 -->
 <section id="day3" style="padding-top:0">
   <div class="container">
     <div class="day-header d3" data-day="03">
-      <div class="tag"><span class="pl">Dzień 3</span><span class="en">Day 3</span></div>
-      <h2>Morskie Oko</h2>
-      <div class="sub pl">Największe jezioro Tatr · Bryczka lub bus</div>
-      <div class="sub en">Largest Tatra lake · Carriage or shuttle bus</div>
+      <div class="tag">30 CZE · <span class="pl">Dzień 3</span><span class="en">Day 3</span></div>
+      <h2>🛶 <span class="pl">Spływ Dunajcem</span><span class="en">Dunajec Rafting</span></h2>
+      <div class="sub pl">Start ~11:00 · Sromowce Wyżne → Szczawnica · 3–4h · obiad do domku</div>
+      <div class="sub en">Start ~11am · Sromowce Wyżne → Szczawnica · 3–4h · lunch delivered to villa</div>
     </div>
     <div class="day-body">
       <div class="attraction">
-        <div class="attraction-title">🏔️ Morskie Oko</div>
+        <div class="attraction-title">🛶 <span class="pl">Spływ Dunajcem — Przełom Pieniński</span><span class="en">Dunajec Rafting — Pieniny Gorge</span></div>
         <div class="gold-line"></div>
-        <div class="desc pl">Najpiękniejsze i największe jezioro Tatr. Parking: Palenica Białczańska (~3h z Połańca) → bus wahadłowy LUB spacer 9 km. Dla seniorów i dzieci: bryczka konna w obie strony!</div>
-        <div class="desc en">The most beautiful and largest lake in the Tatras. Park at Palenica Białczańska (~3h from Połaniec) → shuttle bus OR 9 km walk. For seniors & children: horse-drawn carriage both ways!</div>
-        <div class="tip">💡 <span class="pl">Wyjeżdżaj przed 8:00 — unikniesz tłumów!</span><span class="en">Leave before 8:00 AM — avoid the crowds!</span></div><br>
-        <a href="https://tpn.pl/odwiedzaj" class="lnk" target="_blank">↗ tpn.pl</a>
+        <span class="tag-all">👨‍👩‍👧 <span class="pl">cała rodzina</span><span class="en">whole family</span></span>
+        <span class="tag-senior">🧓 <span class="pl">seniorzy OK</span><span class="en">seniors OK</span></span>
+        <br><br>
+        <div class="desc pl">Tradycyjny spływ tratwą flisacką z Sromowiec Wyżnych do Szczawnicy (~18 km, 3–4h). Przez malowniczy Przełom Dunajca — najbardziej spektakularny odcinek rzeki w Polsce. Flisaków w regionalnych strojach, skalne ściany po obu stronach, lodowata woda pod tratwą. Bezpieczne dla całej rodziny, nie trzeba żadnego doświadczenia. Startujemy ~11:00, end point to Szczawnica — czyli wracamy dosłownie do domu!</div>
+        <div class="desc en">Traditional wooden raft trip from Sromowce Wyżne to Szczawnica (~18 km, 3–4h). Through the spectacular Dunajec Gorge — the most dramatic stretch of river in Poland. Rafters in regional costumes, rock walls on both sides, ice-cold water under the raft. Safe for the whole family, no experience needed. We start ~11am, the end point is Szczawnica — we literally float home!</div>
+        <div class="warn">📅 <span class="pl">Rezerwacja obowiązkowa z wyprzedzeniem — w szczycie sezonu wszystko zajęte!</span><span class="en">Advance booking essential — fully booked at peak season!</span></div>
+        <div class="tip">🍲 <span class="pl">Obiad z dowozu do domku po spływie — zamów dzień wcześniej na dompodjemiola.pl</span><span class="en">Lunch delivered to the villa after rafting — order the day before at dompodjemiola.pl</span></div>
+        <a href="https://flisacy.pl/" class="lnk" target="_blank">↗ flisacy.pl — rezerwacja</a>
         &nbsp;&nbsp;
-        <a href="https://pl.wikipedia.org/wiki/Morskie_Oko" class="lnk" target="_blank">↗ Wikipedia</a>
+        <a href="https://pl.wikipedia.org/wiki/Prze%C5%82om_Dunajca_przez_Pieniny" class="lnk" target="_blank">↗ Wikipedia</a>
       </div>
-      <div class="strip-outer" data-wiki="Morskie Oko lake Tatra" data-label-pl="Morskie Oko — Tatrzański Park Narodowy" data-label-en="Morskie Oko — Tatra National Park">
+      <div class="strip-outer" data-wiki="Dunajec river rafting Pieniny gorge">
         <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
         <div class="strip-count"></div>
-        <div class="strip-label"><span class="pl">Morskie Oko — Tatrzański Park Narodowy</span><span class="en">Morskie Oko — Tatra National Park</span></div>
+        <div class="strip-label"><span class="pl">Spływ Dunajcem — Przełom Pieniński</span><span class="en">Dunajec rafting — Pieniny Gorge</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- D4 -->
+<section id="day4" style="padding-top:0">
+  <div class="container">
+    <div class="day-header d4" data-day="04">
+      <div class="tag">1 LIP · <span class="pl">Dzień 4</span><span class="en">Day 4</span></div>
+      <h2>🪨 <span class="pl">Wąwóz Homole · Wyjazd</span><span class="en">Homole Gorge · Departure</span></h2>
+      <div class="sub pl">Wymeldowanie do 10:00 · Jaworki ~10 min · powrót do Połańca</div>
+      <div class="sub en">Check-out by 10am · Jaworki ~10 min · drive back to Połaniec</div>
+    </div>
+    <div class="day-body">
+      <div class="attraction">
+        <div class="attraction-title">🪨 <span class="pl">Wąwóz Homole — Jaworki</span><span class="en">Homole Gorge — Jaworki</span></div>
+        <div class="gold-line"></div>
+        <span class="tag-all">👨‍👩‍👧 <span class="pl">cała rodzina</span><span class="en">whole family</span></span>
+        <span class="tag-senior">🧓 <span class="pl">seniorzy OK</span><span class="en">seniors OK</span></span>
+        <br><br>
+        <div class="desc pl">Wąwóz Homole w Jaworkach (~10 min jazdy od Szczawnicy) — łatwa trasa przez wąski kanion skalny z wapiennymi ścianami, potokiem i wodospadami. ~3 km, ok. 2h w spokojnym tempie. Na szczycie kapliczka i ławki — kawka + ciasto jako nagroda 🎂. Idealne zakończenie wycieczki przed powrotem do domu.</div>
+        <div class="desc en">Homole Gorge in Jaworki (~10 min drive from Szczawnica) — easy trail through a narrow limestone canyon with a stream and waterfalls. ~3 km, about 2h at a relaxed pace. At the top: a small chapel and benches — coffee and cake as the reward 🎂. The perfect end to the trip before driving home.</div>
+        <div class="tip">☕ <span class="pl">Po wąwozie: kawiarnia w Jaworkach lub termos z domku — zasłużona przerwa!</span><span class="en">After the gorge: café in Jaworki or thermos from the villa — well-deserved break!</span></div>
+        <a href="https://pl.wikipedia.org/wiki/W%C4%85w%C3%B3z_Homole" class="lnk" target="_blank">↗ Wikipedia</a>
+      </div>
+      <div class="strip-outer" data-wiki="Wąwóz Homole Jaworki Pieniny">
+        <div class="strip-track"><div class="strip-loading">⏳ Ładowanie zdjęć…</div></div>
+        <div class="strip-count"></div>
+        <div class="strip-label"><span class="pl">Wąwóz Homole — Jaworki</span><span class="en">Homole Gorge — Jaworki</span></div>
+      </div>
+
+      <div class="attraction">
+        <div class="attraction-title">🚗 <span class="pl">Powrót do Połańca</span><span class="en">Drive back to Połaniec</span></div>
+        <div class="gold-line"></div>
+        <div class="desc pl">Po wąwozie: ~2,5h powrotu do Połańca. Trasa ta sama — przez Nowy Sącz.</div>
+        <div class="desc en">After the gorge: ~2.5h drive back to Połaniec. Same route — via Nowy Sącz.</div>
       </div>
     </div>
   </div>
@@ -296,21 +377,33 @@ footer strong{color:var(--gold)}
       <div class="pract-card">
         <div class="icon">🚗</div>
         <h3 class="pl">Dojazd</h3><h3 class="en">Getting there</h3>
-        <p class="pl">Z Połańca przez Nowy Sącz.<br>Czorsztyn: ~2.5h<br>Morskie Oko: ~3h</p>
-        <p class="en">From Połaniec via Nowy Sącz.<br>Czorsztyn: ~2.5h<br>Morskie Oko: ~3h</p>
+        <p class="pl">Połaniec → Szczawnica: ~2,5h<br>Przez Nowy Sącz<br>Morskie Oko: +35 min od bazy</p>
+        <p class="en">Połaniec → Szczawnica: ~2.5h<br>Via Nowy Sącz<br>Morskie Oko: +35 min from base</p>
       </div>
       <div class="pract-card">
-        <div class="icon">⚠️</div>
-        <h3 class="pl">Ważne</h3><h3 class="en">Important</h3>
-        <p class="pl">Dunajcem: rezerwacja!<br>Morskie Oko: wyjazd przed 8:00<br>E-rowery: booking online</p>
-        <p class="en">Dunajec: book ahead!<br>Morskie Oko: before 8 AM<br>E-bikes: book online</p>
+        <div class="icon">🎟️</div>
+        <h3 class="pl">Rezerwacje — zrób wcześniej!</h3><h3 class="en">Book in advance!</h3>
+        <p class="pl">🛶 Spływ: flisacy.pl<br>🚌 E-Bus TPN: tpn.gov.pl<br>🏰 Zamek Niedzica: zamekniedzica.pl</p>
+        <p class="en">🛶 Rafting: flisacy.pl<br>🚌 E-Bus TPN: tpn.gov.pl<br>🏰 Niedzica Castle: zamekniedzica.pl</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">⏰</div>
+        <h3 class="pl">Ważne godziny</h3><h3 class="en">Key timings</h3>
+        <p class="pl">D1: wyjazd ~12:30, zameldowanie 15:00<br>D2: przed 7:30 na Palenicę!<br>D3: start spływu ~11:00<br>D4: wymeldowanie do 10:00</p>
+        <p class="en">D1: leave ~12:30, check-in 3pm<br>D2: before 7:30am to Palenica!<br>D3: raft start ~11am<br>D4: check-out by 10am</p>
+      </div>
+      <div class="pract-card">
+        <div class="icon">🍽️</div>
+        <h3 class="pl">Jedzenie</h3><h3 class="en">Food</h3>
+        <p class="pl">Obiady z dowozu: 45 zł/os<br>Śniadanie: 400 zł/wszyscy<br><em>Zamów dzień wcześniej!</em></p>
+        <p class="en">Lunch delivery: 45 PLN/pp<br>Breakfast: 400 PLN/all<br><em>Order the day before!</em></p>
       </div>
     </div>
   </div>
 </section>
 
 <footer>
-  <p>🏔️ <strong>Pieniny & Tatry 2025</strong> &nbsp;·&nbsp;
+  <p>🏔️ <strong>Pieniny & Tatry — Czerwiec 2026</strong> &nbsp;·&nbsp;
   <span class="pl">Plan wycieczki rodzinnej</span>
   <span class="en">Family Trip Guide</span>
   &nbsp;·&nbsp; <span style="font-size:.75rem">📷 Zdjęcia: Wikimedia Commons (CC)</span></p>
@@ -318,140 +411,69 @@ footer strong{color:var(--gold)}
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// ── MAP ───────────────────────────────────────────────────────────────────────
-const map = L.map('map').setView([49.7, 20.6], 8);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-  attribution:'© OpenStreetMap contributors', maxZoom:18
-}).addTo(map);
-function mkr(lat,lng,color,title,desc){
-  const icon = L.divIcon({
-    html:`<div style="background:${color};width:14px;height:14px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,.4)"></div>`,
-    iconSize:[14,14],iconAnchor:[7,7],className:''
-  });
+const map = L.map('map');
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(map);
+const _bounds=[];
+function mkr(lat,lng,color,title,desc,big){
+  const s=big?18:14;
+  const icon=L.divIcon({html:`<div style="background:${color};width:${s}px;height:${s}px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,.4)"></div>`,iconSize:[s,s],iconAnchor:[s/2,s/2],className:''});
   L.marker([lat,lng],{icon}).addTo(map).bindPopup(`<strong>${title}</strong><br>${desc}`);
+  _bounds.push([lat,lng]);
 }
-mkr(50.430,21.573,'#C8860A','Połaniec','Baza wypadowa / Base');
-mkr(49.434,20.323,'#1B3A4B','Czorsztyn','Zamek · Jezioro · E-rowery<br>~2.5h z Połańca');
-mkr(49.408,20.435,'#2E7D32','Spływ Dunajcem','Sromowce Kąty<br>~2.5h z Połańca');
-mkr(49.200,20.068,'#4A235A','Morskie Oko','Palenica Białczańska<br>~3h z Połańca');
+mkr(50.430,21.573,'#C8860A','Połaniec','Start i meta wycieczki<br>~2,5h do Szczawnicy',true);
+mkr(49.428,20.496,'#2E7D32','🏡 Szczawnica — baza','Dom pod Jemiołą<br>28 Cze – 1 Lip · 3 noce',true);
+mkr(49.434,20.323,'#1565C0','Zamek Niedzica','Dzień 1 opcja<br>~20 min od bazy');
+mkr(49.202,20.071,'#283593','Morskie Oko','Dzień 2 — E-Bus z Palenicy<br>~35 min od bazy');
+mkr(49.388,20.404,'#1B5E20','Spływ Dunajcem','Dzień 3 — Start Sromowce Wyżne<br>Koniec: Szczawnica (dom!)');
+mkr(49.408,20.497,'#7B1FA2','Wąwóz Homole — Jaworki','Dzień 4 — ~10 min od bazy<br>3 km, ~2h · łatwe');
+map.fitBounds(_bounds,{padding:[30,30]});
 
-// ── LANGUAGE ──────────────────────────────────────────────────────────────────
 function toggleLang(){
-  const body=document.body, btn=document.querySelector('.lang-btn');
+  const body=document.body,btn=document.querySelector('.lang-btn');
   if(body.dataset.lang==='pl'){body.dataset.lang='en';btn.textContent='PL 🌐';}
   else{body.dataset.lang='pl';btn.textContent='EN 🌐';}
 }
 
-// ── WIKIMEDIA COMMONS API ─────────────────────────────────────────────────────
 async function fetchWikiImages(query){
-  const params = new URLSearchParams({
-    action:     'query',
-    generator:  'search',
-    gsrsearch:  query,
-    gsrnamespace: 6,
-    gsrlimit:   50,
-    prop:       'imageinfo',
-    iiprop:     'url',
-    iiurlwidth: 960,
-    format:     'json',
-    origin:     '*'
-  });
-  const res  = await fetch(`https://commons.wikimedia.org/w/api.php?${params}`);
-  const data = await res.json();
-  const pages = Object.values(data.query?.pages || {});
-  return pages
-    .filter(p => p.imageinfo && !/\.(svg|gif|tiff|pdf|ogg|webm|ogv|mp4)/i.test(p.title))
-    .map(p => p.imageinfo[0].thumburl || p.imageinfo[0].url)
+  const params=new URLSearchParams({action:'query',generator:'search',gsrsearch:query,gsrnamespace:6,gsrlimit:50,prop:'imageinfo',iiprop:'url',iiurlwidth:960,format:'json',origin:'*'});
+  const res=await fetch(`https://commons.wikimedia.org/w/api.php?${params}`);
+  const data=await res.json();
+  return Object.values(data.query?.pages||{})
+    .filter(p=>p.imageinfo&&!/\.(svg|gif|tiff|pdf|ogg|webm|ogv|mp4)/i.test(p.title))
+    .map(p=>p.imageinfo[0].thumburl||p.imageinfo[0].url)
     .filter(Boolean);
 }
 
-// ── STRIP INIT ────────────────────────────────────────────────────────────────
-function buildStrip(outer, urls){
-  const track    = outer.querySelector('.strip-track');
-  const countEl  = outer.querySelector('.strip-count');
-
-  track.innerHTML = '';
-  countEl.textContent = `📷 ${urls.length} zdjęć`;
-
-  // Fill track with enough clones for seamless infinite loop
-  // We need at least 3 full sets so the loop never shows a gap
-  const minSets = Math.max(3, Math.ceil(3000 / (urls.length * 200 + 1)));
-  const totalSets = minSets + 2;
-  for(let s = 0; s < totalSets; s++){
-    urls.forEach(src => {
-      const img = document.createElement('img');
-      img.src = src;
-      img.alt = '';
-      img.loading = 'lazy';
-      track.appendChild(img);
-    });
-  }
-
-  let pos       = 0;
-  let speed     = 0.45;
-  let paused    = false;
-  let dragStart = null;
-  let dragPos   = 0;
-
-  // Calculate width of one full set (called after images load a bit)
-  function oneSetWidth(){
-    const imgs = track.querySelectorAll('img');
-    if(!imgs.length) return 1;
-    // Approximate: average rendered width × count per set
-    let total = 0;
-    let counted = 0;
-    imgs.forEach((img, i) => {
-      if(i < urls.length){ total += img.offsetWidth + 4; counted++; }
-    });
-    return counted > 0 ? total : urls.length * 290;
-  }
-
-  function loop(){
-    if(!paused){
-      pos += speed;
-      const w = oneSetWidth();
-      if(w > 0 && pos >= w) pos -= w;
-    }
-    track.style.transform = `translateX(${-pos}px)`;
-    requestAnimationFrame(loop);
-  }
+function buildStrip(outer,urls){
+  const track=outer.querySelector('.strip-track');
+  const countEl=outer.querySelector('.strip-count');
+  track.innerHTML='';
+  countEl.textContent=`📷 ${urls.length} zdjęć`;
+  const sets=Math.max(3,Math.ceil(3000/(urls.length*200+1)))+2;
+  for(let s=0;s<sets;s++) urls.forEach(src=>{const img=document.createElement('img');img.src=src;img.loading='lazy';track.appendChild(img);});
+  let pos=0,paused=false,dragStart=null,dragPos=0;
+  function oneSet(){let t=0;track.querySelectorAll('img').forEach((img,i)=>{if(i<urls.length)t+=img.offsetWidth+4;});return t||urls.length*290;}
+  function loop(){if(!paused){pos+=0.45;const w=oneSet();if(w>0&&pos>=w)pos-=w;}track.style.transform=`translateX(${-pos}px)`;requestAnimationFrame(loop);}
   loop();
-
-  outer.addEventListener('mouseenter', () => { paused = true; });
-  outer.addEventListener('mouseleave', () => { paused = false; });
-
-  function startDrag(x){ paused=true; dragStart=x; dragPos=pos; }
-  function moveDrag(x){
-    if(dragStart===null) return;
-    pos = dragPos + (dragStart - x);
-    const w = oneSetWidth();
-    if(w>0){ if(pos<0) pos+=w; if(pos>w*totalSets) pos-=w; }
-  }
-  function endDrag(){ dragStart=null; paused=false; }
-
-  outer.addEventListener('mousedown',  e => startDrag(e.clientX));
-  window.addEventListener('mousemove', e => { if(dragStart!==null) moveDrag(e.clientX); });
-  window.addEventListener('mouseup',   endDrag);
-  outer.addEventListener('touchstart', e => startDrag(e.touches[0].clientX), {passive:true});
-  outer.addEventListener('touchmove',  e => moveDrag(e.touches[0].clientX),  {passive:true});
-  outer.addEventListener('touchend',   endDrag);
+  outer.addEventListener('mouseenter',()=>{paused=true;});
+  outer.addEventListener('mouseleave',()=>{paused=false;});
+  function sd(x){paused=true;dragStart=x;dragPos=pos;}
+  function md(x){if(dragStart===null)return;pos=dragPos+(dragStart-x);const w=oneSet();if(w>0){if(pos<0)pos+=w;if(pos>w*sets)pos-=w;}}
+  function ed(){dragStart=null;paused=false;}
+  outer.addEventListener('mousedown',e=>sd(e.clientX));
+  window.addEventListener('mousemove',e=>{if(dragStart!==null)md(e.clientX);});
+  window.addEventListener('mouseup',ed);
+  outer.addEventListener('touchstart',e=>sd(e.touches[0].clientX),{passive:true});
+  outer.addEventListener('touchmove',e=>md(e.touches[0].clientX),{passive:true});
+  outer.addEventListener('touchend',ed);
 }
 
-// ── LOAD ALL STRIPS ───────────────────────────────────────────────────────────
-document.querySelectorAll('.strip-outer[data-wiki]').forEach(async outer => {
-  const query = outer.dataset.wiki;
-  try {
-    const urls = await fetchWikiImages(query);
-    if(urls.length === 0){
-      outer.querySelector('.strip-track').innerHTML =
-        '<div class="strip-loading">Brak zdjęć / No photos found</div>';
-      return;
-    }
-    buildStrip(outer, urls);
-  } catch(e) {
-    outer.querySelector('.strip-track').innerHTML =
-      '<div class="strip-loading">Błąd ładowania / Loading error</div>';
-  }
+document.querySelectorAll('.strip-outer[data-wiki]').forEach(async outer=>{
+  try{
+    const urls=await fetchWikiImages(outer.dataset.wiki);
+    if(!urls.length){outer.querySelector('.strip-track').innerHTML='<div class="strip-loading">Brak zdjęć</div>';return;}
+    buildStrip(outer,urls);
+  }catch{outer.querySelector('.strip-track').innerHTML='<div class="strip-loading">Błąd ładowania</div>';}
 });
 </script>
 </body>
