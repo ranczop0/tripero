@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dom pod Jemiołą — Szczawnica</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B3A4B;--gold:#C8860A;--teal:#2A7F8A;
+  --green:#2E7D32;--light:#F8F6F2;--white:#fff;--text:#2C2C2C;--muted:#777;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);line-height:1.7}
+
+.back-btn{position:fixed;top:14px;left:1rem;z-index:999;background:rgba(0,0,0,.45);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:600;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:background .2s}
+.back-btn:hover{background:rgba(0,0,0,.7)}
+.lang-btn{position:fixed;top:14px;right:1rem;z-index:999;background:var(--gold);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:700;cursor:pointer;letter-spacing:.05em;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:opacity .2s}
+.lang-btn:hover{opacity:.85}
+[data-lang="en"] .pl{display:none}
+[data-lang="pl"] .en{display:none}
+
+/* HERO */
+.hero{position:relative;min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 1.5rem 5rem;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://www.dompodjemiola.pl/files/1-20.jpg') center/cover no-repeat}
+.hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(0,30,15,.75) 0%,rgba(10,50,20,.65) 60%,rgba(0,20,40,.7) 100%)}
+.hero-content{position:relative;z-index:1;max-width:680px}
+.hero-confirmed{display:inline-flex;align-items:center;gap:.4rem;background:#2E7D32;color:white;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.35rem 1rem;border-radius:2rem;margin-bottom:1rem}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.5rem);color:white;line-height:1.1;margin-bottom:.6rem}
+.hero h1 span{color:var(--gold)}
+.hero .tagline{font-size:1rem;color:rgba(255,255,255,.75)}
+.hero .tagline.en{font-style:italic;color:rgba(255,255,255,.5);font-size:.93rem}
+.scroll-hint{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.4);font-size:.8rem;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+/* KEY FACTS BAR */
+.facts-bar{background:var(--navy);padding:1.25rem 1.5rem}
+.facts-inner{max-width:880px;margin:0 auto;display:flex;flex-wrap:wrap;gap:1rem;justify-content:center}
+.fact{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:.75rem;padding:.7rem 1.25rem;text-align:center;min-width:130px}
+.fact .f-val{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);line-height:1}
+.fact .f-lbl{font-size:.7rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;margin-top:.2rem}
+
+/* PHOTO STRIP */
+.strip-outer{position:relative;overflow:hidden;height:260px;background:#111;cursor:grab;user-select:none}
+.strip-outer:active{cursor:grabbing}
+.strip-track{display:flex;height:100%;width:max-content;will-change:transform}
+.strip-track img{height:100%;width:auto;min-width:280px;max-width:420px;object-fit:cover;margin-right:4px;flex-shrink:0;pointer-events:none;display:block}
+.strip-count{position:absolute;top:.6rem;right:.75rem;background:rgba(0,0,0,.5);color:rgba(255,255,255,.7);font-size:.7rem;padding:.2rem .55rem;border-radius:1rem;pointer-events:none}
+
+/* SECTIONS */
+section{padding:3.5rem 1.5rem}
+.container{max-width:880px;margin:0 auto}
+.sec-title{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--navy);margin-bottom:1.25rem}
+
+/* ROOM LAYOUT */
+.floor-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:.5rem}
+.floor-card{background:white;border-radius:.85rem;padding:1.25rem 1.4rem;box-shadow:0 4px 18px rgba(0,0,0,.07)}
+.floor-name{font-size:.68rem;text-transform:uppercase;letter-spacing:.13em;font-weight:700;color:var(--gold);margin-bottom:.6rem}
+.floor-card ul{list-style:none}
+.floor-card li{font-size:.88rem;color:var(--text);padding:.2rem 0;border-bottom:1px solid #F5F5F5}
+.floor-card li:last-child{border-bottom:none}
+.floor-card li::before{content:'· ';color:var(--gold);font-weight:700}
+
+/* FOOD */
+.food-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:.5rem}
+.food-card{background:white;border-radius:.85rem;padding:1.25rem 1.4rem;box-shadow:0 4px 18px rgba(0,0,0,.07);text-align:center}
+.food-card .icon{font-size:2rem;margin-bottom:.5rem}
+.food-card h3{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.25rem}
+.food-card .price{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold);margin:.3rem 0}
+.food-card p{font-size:.83rem;color:var(--muted);line-height:1.5}
+.food-note{background:#FFF8E1;border-left:4px solid var(--gold);padding:.85rem 1.25rem;border-radius:0 .5rem .5rem 0;font-size:.88rem;color:var(--navy);margin-top:1rem}
+
+/* TRIP PLAN */
+.plan-days{display:grid;gap:.75rem;margin-top:.5rem}
+.plan-day{background:white;border-radius:.85rem;padding:1rem 1.4rem;box-shadow:0 4px 18px rgba(0,0,0,.07);display:flex;align-items:center;gap:1.25rem}
+.plan-day-num{background:var(--navy);color:white;border-radius:.5rem;width:52px;height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.plan-day-num .dn{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.5)}
+.plan-day-num .dd{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);line-height:1}
+.plan-day-body h4{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.15rem}
+.plan-day-body p{font-size:.85rem;color:var(--muted);line-height:1.5}
+.plan-link{display:inline-flex;align-items:center;gap:.4rem;margin-top:.3rem;background:var(--navy);color:white;padding:.3rem .85rem;border-radius:2rem;font-size:.78rem;font-weight:700;text-decoration:none;transition:background .2s}
+.plan-link:hover{background:var(--gold)}
+
+/* CONTACT + MAP */
+.contact-map{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:.5rem}
+.contact-card{background:white;border-radius:.85rem;padding:1.5rem;box-shadow:0 4px 18px rgba(0,0,0,.07)}
+.contact-card h3{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.9rem}
+.contact-row{display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.85rem}
+.contact-row .icon{font-size:1.2rem;flex-shrink:0;margin-top:.1rem}
+.contact-row p{font-size:.88rem;color:var(--text);line-height:1.6}
+.contact-row a{color:var(--teal);text-decoration:none}
+.contact-row a:hover{text-decoration:underline}
+.map-wrap{border-radius:.85rem;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.1)}
+.map-wrap iframe{width:100%;height:100%;min-height:280px;border:none;display:block}
+
+footer{background:var(--navy);color:rgba(255,255,255,.45);text-align:center;padding:1.75rem;font-size:.82rem}
+footer strong{color:var(--gold)}
+
+@media(max-width:600px){
+  .facts-inner{gap:.6rem}
+  .fact{min-width:100px;padding:.5rem .75rem}
+  .contact-map{grid-template-columns:1fr}
+  .strip-outer{height:200px}
+}
+</style>
+</head>
+<body data-lang="pl">
+
+<a class="back-btn" href="../">← <span class="pl">Strona główna</span><span class="en">Home</span></a>
+<button class="lang-btn" onclick="toggleLang()">EN 🌐</button>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-confirmed">✅ <span class="pl">Potwierdzone</span><span class="en">Confirmed</span></div>
+    <h1>Dom pod <span>Jemiołą</span></h1>
+    <p class="tagline pl">Szczawnica · 4 sypialnie · 13 osób · 3 noce 🏡</p>
+    <p class="tagline en">Szczawnica · 4 bedrooms · 13 people · 3 nights 🏡</p>
+  </div>
+  <div class="scroll-hint">↓</div>
+</div>
+
+<!-- FACTS BAR -->
+<div class="facts-bar">
+  <div class="facts-inner">
+    <div class="fact">
+      <div class="f-val">28 Cze</div>
+      <div class="f-lbl pl">Przyjazd</div>
+      <div class="f-lbl en">Check-in</div>
+    </div>
+    <div class="fact">
+      <div class="f-val">1 Lip</div>
+      <div class="f-lbl pl">Wyjazd</div>
+      <div class="f-lbl en">Check-out</div>
+    </div>
+    <div class="fact">
+      <div class="f-val">3</div>
+      <div class="f-lbl pl">Noce</div>
+      <div class="f-lbl en">Nights</div>
+    </div>
+    <div class="fact">
+      <div class="f-val">13</div>
+      <div class="f-lbl pl">Osób</div>
+      <div class="f-lbl en">Guests</div>
+    </div>
+    <div class="fact">
+      <div class="f-val">5 700 zł</div>
+      <div class="f-lbl pl">Całość · dzieci gratis</div>
+      <div class="f-lbl en">Total · kids free</div>
+    </div>
+    <div class="fact">
+      <div class="f-val">712 zł</div>
+      <div class="f-lbl pl">Per osoba dorosła</div>
+      <div class="f-lbl en">Per adult</div>
+    </div>
+  </div>
+</div>
+
+<!-- PHOTO STRIP -->
+<div class="strip-outer" id="photoStrip">
+  <div class="strip-track">
+    <img src="https://www.dompodjemiola.pl/files/1-20.jpg" alt="">
+    <img src="https://www.dompodjemiola.pl/files/46o.jpg" alt="">
+    <img src="https://www.dompodjemiola.pl/files/1-6.jpg" alt="">
+    <img src="https://www.dompodjemiola.pl/files/31s.jpg" alt="">
+    <img src="https://www.dompodjemiola.pl/files/42s.jpg" alt="">
+    <img src="https://www.dompodjemiola.pl/files/22w.jpg" alt="">
+  </div>
+  <div class="strip-count">📷 6 zdjęć</div>
+</div>
+
+<!-- ROOM LAYOUT -->
+<section>
+  <div class="container">
+    <h2 class="sec-title pl">🏠 Układ willi — 4 sypialnie</h2>
+    <h2 class="sec-title en">🏠 Villa layout — 4 bedrooms</h2>
+    <div class="floor-grid">
+
+      <div class="floor-card">
+        <div class="floor-name pl">⬇ Piwnica</div>
+        <div class="floor-name en">⬇ Basement</div>
+        <ul>
+          <li class="pl">Pralnia</li><li class="en">Laundry room</li>
+          <li class="pl">Kącik dla dzieci</li><li class="en">Kids' corner</li>
+        </ul>
+      </div>
+
+      <div class="floor-card">
+        <div class="floor-name pl">▪ Parter</div>
+        <div class="floor-name en">▪ Ground floor</div>
+        <ul>
+          <li class="pl">Sypialnia (2 dorosłych + 1 dziecko) · wanna</li>
+          <li class="en">Bedroom (2 adults + 1 child) · bathtub</li>
+          <li class="pl">Salon z antresolą · kominek · taras</li>
+          <li class="en">Living room with mezzanine · fireplace · terrace</li>
+          <li class="pl">Kuchnia z jadalnią</li>
+          <li class="en">Kitchen + dining area</li>
+          <li class="pl">Toaleta</li>
+          <li class="en">Toilet</li>
+          <li class="pl">Garaż: ping-pong · dart</li>
+          <li class="en">Garage: ping-pong · darts</li>
+        </ul>
+      </div>
+
+      <div class="floor-card">
+        <div class="floor-name pl">▲ 1. Piętro</div>
+        <div class="floor-name en">▲ 1st Floor</div>
+        <ul>
+          <li class="pl">Główna sypialnia + łazienka + garderoba (2 os.)</li>
+          <li class="en">Master bedroom + en-suite bathroom + wardrobe (2 pp)</li>
+          <li class="pl">Sypialnia z PS5 (maks. 4 os.)</li>
+          <li class="en">Bedroom with PS5 (max 4 pp)</li>
+          <li class="pl">Sypialnia (2 dorosłych + 2 dzieci)</li>
+          <li class="en">Bedroom (2 adults + 2 children)</li>
+          <li class="pl">Łazienka z prysznicem</li>
+          <li class="en">Shower bathroom</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TRIP PLAN -->
+<section style="padding-top:0">
+  <div class="container">
+    <h2 class="sec-title pl">📅 Plan wycieczki</h2>
+    <h2 class="sec-title en">📅 Trip plan</h2>
+    <div class="plan-days">
+
+      <div class="plan-day">
+        <div class="plan-day-num">
+          <div class="dn">CZE</div>
+          <div class="dd">28</div>
+        </div>
+        <div class="plan-day-body">
+          <h4 class="pl">Dzień 1 — Przyjazd</h4>
+          <h4 class="en">Day 1 — Arrival</h4>
+          <p class="pl">Wyjazd z Połańca ~ok. 12:30 · ~2,5h jazdy · zameldowanie od 15:00 · wolny wieczór</p>
+          <p class="en">Leave Połaniec ~12:30 · ~2.5h drive · check-in from 3pm · free evening</p>
+        </div>
+      </div>
+
+      <div class="plan-day">
+        <div class="plan-day-num">
+          <div class="dn">CZE</div>
+          <div class="dd">29</div>
+        </div>
+        <div class="plan-day-body">
+          <h4 class="pl">Dzień 2 — 🏔️ Morskie Oko</h4>
+          <h4 class="en">Day 2 — 🏔️ Morskie Oko</h4>
+          <p class="pl">Wczesna pobudka · ~35 min do Palenicy · bus elektryczny · spacer do schroniska PTTK · obejście jeziora · Czarny Staw (aktywni)</p>
+          <p class="en">Early start · ~35 min to Palenica · electric bus · walk to PTTK refuge · lake circuit · Black Lake (active group)</p>
+        </div>
+      </div>
+
+      <div class="plan-day">
+        <div class="plan-day-num">
+          <div class="dn">CZE</div>
+          <div class="dd">30</div>
+        </div>
+        <div class="plan-day-body">
+          <h4 class="pl">Dzień 3 — 🛶 Spływ Dunajcem</h4>
+          <h4 class="en">Day 3 — 🛶 Dunajec Rafting</h4>
+          <p class="pl">Start ~11:00 · Sromowce Wyżne → Szczawnica · 3–4h tratwą · obiad z dowozu do domku 🍲</p>
+          <p class="en">Start ~11am · Sromowce Wyżne → Szczawnica · 3–4h by raft · lunch delivered to the villa 🍲</p>
+        </div>
+      </div>
+
+      <div class="plan-day">
+        <div class="plan-day-num">
+          <div class="dn">LIP</div>
+          <div class="dd">01</div>
+        </div>
+        <div class="plan-day-body">
+          <h4 class="pl">Dzień 4 — 🪨 Wąwóz Homole · Wyjazd</h4>
+          <h4 class="en">Day 4 — 🪨 Homole Gorge · Departure</h4>
+          <p class="pl">Wymeldowanie do 10:00 · Jaworki (~10 min) · Wąwóz Homole (3 km, ~2h) · kawka na szczycie · powrót do domu</p>
+          <p class="en">Check-out by 10am · Jaworki (~10 min) · Homole Gorge (3 km, ~2h) · coffee at the top · drive home</p>
+          <a href="../pieniny/" class="plan-link">
+            <span class="pl">→ Szczegóły wycieczki Pieniny</span>
+            <span class="en">→ Pieniny trip details</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOD -->
+<section style="padding-top:0">
+  <div class="container">
+    <h2 class="sec-title pl">🍽️ Jedzenie z dowozu</h2>
+    <h2 class="sec-title en">🍽️ Food delivery</h2>
+    <div class="food-grid">
+      <div class="food-card">
+        <div class="icon">🍲</div>
+        <h3 class="pl">Obiad</h3><h3 class="en">Lunch / Dinner</h3>
+        <div class="price">45 zł<span style="font-size:.9rem;color:var(--muted)">/os</span></div>
+        <p class="pl">Ciepły obiad dowieziony pod domek · zamów dzień wcześniej</p>
+        <p class="en">Hot meal delivered to the villa · order the day before</p>
+      </div>
+      <div class="food-card">
+        <div class="icon">🥐</div>
+        <h3 class="pl">Śniadanie</h3><h3 class="en">Breakfast</h3>
+        <div class="price">400 zł<span style="font-size:.9rem;color:var(--muted)">/wszyscy</span></div>
+        <p class="pl">Śniadanie dla całej grupy · ~31 zł/os · zamów dzień wcześniej</p>
+        <p class="en">Breakfast for the whole group · ~31 PLN/pp · order the day before</p>
+      </div>
+    </div>
+    <div class="food-note">
+      ⚠️ <strong class="pl">Pamiętaj:</strong><strong class="en">Remember:</strong>
+      <span class="pl"> zamówienia przyjmowane dzień wcześniej. Szczegóły i menu:</span>
+      <span class="en"> orders must be placed the day before. Details and menu:</span>
+      <a href="https://www.dompodjemiola.pl/kuchnia.html" target="_blank" style="color:var(--teal);font-weight:600"> dompodjemiola.pl/kuchnia.html ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT + MAP -->
+<section style="padding-top:0">
+  <div class="container">
+    <h2 class="sec-title pl">📍 Lokalizacja i kontakt</h2>
+    <h2 class="sec-title en">📍 Location & contact</h2>
+    <div class="contact-map">
+
+      <div class="contact-card">
+        <h3 class="pl">Dom pod Jemiołą</h3>
+        <h3 class="en">Dom pod Jemiołą</h3>
+        <div class="contact-row">
+          <div class="icon">📍</div>
+          <p>Św. Krzyża 49<br>34-460 Szczawnica<br>
+          <a href="https://www.google.com/maps?q=49.42851,20.495895" target="_blank">↗ <span class="pl">Otwórz w Google Maps</span><span class="en">Open in Google Maps</span></a></p>
+        </div>
+        <div class="contact-row">
+          <div class="icon">📞</div>
+          <p><a href="tel:+48503119520">503 119 520</a></p>
+        </div>
+        <div class="contact-row">
+          <div class="icon">✉️</div>
+          <p><a href="mailto:biuro@dompodjemiola.pl">biuro@dompodjemiola.pl</a></p>
+        </div>
+        <div class="contact-row">
+          <div class="icon">🌐</div>
+          <p><a href="https://www.dompodjemiola.pl/" target="_blank">www.dompodjemiola.pl ↗</a></p>
+        </div>
+        <div class="contact-row">
+          <div class="icon">🚗</div>
+          <p class="pl">Z Połańca: ~2,5h · przez Nowy Sącz<br>Wyjazd ok. 12:30 → przyjazd ~15:00</p>
+          <p class="en">From Połaniec: ~2.5h · via Nowy Sącz<br>Leave ~12:30 → arrive ~15:00</p>
+        </div>
+        <div class="contact-row">
+          <div class="icon">⏰</div>
+          <p class="pl">Zameldowanie: od 15:00<br>Wymeldowanie: do 10:00</p>
+          <p class="en">Check-in: from 3pm<br>Check-out: by 10am</p>
+        </div>
+      </div>
+
+      <div class="map-wrap">
+        <iframe
+          src="https://maps.google.com/maps?q=49.428510,20.495895&z=15&output=embed&hl=pl"
+          allowfullscreen loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Dom pod Jemiołą — Szczawnica">
+        </iframe>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>🏡 <strong>Dom pod Jemiołą</strong> &nbsp;·&nbsp; Szczawnica &nbsp;·&nbsp;
+  <span class="pl">28 Cze – 1 Lip 2026 · 3 noce</span>
+  <span class="en">28 Jun – 1 Jul 2026 · 3 nights</span></p>
+</footer>
+
+<script>
+function toggleLang(){
+  const body=document.body,btn=document.querySelector('.lang-btn');
+  if(body.dataset.lang==='pl'){body.dataset.lang='en';btn.textContent='PL 🌐';}
+  else{body.dataset.lang='pl';btn.textContent='EN 🌐';}
+}
+
+// Photo strip infinite scroll
+(function(){
+  const outer=document.getElementById('photoStrip');
+  if(!outer)return;
+  const track=outer.querySelector('.strip-track');
+  const imgs=[...track.querySelectorAll('img')];
+  const sets=4;
+  for(let s=1;s<sets;s++) imgs.forEach(img=>{const c=img.cloneNode();track.appendChild(c);});
+  let pos=0,paused=false,dragStart=null,dragPos=0;
+  function oneSet(){let t=0;track.querySelectorAll('img').forEach((img,i)=>{if(i<imgs.length)t+=img.offsetWidth+4;});return t||imgs.length*300;}
+  function loop(){if(!paused){pos+=0.5;const w=oneSet();if(w>0&&pos>=w)pos-=w;}track.style.transform=`translateX(${-pos}px)`;requestAnimationFrame(loop);}
+  loop();
+  outer.addEventListener('mouseenter',()=>paused=true);
+  outer.addEventListener('mouseleave',()=>paused=false);
+  function sd(x){paused=true;dragStart=x;dragPos=pos;}
+  function md(x){if(dragStart===null)return;pos=dragPos+(dragStart-x);const w=oneSet();if(w>0){if(pos<0)pos+=w;if(pos>w*sets)pos-=w;}}
+  function ed(){dragStart=null;paused=false;}
+  outer.addEventListener('mousedown',e=>sd(e.clientX));
+  window.addEventListener('mousemove',e=>{if(dragStart!==null)md(e.clientX);});
+  window.addEventListener('mouseup',ed);
+  outer.addEventListener('touchstart',e=>sd(e.touches[0].clientX),{passive:true});
+  outer.addEventListener('touchmove',e=>md(e.touches[0].clientX),{passive:true});
+  outer.addEventListener('touchend',ed);
+})();
+</script>
+</body>
+</html>
