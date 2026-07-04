@@ -19,7 +19,7 @@
   .lang-btn:hover{opacity:.85}
 
   /* Hero */
-  .hero{position:relative;min-height:280px;display:flex;flex-direction:column;justify-content:flex-end;padding:2rem 1.5rem 2rem;background:linear-gradient(160deg,rgba(10,40,30,.75) 0%,rgba(10,40,30,.4) 50%,rgba(10,40,30,.85) 100%),url('https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Rzeka_Nida_przy_Motkowicach.jpg/1280px-Rzeka_Nida_przy_Motkowicach.jpg') center/cover no-repeat;color:white}
+  .hero{position:relative;min-height:280px;display:flex;flex-direction:column;justify-content:flex-end;padding:2rem 1.5rem 2rem;background:linear-gradient(160deg,rgba(10,40,30,.75) 0%,rgba(10,40,30,.4) 50%,rgba(10,40,30,.85) 100%),url('https://lh3.googleusercontent.com/pw/AP1GczOeF5ZAHjvbjdh1AARBjpFp8SfBFF2SPIKDlxQkQRqcxEW4gN1Gd4MYITII80Ayo-4PTmPvJRKuzufMff-Jk1IskTpWi3LmrtcKqqdV8xiq5EaeK5la=w1280') center/cover no-repeat;color:white}
   .hero-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--river);color:white;font-size:.8rem;font-weight:700;padding:.3rem .85rem;border-radius:2rem;margin-bottom:.75rem;letter-spacing:.05em}
   .hero h1{font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:.4rem}
   .hero .sub{font-size:.95rem;opacity:.9;max-width:38ch}
@@ -89,8 +89,8 @@
 
   /* Menu */
   .menu{list-style:none;display:flex;flex-direction:column;gap:.65rem}
-  .menu li{display:grid;grid-template-columns:28px 1fr;gap:.6rem;align-items:start}
-  .course{font-family:'Playfair Display',serif;font-size:.87rem;color:var(--sand);font-weight:700;padding-top:.1rem}
+  .menu li{display:grid;grid-template-columns:auto 1fr;gap:.6rem;align-items:baseline}
+  .course{font-family:'Playfair Display',serif;font-size:.82rem;color:var(--sand);font-weight:700;white-space:nowrap}
   .dish{font-size:.97rem}
 
   /* Costs */
@@ -207,32 +207,33 @@
   <section>
     <h2 class="sec-title pl">Trasa spływu</h2>
     <h2 class="sec-title en">Route</h2>
-    <div class="card card-pad">
-      <a class="btn-route" href="https://www.strava.com/routes/3508406231658149612" target="_blank">
-        🗺️ <span class="pl">Otwórz trasę na Stravie</span><span class="en">Open route on Strava</span>
-      </a>
-      <div class="route-facts">
+    <div class="card" style="overflow:hidden">
+      <div class="strava-embed-placeholder" data-embed-type="route" data-embed-id="3508406231658149612" data-style="standard" data-map-hash="10.71/50.6875/20.4517" data-from-embed="true" data-token="mePfzNOnj2vFSVcSQbYS65kDPao83869ELaUVbPtJGs"></div>
+      <script src="https://strava-embeds.com/embed.js"></script>
+      <div class="route-facts" style="padding:1rem 1.25rem 0">
         <div class="rf">📍 <span class="pl"><strong>Start:</strong> Brzeźno</span><span class="en"><strong>Start:</strong> Brzeźno</span></div>
         <div class="rf">🏁 <span class="pl"><strong>Meta:</strong> Agropark Dworek pod Lipą</span><span class="en"><strong>Finish:</strong> Agropark Dworek pod Lipą</span></div>
         <div class="rf">📏 <span class="pl"><strong>Długość:</strong> ~20 km</span><span class="en"><strong>Distance:</strong> ~20 km</span></div>
         <div class="rf">⏱️ <span class="pl"><strong>Czas:</strong> ~2h 40min + postoje</span><span class="en"><strong>Time:</strong> ~2h 40min + stops</span></div>
       </div>
-      <div class="callout warn" style="margin-top:1rem">
-        <div style="font-size:1.4rem">⚠️</div>
-        <div>
-          <div class="ct pl">Uwaga na most</div>
-          <div class="ct en">Watch out at the bridge</div>
-          <p class="cd pl">Jest jeden punkt pod mostem, gdzie kajak potencjalnie może się wywrócić. <strong>Dzieci powinny mieć kapok przez cały spływ.</strong></p>
-          <p class="cd en">There is one point under a bridge where the kayak could flip. <strong>Children must wear a life jacket for the entire trip.</strong></p>
+      <div style="padding:0 1.25rem 1.25rem">
+        <div class="callout warn" style="margin-top:1rem">
+          <div style="font-size:1.4rem">⚠️</div>
+          <div>
+            <div class="ct pl">Uwaga na most</div>
+            <div class="ct en">Watch out at the bridge</div>
+            <p class="cd pl">Jest jeden punkt pod mostem, gdzie kajak potencjalnie może się wywrócić. <strong>Dzieci powinny mieć kapok przez cały spływ.</strong></p>
+            <p class="cd en">There is one point under a bridge where the kayak could flip. <strong>Children must wear a life jacket for the entire trip.</strong></p>
+          </div>
         </div>
-      </div>
-      <div class="callout info">
-        <div style="font-size:1.4rem">🏰</div>
-        <div>
-          <div class="ct pl">Postój w Sobkowie</div>
-          <div class="ct en">Stop in Sobków</div>
-          <p class="cd pl">Po drodze zatrzymujemy się w Sobkowie przy zamku — <strong>nie będziemy do niego wchodzić</strong>, ale będzie można kupić lody 🍦</p>
-          <p class="cd en">We stop in Sobków near the castle — <strong>we won't enter it</strong>, but ice cream is available 🍦</p>
+        <div class="callout info" style="margin-top:.75rem">
+          <div style="font-size:1.4rem">🏰</div>
+          <div>
+            <div class="ct pl">Postój w Sobkowie</div>
+            <div class="ct en">Stop in Sobków</div>
+            <p class="cd pl">Po drodze zatrzymujemy się w Sobkowie przy zamku — <strong>nie będziemy do niego wchodzić</strong>, ale będzie można kupić lody 🍦</p>
+            <p class="cd en">We stop in Sobków near the castle — <strong>we won't enter it</strong>, but ice cream is available 🍦</p>
+          </div>
         </div>
       </div>
     </div>
@@ -241,6 +242,18 @@
   <section>
     <h2 class="sec-title pl">Kajaki</h2>
     <h2 class="sec-title en">Kayak Assignments</h2>
+    <div style="display:flex;gap:.6rem;margin-bottom:.85rem;flex-wrap:wrap">
+      <div style="flex:1;min-width:140px;background:#DCEBF3;border-radius:.75rem;padding:.7rem 1rem;text-align:center">
+        <div style="font-size:1.5rem;font-weight:800;color:#1c5a77">4</div>
+        <div style="font-size:.8rem;color:#1c5a77;font-weight:600;text-transform:uppercase;letter-spacing:.05em" class="pl">kajaki 2-osobowe</div>
+        <div style="font-size:.8rem;color:#1c5a77;font-weight:600;text-transform:uppercase;letter-spacing:.05em" class="en">2-person kayaks</div>
+      </div>
+      <div style="flex:1;min-width:140px;background:#DCF0E8;border-radius:.75rem;padding:.7rem 1rem;text-align:center">
+        <div style="font-size:1.5rem;font-weight:800;color:var(--river)">5</div>
+        <div style="font-size:.8rem;color:var(--river);font-weight:600;text-transform:uppercase;letter-spacing:.05em" class="pl">kajaków 1-osobowych</div>
+        <div style="font-size:.8rem;color:var(--river);font-weight:600;text-transform:uppercase;letter-spacing:.05em" class="en">1-person kayaks</div>
+      </div>
+    </div>
     <div class="kayak-grid">
       <div class="kayak duo"><div class="num">1</div><div><div class="who">Mariusz + Amelka</div><div class="typ pl">2-osobowy</div><div class="typ en">2-person</div></div></div>
       <div class="kayak"><div class="num">2</div><div><div class="who">Madzia</div><div class="typ pl">1-osobowy</div><div class="typ en">1-person</div></div></div>
@@ -276,9 +289,18 @@
     <h2 class="sec-title en">Lunch</h2>
     <div class="card card-pad">
       <ul class="menu">
-        <li><div class="course pl">Zupa</div><div class="course en">Soup</div><div class="dish pl">Żurek z ziemniakami lub rosół</div><div class="dish en">Żurek soup or broth</div></li>
-        <li><div class="course pl">Danie główne</div><div class="course en">Main</div><div class="dish pl">Schab pieczony + ziemniaki + surówka</div><div class="dish en">Roast pork + potatoes + salad</div></li>
-        <li><div class="course pl">Napój</div><div class="course en">Drink</div><div class="dish pl">Kompot lub woda</div><div class="dish en">Kompot or water</div></li>
+        <li>
+          <div class="course"><span class="pl">Zupa</span><span class="en">Soup</span></div>
+          <div class="dish"><span class="pl">Żurek z ziemniakami lub rosół</span><span class="en">Żurek soup or broth</span></div>
+        </li>
+        <li>
+          <div class="course"><span class="pl">Danie główne</span><span class="en">Main</span></div>
+          <div class="dish"><span class="pl">Schab pieczony + ziemniaki + surówka</span><span class="en">Roast pork + potatoes + salad</span></div>
+        </li>
+        <li>
+          <div class="course"><span class="pl">Napój</span><span class="en">Drink</span></div>
+          <div class="dish"><span class="pl">Kompot lub woda</span><span class="en">Kompot or water</span></div>
+        </li>
       </ul>
     </div>
   </section>
@@ -322,7 +344,7 @@
       <div class="chips">
         <a class="chip" href="https://ponidziekajakiem.pl/" target="_blank">🛶 ponidziekajakiem.pl</a>
         <a class="chip" href="https://agropark.com.pl/kontakt.php" target="_blank">🏡 agropark.com.pl</a>
-        <a class="chip" href="https://www.google.com/maps/dir/?api=1&destination=50.6607858,20.4680441" target="_blank">🧭 <span class="pl">Nawiguj</span><span class="en">Navigate</span></a>
+        <a class="chip" href="tel:+48510150265">📞 510 150 265</a>
       </div>
     </div>
   </section>
