@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pl" data-lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spływ Nidą · tripmate 🦘</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#1B3A4B;--gold:#C8860A;--teal:#2A7F8A;--river:#1E6E5C;--water:#2A6EA6;--sand:#B07A2A;--ink:#141413;--muted:#5C6C63;--faint:#8A988F;--line:#DCE4DC;--card:#FFFFFF;--ground:#F1F5F0}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;font-size:16px;line-height:1.55;background:var(--ground);color:var(--ink);-webkit-font-smoothing:antialiased}
+  [data-lang="en"] .pl{display:none}
+  [data-lang="pl"] .en{display:none}
+
+  .back-btn{position:fixed;top:14px;left:1rem;z-index:999;background:rgba(0,0,0,.45);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:600;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:background .2s}
+  .back-btn:hover{background:rgba(0,0,0,.7)}
+  .lang-btn{position:fixed;top:14px;right:1rem;z-index:999;background:var(--gold);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:700;cursor:pointer;letter-spacing:.05em;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:opacity .2s}
+  .lang-btn:hover{opacity:.85}
+
+  /* Hero */
+  .hero{position:relative;min-height:280px;display:flex;flex-direction:column;justify-content:flex-end;padding:2rem 1.5rem 2rem;background:linear-gradient(160deg,rgba(10,40,30,.75) 0%,rgba(10,40,30,.4) 50%,rgba(10,40,30,.85) 100%),url('https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Rzeka_Nida_przy_Motkowicach.jpg/1280px-Rzeka_Nida_przy_Motkowicach.jpg') center/cover no-repeat;color:white}
+  .hero-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--river);color:white;font-size:.8rem;font-weight:700;padding:.3rem .85rem;border-radius:2rem;margin-bottom:.75rem;letter-spacing:.05em}
+  .hero h1{font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:.4rem}
+  .hero .sub{font-size:.95rem;opacity:.9;max-width:38ch}
+  .hero-nav-btn{display:inline-flex;align-items:center;gap:.45rem;margin-top:1.1rem;background:var(--river);color:white;padding:.55rem 1.2rem;border-radius:2rem;font-size:.85rem;font-weight:700;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:opacity .2s}
+  .hero-nav-btn:hover{opacity:.85}
+
+  /* Facts bar */
+  .facts-bar{background:var(--navy);padding:1.25rem 1.5rem;display:flex;flex-wrap:wrap;gap:.6rem 1.5rem}
+  .fact{display:flex;flex-direction:column}
+  .fact-label{font-size:.7rem;color:rgba(255,255,255,.5);font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+  .fact-value{font-size:1.05rem;color:white;font-weight:700}
+
+  /* Sections */
+  .wrap{max-width:680px;margin:0 auto;padding:0 1rem}
+  section{margin-top:1.75rem}
+  .sec-title{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--navy);margin-bottom:1rem;display:flex;align-items:center;gap:.75rem}
+  .sec-title::after{content:'';flex:1;height:1px;background:var(--line)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:1rem;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .card-pad{padding:1.25rem 1.4rem}
+
+  /* Timeline */
+  .tl{list-style:none;display:flex;flex-direction:column;gap:0}
+  .tl li{display:grid;grid-template-columns:68px 1fr;gap:.5rem;padding:.75rem 0;border-bottom:1px solid var(--line)}
+  .tl li:last-child{border-bottom:none}
+  .tl .time{font-size:.8rem;font-weight:700;color:var(--water);padding-top:.15rem;line-height:1.3}
+  .tl .ev{font-size:.95rem;font-weight:600;color:var(--ink)}
+  .tl .note{font-size:.83rem;color:var(--muted);margin-top:.25rem}
+  .inline-nav{display:inline-flex;align-items:center;gap:.3rem;font-size:.78rem;font-weight:700;color:var(--water);text-decoration:none;margin-top:.3rem}
+  .inline-nav:hover{text-decoration:underline}
+
+  /* Route */
+  .route-facts{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;margin-top:.85rem}
+  .rf{font-size:.87rem;color:var(--muted);display:flex;align-items:center;gap:.35rem}
+  .rf strong{color:var(--ink)}
+  .btn-route{display:inline-flex;align-items:center;gap:.5rem;background:var(--water);color:white;padding:.55rem 1.2rem;border-radius:2rem;font-size:.85rem;font-weight:700;text-decoration:none;transition:opacity .2s}
+  .btn-route:hover{opacity:.85}
+
+  /* Callout */
+  .callout{display:flex;gap:.85rem;padding:1rem 1.1rem;border-radius:.75rem;align-items:flex-start;margin-top:.75rem}
+  .callout.warn{background:#FaEEDD;border:1px solid #EAD3B0}
+  .callout.warn .ct{color:var(--sand);font-weight:700;font-size:.95rem;margin-bottom:.2rem}
+  .callout.info{background:#E8F4F8;border:1px solid #C8DDE6}
+  .callout.info .ct{color:var(--water);font-weight:700;font-size:.95rem;margin-bottom:.2rem}
+  .callout .cd{font-size:.87rem;color:var(--muted)}
+
+  /* Kayaks */
+  .kayak-grid{display:flex;flex-direction:column;gap:.6rem}
+  .kayak{background:var(--card);border:1px solid var(--line);border-radius:.75rem;padding:.75rem .85rem;display:flex;gap:.75rem;align-items:center}
+  .kayak .num{flex:none;width:32px;height:32px;border-radius:.5rem;display:grid;place-items:center;font-weight:800;font-size:.9rem;background:#DCF0E8;color:var(--river)}
+  .kayak.duo .num{background:#DCEBF3;color:var(--water)}
+  .kayak .who{font-size:.93rem;font-weight:600;line-height:1.25}
+  .kayak .typ{font-size:.75rem;color:var(--faint);text-transform:uppercase;letter-spacing:.05em}
+
+  /* Checklist */
+  .check{list-style:none;display:flex;flex-direction:column;gap:.1rem}
+  .check li label{display:flex;align-items:center;gap:.7rem;padding:.55rem .5rem;border-radius:.5rem;cursor:pointer;transition:background .15s}
+  .check li label:hover{background:#f5f7f4}
+  .check input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}
+  .box{flex:none;width:22px;height:22px;border-radius:.4rem;border:2px solid var(--line);display:grid;place-items:center;transition:all .15s;background:white}
+  .box svg{opacity:0;transition:opacity .15s}
+  input:checked~.box{background:var(--river);border-color:var(--river)}
+  input:checked~.box svg{opacity:1}
+  input:checked~.txt{color:var(--faint);text-decoration:line-through}
+  .txt{font-size:.93rem}
+  .provided{margin-top:.75rem;font-size:.87rem;color:var(--muted);display:flex;gap:.5rem;align-items:baseline}
+  .provided b{color:var(--navy)}
+
+  /* Menu */
+  .menu{list-style:none;display:flex;flex-direction:column;gap:.65rem}
+  .menu li{display:grid;grid-template-columns:28px 1fr;gap:.6rem;align-items:start}
+  .course{font-family:'Playfair Display',serif;font-size:.87rem;color:var(--sand);font-weight:700;padding-top:.1rem}
+  .dish{font-size:.97rem}
+
+  /* Costs */
+  .cost-table{width:100%;border-collapse:collapse}
+  .cost-table td{padding:.55rem .1rem;border-bottom:1px solid var(--line);font-size:.93rem}
+  .cost-table tr:last-child td{border-bottom:none}
+  .cost-table .amt{text-align:right;font-weight:700;color:var(--navy);white-space:nowrap}
+  .cost-table .per{font-size:.78rem;font-weight:400;color:var(--faint)}
+  .cost-total{display:flex;justify-content:space-between;align-items:baseline;margin-top:.85rem;padding-top:.85rem;border-top:2px solid var(--navy)}
+  .cost-total .label{font-weight:700;font-size:.95rem;color:var(--navy)}
+  .cost-total .val{font-weight:800;font-size:1.2rem;color:var(--river)}
+
+  /* Chips */
+  .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.85rem}
+  .chip{display:inline-flex;align-items:center;gap:.35rem;font-size:.82rem;font-weight:700;text-decoration:none;color:var(--water);background:#EAF4F8;border:1px solid #C8DDE6;padding:.4rem .85rem;border-radius:999px}
+  .chip:hover{background:#DFEEF3}
+
+  footer{background:var(--navy);color:rgba(255,255,255,.45);text-align:center;padding:1.75rem;font-size:.82rem;margin-top:2.5rem}
+</style>
+</head>
+<body>
+
+<a class="back-btn" href="../">← <span class="pl">Strona główna</span><span class="en">Home</span></a>
+<button class="lang-btn" onclick="toggleLang()">EN 🌐</button>
+
+<header class="hero">
+  <div class="hero-badge">✅ <span class="pl">Potwierdzone</span><span class="en">Confirmed</span></div>
+  <h1 class="pl">Spływ kajakiem po Nidzie</h1>
+  <h1 class="en">Kayaking on the Nida River</h1>
+  <p class="sub pl"><strong>Niedziela, 5 Lip 2026</strong> · zbiórka 8:30 w Agroparku „Dworek pod Lipą"</p>
+  <p class="sub en"><strong>Sunday, 5 Jul 2026</strong> · meet 8:30 at Agropark "Dworek pod Lipą"</p>
+  <a class="hero-nav-btn" href="https://www.google.com/maps/dir/?api=1&destination=50.6607858,20.4680441" target="_blank">
+    🧭 <span class="pl">Nawiguj do Agroparku</span><span class="en">Navigate to Agropark</span>
+  </a>
+</header>
+
+<div class="facts-bar">
+  <div class="fact"><div class="fact-label">Data</div><div class="fact-value">5 Lip 2026</div></div>
+  <div class="fact"><div class="fact-label pl">Zbiórka</div><div class="fact-label en">Meet</div><div class="fact-value">8:30</div></div>
+  <div class="fact"><div class="fact-label pl">Trasa</div><div class="fact-label en">Route</div><div class="fact-value pl">Brzeźno → meta</div><div class="fact-value en">Brzeźno → finish</div></div>
+  <div class="fact"><div class="fact-label pl">Czas</div><div class="fact-label en">Time</div><div class="fact-value">~3h</div></div>
+  <div class="fact"><div class="fact-label pl">Osób</div><div class="fact-label en">People</div><div class="fact-value">13</div></div>
+</div>
+
+<div class="wrap">
+
+  <section>
+    <h2 class="sec-title pl">Plan dnia</h2>
+    <h2 class="sec-title en">Day Plan</h2>
+    <div class="card">
+      <ul class="tl card-pad">
+        <li>
+          <div class="time">8:30–9:00</div>
+          <div>
+            <div class="ev pl">Zbiórka w Agroparku „Dworek pod Lipą"</div>
+            <div class="ev en">Meet at Agropark "Dworek pod Lipą"</div>
+            <a class="inline-nav" href="https://www.google.com/maps/dir/?api=1&destination=50.6607858,20.4680441" target="_blank">
+              🧭 <span class="pl">Nawiguj</span><span class="en">Navigate</span>
+            </a>
+          </div>
+        </li>
+        <li>
+          <div class="time">9:00</div>
+          <div>
+            <div class="ev pl">Wyjazd busem do Brzeźna (start spływu)</div>
+            <div class="ev en">Bus to Brzeźno (start of route)</div>
+            <div class="note pl">⏰ Bus rusza <strong>punktualnie o 9:00</strong> — lepiej być kilka minut za wcześnie</div>
+            <div class="note en">⏰ Bus departs <strong>exactly at 9:00</strong> — better arrive a few minutes early</div>
+          </div>
+        </li>
+        <li>
+          <div class="time">9:00–9:30</div>
+          <div>
+            <div class="ev pl">Przygotowanie, rozdanie sprzętu</div>
+            <div class="ev en">Preparation, equipment handout</div>
+          </div>
+        </li>
+        <li>
+          <div class="time">9:30</div>
+          <div>
+            <div class="ev pl">Start spływu</div>
+            <div class="ev en">Kayaking starts</div>
+          </div>
+        </li>
+        <li>
+          <div class="time">~20 min</div>
+          <div>
+            <div class="ev pl">Postój w Sobkowie</div>
+            <div class="ev en">Stop in Sobków</div>
+            <div class="note pl">Krótka przerwa (~20 min) — można kupić lody 🍦</div>
+            <div class="note en">Short break (~20 min) — ice cream available 🍦</div>
+          </div>
+        </li>
+        <li>
+          <div class="time">12:30–13:00</div>
+          <div>
+            <div class="ev pl">Planowane dopłynięcie na metę</div>
+            <div class="ev en">Planned arrival at finish</div>
+          </div>
+        </li>
+        <li>
+          <div class="time">13:00</div>
+          <div>
+            <div class="ev pl">Obiad w Agroparku</div>
+            <div class="ev en">Lunch at Agropark</div>
+            <div class="note pl">Jeśli nie zdążymy na 13:00 — obiad będzie dopiero o <strong>15:00</strong> (o 14:00 jest inna grupa). Warto trzymać tempo!</div>
+            <div class="note en">If we're late — lunch shifts to <strong>15:00</strong> (another group at 14:00). Keep the pace!</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec-title pl">Trasa spływu</h2>
+    <h2 class="sec-title en">Route</h2>
+    <div class="card card-pad">
+      <a class="btn-route" href="https://www.strava.com/routes/3508406231658149612" target="_blank">
+        🗺️ <span class="pl">Otwórz trasę na Stravie</span><span class="en">Open route on Strava</span>
+      </a>
+      <div class="route-facts">
+        <div class="rf">📍 <span class="pl"><strong>Start:</strong> Brzeźno</span><span class="en"><strong>Start:</strong> Brzeźno</span></div>
+        <div class="rf">🏁 <span class="pl"><strong>Meta:</strong> Agropark Dworek pod Lipą</span><span class="en"><strong>Finish:</strong> Agropark Dworek pod Lipą</span></div>
+        <div class="rf">📏 <span class="pl"><strong>Długość:</strong> ~20 km</span><span class="en"><strong>Distance:</strong> ~20 km</span></div>
+        <div class="rf">⏱️ <span class="pl"><strong>Czas:</strong> ~2h 40min + postoje</span><span class="en"><strong>Time:</strong> ~2h 40min + stops</span></div>
+      </div>
+      <div class="callout warn" style="margin-top:1rem">
+        <div style="font-size:1.4rem">⚠️</div>
+        <div>
+          <div class="ct pl">Uwaga na most</div>
+          <div class="ct en">Watch out at the bridge</div>
+          <p class="cd pl">Jest jeden punkt pod mostem, gdzie kajak potencjalnie może się wywrócić. <strong>Dzieci powinny mieć kapok przez cały spływ.</strong></p>
+          <p class="cd en">There is one point under a bridge where the kayak could flip. <strong>Children must wear a life jacket for the entire trip.</strong></p>
+        </div>
+      </div>
+      <div class="callout info">
+        <div style="font-size:1.4rem">🏰</div>
+        <div>
+          <div class="ct pl">Postój w Sobkowie</div>
+          <div class="ct en">Stop in Sobków</div>
+          <p class="cd pl">Po drodze zatrzymujemy się w Sobkowie przy zamku — <strong>nie będziemy do niego wchodzić</strong>, ale będzie można kupić lody 🍦</p>
+          <p class="cd en">We stop in Sobków near the castle — <strong>we won't enter it</strong>, but ice cream is available 🍦</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec-title pl">Kajaki</h2>
+    <h2 class="sec-title en">Kayak Assignments</h2>
+    <div class="kayak-grid">
+      <div class="kayak duo"><div class="num">1</div><div><div class="who">Mariusz + Amelka</div><div class="typ pl">2-osobowy</div><div class="typ en">2-person</div></div></div>
+      <div class="kayak"><div class="num">2</div><div><div class="who">Madzia</div><div class="typ pl">1-osobowy</div><div class="typ en">1-person</div></div></div>
+      <div class="kayak"><div class="num">3</div><div><div class="who">Tata</div><div class="typ pl">1-osobowy</div><div class="typ en">1-person</div></div></div>
+      <div class="kayak"><div class="num">4</div><div><div class="who">Mama</div><div class="typ pl">1-osobowy</div><div class="typ en">1-person</div></div></div>
+      <div class="kayak duo"><div class="num">5</div><div><div class="who">Krzysztof + Zuza</div><div class="typ pl">2-osobowy</div><div class="typ en">2-person</div></div></div>
+      <div class="kayak duo"><div class="num">6</div><div><div class="who">Anita + Julka</div><div class="typ pl">2-osobowy</div><div class="typ en">2-person</div></div></div>
+      <div class="kayak duo"><div class="num">7</div><div><div class="who">Dawid + Ania</div><div class="typ pl">2-osobowy</div><div class="typ en">2-person</div></div></div>
+      <div class="kayak"><div class="num">8</div><div><div class="who">Patryk</div><div class="typ pl">1-osobowy</div><div class="typ en">1-person</div></div></div>
+      <div class="kayak"><div class="num">9</div><div><div class="who">Aneta</div><div class="typ pl">1-osobowy</div><div class="typ en">1-person</div></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec-title pl">Co zabrać</h2>
+    <h2 class="sec-title en">What to Bring</h2>
+    <div class="card card-pad">
+      <ul class="check" id="checklist">
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">Ubranie sportowe — jeśli się da, nie bawełniane</span><span class="txt en">Sports clothes — ideally non-cotton</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">Ręcznik</span><span class="txt en">Towel</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">Klapki lub buty do wody</span><span class="txt en">Sandals or water shoes</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">Kurtka (może padać)</span><span class="txt en">Jacket (in case of rain)</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">Woda (na ~3h)</span><span class="txt en">Water (for ~3h)</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">Ubranie na przebranie</span><span class="txt en">Dry change of clothes</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">Coś do jedzenia (na drogę)</span><span class="txt en">Snack for the trip</span></label></li>
+      </ul>
+      <p class="provided"><span>✅</span><span class="pl"><b>Kapoki</b> będą dostarczone przez organizatora.</span><span class="en"><b>Life jackets</b> provided by the organizer.</span></p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec-title pl">Obiad</h2>
+    <h2 class="sec-title en">Lunch</h2>
+    <div class="card card-pad">
+      <ul class="menu">
+        <li><div class="course pl">Zupa</div><div class="course en">Soup</div><div class="dish pl">Żurek z ziemniakami lub rosół</div><div class="dish en">Żurek soup or broth</div></li>
+        <li><div class="course pl">Danie główne</div><div class="course en">Main</div><div class="dish pl">Schab pieczony + ziemniaki + surówka</div><div class="dish en">Roast pork + potatoes + salad</div></li>
+        <li><div class="course pl">Napój</div><div class="course en">Drink</div><div class="dish pl">Kompot lub woda</div><div class="dish en">Kompot or water</div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec-title pl">Koszty</h2>
+    <h2 class="sec-title en">Costs</h2>
+    <div class="card card-pad">
+      <table class="cost-table">
+        <tr>
+          <td><span class="pl">Kajak 2-osobowy</span><span class="en">2-person kayak</span></td>
+          <td class="amt">130 zł <span class="per pl">/ szt.</span><span class="per en">/ piece</span></td>
+        </tr>
+        <tr>
+          <td><span class="pl">Kajak 1-osobowy</span><span class="en">1-person kayak</span></td>
+          <td class="amt">110 zł <span class="per pl">/ szt.</span><span class="per en">/ piece</span></td>
+        </tr>
+        <tr>
+          <td><span class="pl">Transport na start</span><span class="en">Transport to start</span></td>
+          <td class="amt">15 zł <span class="per pl">/ os.</span><span class="per en">/ person</span></td>
+        </tr>
+        <tr>
+          <td><span class="pl">Obiad</span><span class="en">Lunch</span></td>
+          <td class="amt">60 zł <span class="per pl">/ os.</span><span class="per en">/ person</span></td>
+        </tr>
+      </table>
+      <div class="cost-total">
+        <div class="label pl">Łącznie / os. (~)</div>
+        <div class="label en">Total / person (~)</div>
+        <div class="val">~120–130 zł</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec-title pl">Organizator</h2>
+    <h2 class="sec-title en">Organizer</h2>
+    <div class="card card-pad">
+      <p class="pl" style="font-size:.93rem;color:var(--muted)">Spływ organizowany przez Ponidziekajakiem.pl, zbiórka i obiad w Agroparku „Dworek pod Lipą".</p>
+      <p class="en" style="font-size:.93rem;color:var(--muted)">Trip organized by Ponidziekajakiem.pl, meeting point and lunch at Agropark "Dworek pod Lipą".</p>
+      <div class="chips">
+        <a class="chip" href="https://ponidziekajakiem.pl/" target="_blank">🛶 ponidziekajakiem.pl</a>
+        <a class="chip" href="https://agropark.com.pl/kontakt.php" target="_blank">🏡 agropark.com.pl</a>
+        <a class="chip" href="https://www.google.com/maps/dir/?api=1&destination=50.6607858,20.4680441" target="_blank">🧭 <span class="pl">Nawiguj</span><span class="en">Navigate</span></a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <span class="pl">Miłego spływu! 🛶 · Nida · 5 Lip 2026</span>
+  <span class="en">Happy paddling! 🛶 · Nida · 5 Jul 2026</span>
+</footer>
+
+<script>
+  function toggleLang(){
+    const body=document.body,btn=document.querySelector('.lang-btn');
+    if(body.dataset.lang==='pl'){body.dataset.lang='en';btn.textContent='PL 🌐';}
+    else{body.dataset.lang='pl';btn.textContent='EN 🌐';}
+  }
+  document.querySelectorAll('#checklist input[type=checkbox]').forEach(cb=>{
+    const key='nida-check-'+cb.closest('li').querySelector('.txt').textContent.slice(0,20);
+    cb.checked=localStorage.getItem(key)==='1';
+    cb.addEventListener('change',()=>localStorage.setItem(key,cb.checked?'1':'0'));
+  });
+</script>
+</body>
+</html>
