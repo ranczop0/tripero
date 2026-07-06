@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kasprowy Wierch · tripmate 🦘</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#1B3A4B;--gold:#C8860A;--teal:#2A7F8A;--river:#1E6E5C;--water:#2A6EA6;--sand:#B07A2A;--ink:#141413;--muted:#5C6C63;--faint:#8A988F;--line:#DCE4DC;--card:#FFFFFF;--ground:#F1F5F0}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;font-size:16px;line-height:1.55;background:var(--ground);color:var(--ink);-webkit-font-smoothing:antialiased}
+  [data-lang="en"] .pl{display:none}
+  [data-lang="pl"] .en{display:none}
+
+  .back-btn{position:fixed;top:14px;left:1rem;z-index:999;background:rgba(0,0,0,.45);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:600;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:background .2s}
+  .back-btn:hover{background:rgba(0,0,0,.7)}
+  .lang-btn{position:fixed;top:14px;right:1rem;z-index:999;background:var(--gold);color:white;border:none;padding:.35rem .9rem;border-radius:2rem;font-size:.8rem;font-weight:700;cursor:pointer;letter-spacing:.05em;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:opacity .2s}
+  .lang-btn:hover{opacity:.85}
+
+  .hero{position:relative;min-height:300px;display:flex;flex-direction:column;justify-content:flex-end;padding:2rem 1.5rem 2rem;background:linear-gradient(160deg,rgba(5,20,40,.75) 0%,rgba(5,20,40,.35) 50%,rgba(5,20,40,.88) 100%),url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Kasprowy_Wierch_letni.jpg/1280px-Kasprowy_Wierch_letni.jpg') center/cover no-repeat;color:white}
+  .hero-badge{display:inline-flex;align-items:center;gap:.4rem;background:#2E7D32;color:white;font-size:.8rem;font-weight:700;padding:.3rem .85rem;border-radius:2rem;margin-bottom:.75rem;letter-spacing:.05em}
+  .hero h1{font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:.4rem}
+  .hero .sub{font-size:.95rem;opacity:.9;max-width:38ch}
+  .hero-nav-btn{display:inline-flex;align-items:center;gap:.45rem;margin-top:1.1rem;background:var(--navy);color:white;padding:.55rem 1.2rem;border-radius:2rem;font-size:.85rem;font-weight:700;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:opacity .2s}
+  .hero-nav-btn:hover{opacity:.85}
+
+  .facts-bar{background:var(--navy);padding:1.25rem 1.5rem;display:flex;flex-wrap:wrap;gap:.6rem 1.5rem}
+  .fact{display:flex;flex-direction:column;gap:.1rem}
+  .fact-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.55);font-weight:600}
+  .fact-value{font-size:.97rem;color:white;font-weight:700}
+
+  .wrap{max-width:640px;margin:0 auto;padding:1.5rem 1rem 3rem}
+  section{margin-bottom:1.75rem}
+  .sec-title{font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--navy);margin-bottom:.85rem}
+  .card{background:var(--card);border-radius:1rem;border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .card-pad{padding:1.25rem}
+
+  /* Timeline */
+  .tl{list-style:none;display:flex;flex-direction:column;gap:0}
+  .tl li{display:grid;grid-template-columns:72px 1fr;gap:.6rem;padding:.7rem 0;border-bottom:1px solid var(--line)}
+  .tl li:last-child{border-bottom:none}
+  .time{font-size:.82rem;font-weight:700;color:var(--teal);padding-top:.15rem;line-height:1.3}
+  .ev{font-size:.95rem;font-weight:600;color:var(--ink)}
+  .note{font-size:.83rem;color:var(--muted);margin-top:.2rem;line-height:1.4}
+
+  /* Callouts */
+  .callout{display:flex;gap:.85rem;padding:1rem 1.1rem;border-radius:.75rem;align-items:flex-start;margin-top:.85rem}
+  .callout.warn{background:#FFF8E1;border:1px solid #EAD3B0}
+  .callout.warn .ct{color:#9A6E1E;font-weight:700;font-size:.95rem;margin-bottom:.2rem}
+  .callout.info{background:#EAF4F8;border:1px solid #C8DDE6}
+  .callout.info .ct{color:#1c5a77;font-weight:700;font-size:.95rem;margin-bottom:.2rem}
+  .callout.green{background:#E8F5E9;border:1px solid #A5D6A7}
+  .callout.green .ct{color:#2E7D32;font-weight:700;font-size:.95rem;margin-bottom:.2rem}
+  .cd{font-size:.88rem;color:var(--muted);margin:0;line-height:1.45}
+
+  /* Links */
+  .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.85rem}
+  .chip{display:inline-flex;align-items:center;gap:.35rem;font-size:.82rem;font-weight:700;text-decoration:none;color:var(--water);background:#EAF4F8;border:1px solid #C8DDE6;padding:.4rem .85rem;border-radius:999px}
+  .chip:hover{background:#DFEEF3}
+
+  /* Check list */
+  .check{list-style:none;display:flex;flex-direction:column;gap:.55rem}
+  .check label{display:flex;align-items:center;gap:.75rem;cursor:pointer;font-size:.95rem}
+  .check input{display:none}
+  .box{flex-shrink:0;width:22px;height:22px;border-radius:6px;border:2px solid var(--line);background:white;display:grid;place-items:center;transition:background .15s,border-color .15s}
+  .box svg{display:none}
+  .check input:checked~.box{background:var(--river);border-color:var(--river)}
+  .check input:checked~.box svg{display:block}
+  .check input:checked~.txt{text-decoration:line-through;color:var(--faint)}
+  .provided{margin-top:.85rem;font-size:.88rem;color:var(--muted);display:flex;gap:.5rem;align-items:baseline}
+  .provided b{color:var(--river)}
+
+  /* Route facts */
+  .route-facts{display:flex;flex-direction:column;gap:.5rem;padding:1rem 1.25rem}
+  .rf{font-size:.9rem;color:var(--muted)}
+  .rf strong{color:var(--ink)}
+
+  footer{text-align:center;padding:2rem 1rem;color:var(--faint);font-size:.82rem}
+</style>
+</head>
+
+<body data-lang="pl">
+
+<a class="back-btn" href="../">← <span class="pl">Strona główna</span><span class="en">Home</span></a>
+<button class="lang-btn" onclick="toggleLang()">EN 🌐</button>
+
+<header class="hero">
+  <div class="hero-badge">✅ <span class="pl">Potwierdzone</span><span class="en">Confirmed</span></div>
+  <h1><span class="pl">Kasprowy Wierch</span><span class="en">Kasprowy Peak</span></h1>
+  <p class="sub pl">Wyciąg linowy PKL · zbiórka 11:00 na parkingu Kuźnice</p>
+  <p class="sub en">Cable car PKL · meet at 11:00 at Kuźnice parking</p>
+  <a class="hero-nav-btn" href="https://www.google.com/maps/dir/?api=1&destination=49.280837,19.978754" target="_blank">
+    🧭 <span class="pl">Nawiguj na parking</span><span class="en">Navigate to parking</span>
+  </a>
+</header>
+
+<div class="facts-bar">
+  <div class="fact">
+    <div class="fact-label pl">Zbiórka</div><div class="fact-label en">Meet</div>
+    <div class="fact-value">11:00</div>
+  </div>
+  <div class="fact">
+    <div class="fact-label pl">Wyjazd kolejką</div><div class="fact-label en">Cable car</div>
+    <div class="fact-value">12:30</div>
+  </div>
+  <div class="fact">
+    <div class="fact-label pl">Czas na górze</div><div class="fact-label en">Time on top</div>
+    <div class="fact-value pl">max 1h 40 min</div><div class="fact-value en">max 1h 40 min</div>
+  </div>
+  <div class="fact">
+    <div class="fact-label pl">Wyjazd kolejką</div><div class="fact-label en">Cable car ride</div>
+    <div class="fact-value pl">~20 min</div><div class="fact-value en">~20 min</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section>
+    <h2 class="sec-title pl">Plan dnia</h2>
+    <h2 class="sec-title en">Day Plan</h2>
+    <div class="card card-pad">
+      <ul class="tl">
+        <li>
+          <div class="time">11:00</div>
+          <div class="body">
+            <div class="ev pl">Zbiórka na Parkingu nr 3 Kuźnice</div>
+            <div class="ev en">Meet at Kuźnice Parking no. 3</div>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=49.280837,19.978754" target="_blank" style="display:inline-flex;align-items:center;gap:.3rem;margin-top:.35rem;font-size:.78rem;font-weight:700;color:var(--water);text-decoration:none">🧭 <span class="pl">Nawiguj na parking</span><span class="en">Navigate to parking</span></a>
+          </div>
+        </li>
+        <li>
+          <div class="time">11:00–11:30</div>
+          <div class="body">
+            <div class="ev pl">Spacer do dolnej stacji kolejki</div>
+            <div class="ev en">Walk to lower cable car station</div>
+            <div class="note pl">~1,5 km · ok. 30 min · przyjemna droga wzdłuż potoku</div>
+            <div class="note en">~1.5 km · approx. 30 min · pleasant walk along the stream</div>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=49.2694154,19.9798222" target="_blank" style="display:inline-flex;align-items:center;gap:.3rem;margin-top:.35rem;font-size:.78rem;font-weight:700;color:var(--water);text-decoration:none">🧭 <span class="pl">Dolna stacja kolejki</span><span class="en">Lower cable car station</span></a>
+          </div>
+        </li>
+        <li>
+          <div class="time">12:30</div>
+          <div class="body">
+            <div class="ev pl">Wyjazd kolejką na Kasprowy Wierch</div>
+            <div class="ev en">Cable car departure to Kasprowy Wierch</div>
+            <div class="note pl">⚠️ <strong>Musimy być przy kasach wcześniej</strong> — warto dotrzeć ok. 12:00</div>
+            <div class="note en">⚠️ <strong>We must be at the ticket office early</strong> — aim to arrive around 12:00</div>
+          </div>
+        </li>
+        <li>
+          <div class="time">~12:50</div>
+          <div class="body">
+            <div class="ev pl">Na szczycie — Kasprowy Wierch (1987 m n.p.m.)</div>
+            <div class="ev en">At the top — Kasprowy Wierch (1987 m a.s.l.)</div>
+            <div class="note pl">Restauracja, widoki na Tatry, spacer po grani</div>
+            <div class="note en">Restaurant, views over the Tatras, ridge walk</div>
+          </div>
+        </li>
+        <li>
+          <div class="time">~14:30</div>
+          <div class="body">
+            <div class="ev pl">Zjazd kolejką</div>
+            <div class="ev en">Cable car descent</div>
+            <div class="note pl">max 1h 40 min pobytu na górze</div>
+            <div class="note en">max 1h 40 min stay at the top</div>
+          </div>
+        </li>
+        <li>
+          <div class="time">~15:00</div>
+          <div class="body">
+            <div class="ev pl">Spacer powrotny do parkingu</div>
+            <div class="ev en">Walk back to parking</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec-title pl">Parking Kuźnice</h2>
+    <h2 class="sec-title en">Kuźnice Parking</h2>
+    <div class="card card-pad">
+      <div class="callout warn" style="margin-top:0">
+        <div style="font-size:1.4rem">🚗</div>
+        <div>
+          <div class="ct pl">Zakaz wjazdu — nie dotyczy nas!</div>
+          <div class="ct en">No entry — doesn't apply to us!</div>
+          <p class="cd pl">„Zakaz wjazdu samochodów osobowych do Kuźnic <strong>NIE DOTYCZY</strong> dojazdu do naszego parkingu." Po drodze możecie spotkać osoby kierujące na inne parkingi — <strong>nie dajcie się zmylić 😄</strong></p>
+          <p class="cd en">"The no-entry ban for cars into Kuźnice <strong>DOES NOT APPLY</strong> to access to our parking." Along the way you may meet people directing you elsewhere — <strong>don't be misled 😄</strong></p>
+        </div>
+      </div>
+      <div style="margin-top:1rem">
+        <a href="https://www.google.com/maps/dir/?api=1&destination=49.280837,19.978754" target="_blank" style="display:inline-flex;align-items:center;gap:.45rem;background:var(--navy);color:white;padding:.5rem 1.1rem;border-radius:2rem;font-size:.85rem;font-weight:700;text-decoration:none">🧭 <span class="pl">Nawiguj na Parking nr 3</span><span class="en">Navigate to Parking no. 3</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec-title pl">Na szczycie</h2>
+    <h2 class="sec-title en">At the Summit</h2>
+    <div class="card card-pad">
+      <div class="callout green" style="margin-top:0">
+        <div style="font-size:1.4rem">🍽️</div>
+        <div>
+          <div class="ct pl">Restauracja na Kasprowym</div>
+          <div class="ct en">Kasprowy Restaurant</div>
+          <p class="cd pl">Najwyżej położona restauracja w Polsce — warto wpaść na herbatę lub coś ciepłego po wyjściu na zewnątrz.</p>
+          <p class="cd en">The highest restaurant in Poland — worth stopping for tea or something warm after time outside.</p>
+        </div>
+      </div>
+      <div class="callout info" style="margin-top:.75rem">
+        <div style="font-size:1.4rem">🏔️</div>
+        <div>
+          <div class="ct pl">Spacer po grani</div>
+          <div class="ct en">Ridge walk</div>
+          <p class="cd pl">Ze szczytu można przejść chwilę po grani z widokiem na obie strony — Tatry Zachodnie i Wschodnie. <strong>Trzymajcie się razem i wróćcie na czas!</strong></p>
+          <p class="cd en">From the top you can walk along the ridge with views on both sides — Western and Eastern Tatras. <strong>Stay together and be back on time!</strong></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec-title pl">Co zabrać</h2>
+    <h2 class="sec-title en">What to Bring</h2>
+    <div class="card card-pad">
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:.85rem" class="pl">Na górze będzie znacznie chłodniej i wietrznie — warto być przygotowanym!</p>
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:.85rem" class="en">It will be much colder and windier at the top — come prepared!</p>
+      <ul class="check">
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">🧥 Najcieplejsza kurtka jaką macie</span><span class="txt en">🧥 Your warmest jacket</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">🌧️ Kurtka przeciwdeszczowa</span><span class="txt en">🌧️ Rain jacket</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">🧤 Czapka i rękawiczki (na szczycie może być 5–10°C)</span><span class="txt en">🧤 Hat and gloves (summit may be 5–10°C)</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">👟 Wygodne buty z gripem (grań może być mokra)</span><span class="txt en">👟 Sturdy shoes with grip (ridge can be wet)</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">💧 Woda i przekąska</span><span class="txt en">💧 Water and snack</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">📷 Aparat / telefon — widoki są fantastyczne!</span><span class="txt en">📷 Camera / phone — the views are stunning!</span></label></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec-title pl">Pogoda i kamery</h2>
+    <h2 class="sec-title en">Weather &amp; Cameras</h2>
+    <div class="card card-pad">
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:.85rem" class="pl">Sprawdź przed wyjazdem — pogoda w górach zmienia się szybko.</p>
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:.85rem" class="en">Check before heading out — mountain weather changes fast.</p>
+      <div class="chips" style="margin-top:0">
+        <a class="chip" href="https://www.pkl.pl/kasprowy-wierch/pogoda.html" target="_blank">🌤️ <span class="pl">Pogoda PKL</span><span class="en">PKL Weather</span></a>
+        <a class="chip" href="https://www.pkl.pl/kasprowy-wierch/kamery-online.html" target="_blank">📷 <span class="pl">Kamery online</span><span class="en">Live cameras</span></a>
+        <a class="chip" href="https://www.pkl.pl/" target="_blank">🚡 pkl.pl</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <span class="pl">Kasprowy Wierch · 1987 m n.p.m. · Tatry 🏔️</span>
+  <span class="en">Kasprowy Wierch · 1987 m a.s.l. · Tatra Mountains 🏔️</span>
+</footer>
+
+<script>
+  function toggleLang(){
+    const body=document.body,btn=document.querySelector('.lang-btn');
+    if(body.dataset.lang==='pl'){body.dataset.lang='en';btn.textContent='PL 🌐';}
+    else{body.dataset.lang='pl';btn.textContent='EN 🌐';}
+  }
+</script>
+</body>
+</html>
