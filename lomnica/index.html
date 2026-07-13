@@ -37,12 +37,27 @@
   .card{background:var(--card);border-radius:1rem;border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.05)}
   .card-pad{padding:1.25rem}
 
-  .plan-label{display:inline-flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:700;padding:.28rem .75rem;border-radius:999px;margin-bottom:.85rem;letter-spacing:.04em}
-  .plan-a{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7}
-  .plan-b{background:#FFF8E1;color:#9A6E1E;border:1px solid #EAD3B0}
-  .plan-c{background:#EAF4F8;color:#1c5a77;border:1px solid #C8DDE6}
-  .plan-d{background:#F3E8FF;color:#6A2C91;border:1px solid #D1B3E6}
+  /* Weather badges */
+  .wb{display:inline-flex;align-items:center;gap:.35rem;font-size:.75rem;font-weight:700;padding:.22rem .65rem;border-radius:999px;letter-spacing:.03em;flex-shrink:0}
+  .wb-any{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7}
+  .wb-dry{background:#FFF8E1;color:#9A6E1E;border:1px solid #EAD3B0}
+  .wb-rain{background:#EAF4F8;color:#1c5a77;border:1px solid #C8DDE6}
+  .wb-sun{background:#FFF3E0;color:#E65100;border:1px solid #FFCC80}
 
+  /* Distance badge */
+  .dist{display:inline-flex;align-items:center;gap:.3rem;font-size:.75rem;font-weight:600;color:var(--muted);background:var(--ground);border:1px solid var(--line);padding:.22rem .65rem;border-radius:999px}
+
+  /* Alt card */
+  .alt-card{background:var(--card);border-radius:1rem;border:1px solid var(--line);padding:1.1rem 1.25rem;margin-bottom:.85rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .alt-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;margin-bottom:.5rem}
+  .alt-card-title{font-size:1rem;font-weight:700;color:var(--ink)}
+  .alt-card-badges{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.5rem}
+  .alt-card-desc{font-size:.875rem;color:var(--muted);line-height:1.45;margin-bottom:.7rem}
+  .alt-card-links{display:flex;flex-wrap:wrap;gap:.45rem}
+  .btn-nav{display:inline-flex;align-items:center;gap:.3rem;background:var(--navy);color:white;padding:.38rem .85rem;border-radius:2rem;font-size:.8rem;font-weight:700;text-decoration:none}
+  .btn-web{display:inline-flex;align-items:center;gap:.3rem;background:var(--ground);color:var(--ink);border:1px solid var(--line);padding:.38rem .85rem;border-radius:2rem;font-size:.8rem;font-weight:700;text-decoration:none}
+
+  /* Timeline */
   .tl{list-style:none;display:flex;flex-direction:column;gap:0}
   .tl li{display:grid;grid-template-columns:72px 1fr;gap:.6rem;padding:.7rem 0;border-bottom:1px solid var(--line)}
   .tl li:last-child{border-bottom:none}
@@ -50,6 +65,7 @@
   .ev{font-size:.95rem;font-weight:600;color:var(--ink)}
   .note{font-size:.83rem;color:var(--muted);margin-top:.2rem;line-height:1.4}
 
+  /* Callouts */
   .callout{display:flex;gap:.85rem;padding:1rem 1.1rem;border-radius:.75rem;align-items:flex-start;margin-top:.85rem}
   .callout.warn{background:#FFF8E1;border:1px solid #EAD3B0}
   .callout.warn .ct{color:#9A6E1E;font-weight:700;font-size:.95rem;margin-bottom:.2rem}
@@ -57,24 +73,30 @@
   .callout.info .ct{color:#1c5a77;font-weight:700;font-size:.95rem;margin-bottom:.2rem}
   .callout.green{background:#E8F5E9;border:1px solid #A5D6A7}
   .callout.green .ct{color:#2E7D32;font-weight:700;font-size:.95rem;margin-bottom:.2rem}
-  .callout.purple{background:#F3E8FF;border:1px solid #D1B3E6}
-  .callout.purple .ct{color:#6A2C91;font-weight:700;font-size:.95rem;margin-bottom:.2rem}
   .cd{font-size:.88rem;color:var(--muted);margin:0;line-height:1.45}
 
+  /* Chips */
   .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.85rem}
   .chip{display:inline-flex;align-items:center;gap:.35rem;font-size:.82rem;font-weight:700;text-decoration:none;color:var(--water);background:#EAF4F8;border:1px solid #C8DDE6;padding:.4rem .85rem;border-radius:999px}
   .chip:hover{background:#DFEEF3}
 
-  .nav-btn{display:inline-flex;align-items:center;gap:.45rem;background:var(--navy);color:white;padding:.5rem 1.1rem;border-radius:2rem;font-size:.85rem;font-weight:700;text-decoration:none;margin-top:.85rem}
-  .nav-btn:hover{opacity:.85}
+  /* Checklist */
+  .check{list-style:none;display:flex;flex-direction:column;gap:.55rem}
+  .check label{display:flex;align-items:center;gap:.75rem;cursor:pointer;font-size:.95rem}
+  .check input{display:none}
+  .box{flex-shrink:0;width:22px;height:22px;border-radius:6px;border:2px solid var(--line);background:white;display:grid;place-items:center;transition:background .15s,border-color .15s}
+  .box svg{display:none}
+  .check input:checked~.box{background:var(--river);border-color:var(--river)}
+  .check input:checked~.box svg{display:block}
+  .check input:checked~.txt{text-decoration:line-through;color:var(--faint)}
 
-  .alt-divider{display:flex;align-items:center;gap:.75rem;margin:1.5rem 0 1rem;font-size:.8rem;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
+  /* Divider */
+  .alt-divider{display:flex;align-items:center;gap:.75rem;margin:1.5rem 0 1.1rem;font-size:.8rem;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
   .alt-divider::before,.alt-divider::after{content:'';flex:1;height:1px;background:var(--line)}
 
   footer{text-align:center;padding:2rem 1rem;color:var(--faint);font-size:.82rem}
 </style>
 </head>
-
 <body data-lang="pl">
 
 <a class="back-btn" href="../">← <span class="pl">Strona główna</span><span class="en">Home</span></a>
@@ -83,8 +105,8 @@
 <header class="hero">
   <div class="hero-badge">🗓️ 14 <span class="pl">Lipca 2026</span><span class="en">July 2026</span></div>
   <h1>Lomnický štít</h1>
-  <p class="sub pl"><strong>Wysokie Tatry, Słowacja</strong> · 2634 m n.p.m. · kilka wariantów w zależności od pogody</p>
-  <p class="sub en"><strong>High Tatras, Slovakia</strong> · 2634 m a.s.l. · a few options depending on weather</p>
+  <p class="sub pl"><strong>Wysokie Tatry, Słowacja</strong> · 2634 m n.p.m. · plan A + 9 alternatyw na każdą pogodę</p>
+  <p class="sub en"><strong>High Tatras, Slovakia</strong> · 2634 m a.s.l. · plan A + 9 alternatives for any weather</p>
   <a class="hero-nav-btn" href="https://www.google.com/maps/dir/?api=1&destination=49.1625,20.2835" target="_blank">
     🧭 <span class="pl">Nawiguj do Tatranskiej Lomicy</span><span class="en">Navigate to Tatranská Lomnica</span>
   </a>
@@ -117,17 +139,18 @@
     <h2 class="sec-title en">Plan A — Cable car to the summit 🌤️</h2>
     <p class="sec-sub pl">Jeśli widoczność jest dobra i wyciąg czynny — to jest plan główny.</p>
     <p class="sec-sub en">If visibility is good and the cable car is running — this is the main plan.</p>
-
     <div class="card card-pad">
-      <div class="plan-label plan-a">✅ <span class="pl">Dobra pogoda</span><span class="en">Good weather</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.85rem">
+        <span class="wb wb-sun">☀️ <span class="pl">Tylko dobra pogoda</span><span class="en">Good weather only</span></span>
+      </div>
       <ul class="tl">
         <li>
           <div class="time pl">Rano</div><div class="time en">Morning</div>
           <div class="body">
             <div class="ev pl">Sprawdź pogodę i kup bilety online</div>
             <div class="ev en">Check weather and buy tickets online</div>
-            <div class="note pl">⚠️ <strong>Bilety warto zarezerwować z wyprzedzeniem</strong> — tatry.sk wyprzedaje się szybko w sezonie</div>
-            <div class="note en">⚠️ <strong>Book tickets in advance</strong> — tatry.sk sells out fast in season</div>
+            <div class="note pl">⚠️ <strong>Bilety warto zarezerwować z wyprzedzeniem</strong> — tatry.sk wyprzedaje się szybko w lipcu</div>
+            <div class="note en">⚠️ <strong>Book in advance</strong> — tatry.sk sells out fast in July</div>
           </div>
         </li>
         <li>
@@ -135,128 +158,250 @@
           <div class="body">
             <div class="ev pl">Przyjazd do Tatranskiej Lomicy</div>
             <div class="ev en">Arrive at Tatranská Lomnica</div>
-            <div class="note pl">Parking przy dolnej stacji kolejki · ~1h jazdy z Zakopanego przez Łysą Polanę</div>
-            <div class="note en">Parking at the lower station · ~1h drive from Zakopane via Łysa Polana</div>
-            <a href="https://www.google.com/maps/dir/?api=1&destination=49.1625,20.2835" target="_blank" style="display:inline-flex;align-items:center;gap:.3rem;margin-top:.35rem;font-size:.78rem;font-weight:700;color:var(--water);text-decoration:none">🧭 <span class="pl">Dolna stacja kolejki</span><span class="en">Lower cable car station</span></a>
+            <div class="note pl">~1h jazdy z Zakopanego przez Łysą Polanę · parking przy dolnej stacji</div>
+            <div class="note en">~1h drive from Zakopane via Łysa Polana · parking at lower station</div>
           </div>
         </li>
         <li>
-          <div class="time pl">wg biletu</div><div class="time en">per ticket</div>
+          <div class="time pl">I etap</div><div class="time en">Stage 1</div>
           <div class="body">
-            <div class="ev pl">Wyjazd kolejką — 2 etapy</div>
-            <div class="ev en">Cable car — 2 stages</div>
-            <div class="note pl">Tatranská Lomnica (749 m) → Štart (1751 m) → Lomnický štít (2634 m) · ~20 min łącznie</div>
-            <div class="note en">Tatranská Lomnica (749 m) → Štart (1751 m) → Lomnický štít (2634 m) · ~20 min total</div>
+            <div class="ev pl">Kolejka do Skalnaté Pleso (1751 m)</div>
+            <div class="ev en">Cable car to Skalnaté Pleso (1751 m)</div>
+            <div class="note pl">Górskie jezioro, restauracja, mini-park ze świstakami · można zostać, jeśli szczyt jest w chmurach</div>
+            <div class="note en">Mountain lake, restaurant, marmot mini-park · can stay here if the summit is in clouds</div>
           </div>
         </li>
         <li>
-          <div class="time pl">Na górze</div><div class="time en">At top</div>
+          <div class="time pl">II etap</div><div class="time en">Stage 2</div>
           <div class="body">
-            <div class="ev pl">Szczyt — Lomnický štít (2634 m n.p.m.)</div>
-            <div class="ev en">Summit — Lomnický štít (2634 m a.s.l.)</div>
+            <div class="ev pl">Kolejka na Lomnický štít (2634 m)</div>
+            <div class="ev en">Cable car to Lomnický štít (2634 m)</div>
             <div class="note pl">Restauracja, taras widokowy, Obserwatorium Meteorologiczne · panorama całych Wysokich Tatr</div>
-            <div class="note en">Restaurant, viewing terrace, Meteorological Observatory · panorama of the entire High Tatras</div>
+            <div class="note en">Restaurant, viewing terrace, Meteorological Observatory · panorama over the entire High Tatras</div>
           </div>
         </li>
       </ul>
-
       <div class="callout info" style="margin-top:1rem">
         <div style="font-size:1.4rem">🎫</div>
         <div>
-          <div class="ct pl">Rezerwacja biletów</div>
-          <div class="ct en">Ticket booking</div>
-          <p class="cd pl">Bilety na wyciąg kupuje się online na <strong>tatry.sk</strong> — wybierz konkretną godzinę wyjazdu. Warto zarezerwować dzień wcześniej.</p>
-          <p class="cd en">Cable car tickets are bought online at <strong>tatry.sk</strong> — select a specific departure time. Book the day before to be safe.</p>
+          <div class="ct pl">Rezerwacja biletów — tatry.sk</div>
+          <div class="ct en">Book tickets — tatry.sk</div>
+          <p class="cd pl">Kupuj bilety z wybraną godziną wyjazdu na <strong>tatry.sk</strong>. W lipcu warto rezerwować dzień wcześniej.</p>
+          <p class="cd en">Buy tickets with a chosen departure time at <strong>tatry.sk</strong>. In July, book the day before.</p>
         </div>
       </div>
-      <div class="chips" style="margin-top:.85rem">
-        <a class="chip" href="https://www.tatry.sk/en/ticket-booking" target="_blank">🎫 <span class="pl">Kup bilety · tatry.sk</span><span class="en">Buy tickets · tatry.sk</span></a>
+      <div class="chips">
+        <a class="chip" href="https://www.tatry.sk/en/ticket-booking" target="_blank">🎫 <span class="pl">Kup bilety</span><span class="en">Buy tickets</span></a>
         <a class="chip" href="https://www.tatry.sk/en/weather" target="_blank">🌤️ <span class="pl">Pogoda na szczycie</span><span class="en">Summit weather</span></a>
         <a class="chip" href="https://www.tatry.sk/en/webcams" target="_blank">📷 <span class="pl">Kamery online</span><span class="en">Live cameras</span></a>
       </div>
     </div>
   </section>
 
-  <!-- DIVIDER -->
-  <div class="alt-divider pl">Alternatywy na złą pogodę</div>
-  <div class="alt-divider en">Bad weather alternatives</div>
+  <!-- ALTERNATYWY -->
+  <div class="alt-divider pl">9 alternatyw · wybierz według pogody</div>
+  <div class="alt-divider en">9 alternatives · pick by weather</div>
 
-  <!-- PLAN B -->
+  <!-- LEGENDA -->
+  <div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.25rem;padding:.75rem 1rem;background:var(--card);border-radius:.85rem;border:1px solid var(--line)">
+    <span class="wb wb-any">🟢 <span class="pl">Każda pogoda</span><span class="en">Any weather</span></span>
+    <span class="wb wb-dry">🟡 <span class="pl">Pochmurno, bez deszczu</span><span class="en">Overcast, no rain</span></span>
+    <span class="wb wb-sun">🟠 <span class="pl">Sucho, nie na szczyt</span><span class="en">Dry, not summit</span></span>
+    <span class="wb wb-rain">🔵 <span class="pl">Nawet przy deszczu</span><span class="en">Even in rain</span></span>
+  </div>
+
   <section>
-    <h2 class="sec-title pl">Plan B — Jaskinia Bielańska 🦇</h2>
-    <h2 class="sec-title en">Plan B — Belianska Cave 🦇</h2>
-    <p class="sec-sub pl">Jedyna ogólnodostępna jaskinia w Tatrach Słowackich. Działa niezależnie od pogody.</p>
-    <p class="sec-sub en">The only publicly accessible cave in the Slovak Tatras. Operates regardless of weather.</p>
+    <h2 class="sec-title pl">Alternatywy w rejonie</h2>
+    <h2 class="sec-title en">Alternatives in the area</h2>
 
+    <!-- 1. Skalnaté Pleso -->
+    <div class="alt-card">
+      <div class="alt-card-head">
+        <div class="alt-card-title">🏔️ Skalnaté Pleso</div>
+      </div>
+      <div class="alt-card-badges">
+        <span class="wb wb-any">🟢 <span class="pl">Każda pogoda</span><span class="en">Any weather</span></span>
+        <span class="dist">📍 ~5 km · 1751 m</span>
+      </div>
+      <p class="alt-card-desc pl">Górskie jezioro w połowie drogi na Lomnický štít — dostępne pierwszą kolejką. Nawet jeśli szczyt jest w chmurach, tu widoki są świetne. Restauracja, mini-park ze świstakami dla dzieci (Marmot Land), punkt startowy na trasy piesze.</p>
+      <p class="alt-card-desc en">Mountain lake halfway up to Lomnický štít — accessible via the first cable car. Even when the summit is in clouds, views here are great. Restaurant, marmot mini-park for kids (Marmot Land), starting point for hikes.</p>
+      <div class="alt-card-links">
+        <a href="https://www.google.com/maps/dir/?api=1&destination=49.1625,20.2835" target="_blank" class="btn-nav">🧭 <span class="pl">Dolna stacja</span><span class="en">Lower station</span></a>
+        <a href="https://www.tatry.sk/en/marmot-land-skalnate-pleso/" target="_blank" class="btn-web">🌐 tatry.sk</a>
+      </div>
+    </div>
+
+    <!-- 2. Belianská jaskyňa -->
+    <div class="alt-card">
+      <div class="alt-card-head">
+        <div class="alt-card-title">🪨 Belianská jaskyňa</div>
+      </div>
+      <div class="alt-card-badges">
+        <span class="wb wb-rain">🔵 <span class="pl">Nawet przy deszczu</span><span class="en">Even in rain</span></span>
+        <span class="dist">📍 ~12 km · Tatranská Kotlina</span>
+      </div>
+      <p class="alt-card-desc pl">Jedyna ogólnodostępna jaskinia w słowackich Tatrach. <strong>Jaskinia stalaktytowa</strong> (nie lodowa!) ze stalaktytami, stalagmitami i podziemnymi salami. Stała temperatura ~7–9°C — weźcie swetry. Wycieczki z przewodnikiem ok. 70 minut. Bilety: 15€ dorośli / 8€ dzieci. Płatność gotówką.</p>
+      <p class="alt-card-desc en">The only publicly accessible cave in the Slovak Tatras. <strong>Stalactite cave</strong> (not ice!) with stalactites, stalagmites and underground chambers. Constant temperature ~7–9°C — bring jumpers. Guided tours ~70 min. Tickets: €15 adults / €8 kids. Cash only.</p>
+      <div class="alt-card-links">
+        <a href="https://www.google.com/maps/dir/?api=1&destination=49.2582,20.2353" target="_blank" class="btn-nav">🧭 <span class="pl">Nawiguj</span><span class="en">Navigate</span></a>
+        <a href="https://www.ssj.sk/en/caves/belianska-jaskyna" target="_blank" class="btn-web">🌐 ssj.sk</a>
+      </div>
+    </div>
+
+    <!-- 3. Dobšinská jaskyňa lodowa -->
+    <div class="alt-card">
+      <div class="alt-card-head">
+        <div class="alt-card-title">🧊 Dobšinská ľadová jaskyňa</div>
+      </div>
+      <div class="alt-card-badges">
+        <span class="wb wb-rain">🔵 <span class="pl">Nawet przy deszczu</span><span class="en">Even in rain</span></span>
+        <span class="dist">📍 ~45 km · Słowacki Raj</span>
+      </div>
+      <p class="alt-card-desc pl"><strong>Prawdziwa jaskinia lodowa!</strong> Wpisana na listę UNESCO — jedna z największych jaskiń lodowych w Europie. Lód na ścianach, podłodze i suficie przez cały rok, temperatura wewnątrz –3°C. Trasa 515 m, ok. 30 min. Bilety limitowane — warto zarezerwować online.</p>
+      <p class="alt-card-desc en"><strong>A real ice cave!</strong> UNESCO listed — one of the largest ice caves in Europe. Ice on walls, floor and ceiling all year round, temperature –3°C inside. Route 515 m, ~30 min. Limited tickets — worth booking online in advance.</p>
+      <div class="alt-card-links">
+        <a href="https://www.google.com/maps/dir/?api=1&destination=48.7819,20.2764" target="_blank" class="btn-nav">🧭 <span class="pl">Nawiguj</span><span class="en">Navigate</span></a>
+        <a href="https://dlj.sk/en/" target="_blank" class="btn-web">🌐 dlj.sk</a>
+      </div>
+    </div>
+
+    <!-- 4. Bachledova Treetop Walk -->
+    <div class="alt-card">
+      <div class="alt-card-head">
+        <div class="alt-card-title">🌲 Bachledova dolina — Chodník korunami stromov</div>
+      </div>
+      <div class="alt-card-badges">
+        <span class="wb wb-dry">🟡 <span class="pl">Pochmurno OK</span><span class="en">Overcast OK</span></span>
+        <span class="dist">📍 ~40 km · kierunek Ždiar</span>
+      </div>
+      <p class="alt-card-desc pl">Spacer po koronach drzew na wysokości 32 m! Trasa 1234 m, 3 strefy adrenaliny z przezroczystymi elementami, 67-metrowa zjeżdżalnia wokół wieży widokowej. Panorama Tatr Bielańskich i Pienin. Dostęp kolejką (7 min). Idealne dla dzieci i dorosłych.</p>
+      <p class="alt-card-desc en">A walk through the treetops at 32 m height! 1234 m trail, 3 thrill zones with transparent sections, 67 m slide around the observation tower. Views of the Belianske Tatras and Pieniny. Access by cable car (7 min). Great for kids and adults.</p>
+      <div class="alt-card-links">
+        <a href="https://www.google.com/maps/dir/?api=1&destination=49.2870,20.2440" target="_blank" class="btn-nav">🧭 <span class="pl">Nawiguj</span><span class="en">Navigate</span></a>
+        <a href="https://chodnikkorunamistromov.sk/en/" target="_blank" class="btn-web">🌐 chodnikkorunamistromov.sk</a>
+      </div>
+    </div>
+
+    <!-- 5. Ždiar -->
+    <div class="alt-card">
+      <div class="alt-card-head">
+        <div class="alt-card-title">🏡 Ždiar — słowacka wioska</div>
+      </div>
+      <div class="alt-card-badges">
+        <span class="wb wb-any">🟢 <span class="pl">Każda pogoda</span><span class="en">Any weather</span></span>
+        <span class="dist">📍 ~20 km · Tatry Bielańskie</span>
+      </div>
+      <p class="alt-card-desc pl">Malownicza słowacka wioska z tradycyjnymi drewnianymi domkami zdobionymi kwiatami i rzeźbami. Mniej turystyczna niż główne ośrodki. Kawiarnie, lokalne produkty, spokojny spacer. Blisko Bielańskiej jaskini — można połączyć obie atrakcje w jeden dzień.</p>
+      <p class="alt-card-desc en">A picturesque Slovak village with traditional wooden cottages decorated with flowers and carvings. Less touristy than the main resorts. Cafés, local produce, a leisurely stroll. Close to Belianska Cave — can combine both in one day.</p>
+      <div class="alt-card-links">
+        <a href="https://www.google.com/maps/dir/?api=1&destination=49.2735,20.1571" target="_blank" class="btn-nav">🧭 <span class="pl">Nawiguj</span><span class="en">Navigate</span></a>
+      </div>
+    </div>
+
+    <!-- 6. Štrbské Pleso -->
+    <div class="alt-card">
+      <div class="alt-card-head">
+        <div class="alt-card-title">🏞️ Štrbské Pleso</div>
+      </div>
+      <div class="alt-card-badges">
+        <span class="wb wb-any">🟢 <span class="pl">Każda pogoda</span><span class="en">Any weather</span></span>
+        <span class="dist">📍 ~15 km · 1351 m n.p.m.</span>
+      </div>
+      <p class="alt-card-desc pl">Eleganckie jezioro polodowcowe na wysokości 1351 m z pięknymi hotelami wzdłuż brzegu. Spacer wokół jeziora zajmuje ok. 1h. Tradycyjne drewniane łódki wiosłowe do wynajęcia. Klimatyczna kawiarnia przy wodzie. Jeden z piękniejszych zakątków Tatr.</p>
+      <p class="alt-card-desc en">An elegant glacial lake at 1351 m surrounded by beautiful hotels. A walk around the lake takes about 1h. Traditional wooden rowing boats for hire. Scenic lakeside café. One of the most beautiful spots in the Tatras.</p>
+      <div class="alt-card-links">
+        <a href="https://www.google.com/maps/dir/?api=1&destination=49.1204,20.0617" target="_blank" class="btn-nav">🧭 <span class="pl">Nawiguj</span><span class="en">Navigate</span></a>
+      </div>
+    </div>
+
+    <!-- 7. Slovenský raj -->
+    <div class="alt-card">
+      <div class="alt-card-head">
+        <div class="alt-card-title">🏕️ Slovenský raj — Park Narodowy</div>
+      </div>
+      <div class="alt-card-badges">
+        <span class="wb wb-dry">🟡 <span class="pl">Bez deszczu</span><span class="en">No rain</span></span>
+        <span class="dist">📍 ~40 km · Słowacki Raj</span>
+      </div>
+      <p class="alt-card-desc pl">Park Narodowy z kanionami, wodospadami i przejściami przez wąwozy po drabinkach i kładkach — niesamowita przygoda dla całej rodziny. Łatwe trasy (Suchá Belá) dla dzieci 8+. Wstęp 3€. Buty trekkingowe obowiązkowe — ścieżki są mokre i śliskie.</p>
+      <p class="alt-card-desc en">National park with canyons, waterfalls and gorge passages using ladders and walkways — an amazing adventure for the whole family. Easy routes (Suchá Belá) for kids 8+. Entry €3. Hiking boots essential — paths are wet and slippery.</p>
+      <div class="alt-card-links">
+        <a href="https://www.google.com/maps/dir/?api=1&destination=48.9214,20.4178" target="_blank" class="btn-nav">🧭 <span class="pl">Nawiguj</span><span class="en">Navigate</span></a>
+        <a href="https://www.npsr.sk/en/" target="_blank" class="btn-web">🌐 npsr.sk</a>
+      </div>
+    </div>
+
+    <!-- 8. Aqua City Poprad -->
+    <div class="alt-card">
+      <div class="alt-card-head">
+        <div class="alt-card-title">💦 Aqua City Poprad</div>
+      </div>
+      <div class="alt-card-badges">
+        <span class="wb wb-rain">🔵 <span class="pl">Nawet przy deszczu</span><span class="en">Even in rain</span></span>
+        <span class="dist">📍 ~20 km · Poprad</span>
+      </div>
+      <p class="alt-card-desc pl">Kryty i odkryty park wodny z 13 basenami termalnymi (28–38°C), zjeżdżalniami i strefą relaksu. Jeden z największych parków wodnych na Słowacji. Dla całej rodziny, otwarty całorocznie. Nagrodzona „World's Leading Green Resort".</p>
+      <p class="alt-card-desc en">Indoor and outdoor water park with 13 thermal pools (28–38°C), slides and a relaxation zone. One of the largest water parks in Slovakia. Family-friendly, open year-round. Awarded "World's Leading Green Resort".</p>
+      <div class="alt-card-links">
+        <a href="https://www.google.com/maps/dir/?api=1&destination=49.0563,20.2898" target="_blank" class="btn-nav">🧭 <span class="pl">Nawiguj</span><span class="en">Navigate</span></a>
+        <a href="https://www.aquacitypoprad.sk" target="_blank" class="btn-web">🌐 aquacitypoprad.sk</a>
+      </div>
+    </div>
+
+    <!-- 9. Spišský hrad -->
+    <div class="alt-card">
+      <div class="alt-card-head">
+        <div class="alt-card-title">🏰 Spišský hrad — Zamek Spyski</div>
+      </div>
+      <div class="alt-card-badges">
+        <span class="wb wb-dry">🟡 <span class="pl">Pochmurno, bez deszczu</span><span class="en">Overcast, no rain</span></span>
+        <span class="dist">📍 ~60 km · UNESCO</span>
+      </div>
+      <p class="alt-card-desc pl">Jeden z największych zamków w Europie Środkowej, wpisany na listę UNESCO. Ruiny na wzgórzu z widokiem na Nizinę Spyską. Zwiedzanie ok. 2h. Bilet: 10€ (jedne z najtańszych wśród zamków UNESCO). Przy silnym deszczu lub burzy — lepiej wybrać Plan z jaskiniami lub aquaparkiem.</p>
+      <p class="alt-card-desc en">One of the largest castle ruins in Central Europe, UNESCO listed. Hilltop ruins with views over the Spiš Lowlands. Allow ~2h. Ticket: €10 (among the cheapest UNESCO castles). In heavy rain or storm — better to choose the cave or water park options.</p>
+      <div class="alt-card-links">
+        <a href="https://www.google.com/maps/dir/?api=1&destination=49.0018,20.7705" target="_blank" class="btn-nav">🧭 <span class="pl">Nawiguj</span><span class="en">Navigate</span></a>
+        <a href="https://snm-online.sk/en/spissky-hrad/" target="_blank" class="btn-web">🌐 snm-online.sk</a>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- CO ZABRAĆ -->
+  <section>
+    <h2 class="sec-title pl">Co zabrać</h2>
+    <h2 class="sec-title en">What to Bring</h2>
     <div class="card card-pad">
-      <div class="plan-label plan-b">🌧️ <span class="pl">Dowolna pogoda</span><span class="en">Any conditions</span></div>
-      <div class="callout warn" style="margin-top:0">
-        <div style="font-size:1.4rem">🦇</div>
-        <div>
-          <div class="ct pl">Belianská jaskyňa</div>
-          <div class="ct en">Belianska Cave</div>
-          <p class="cd pl">Piękna jaskinia ze stalaktytami i stalagmitami, stała temperatura ~7°C — weźcie swetry. Wycieczki z przewodnikiem co godzinę, trasa ok. 1h. Odległość od Tatranskiej Lomicy: <strong>~12 km</strong> (kierunek Ždiar).</p>
-          <p class="cd en">Beautiful cave with stalactites and stalagmites, constant temperature ~7°C — bring jumpers. Guided tours every hour, ~1h route. Distance from Tatranská Lomnica: <strong>~12 km</strong> (towards Ždiar).</p>
-        </div>
-      </div>
-      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.85rem">
-        <a href="https://www.google.com/maps/dir/?api=1&destination=49.2582,20.2353" target="_blank" class="nav-btn">🧭 <span class="pl">Nawiguj do jaskini</span><span class="en">Navigate to cave</span></a>
-        <a href="https://www.ssj.sk/en/caves/belianska-jaskyna" target="_blank" style="display:inline-flex;align-items:center;gap:.45rem;background:#FFF8E1;color:#9A6E1E;border:1px solid #EAD3B0;padding:.5rem 1.1rem;border-radius:2rem;font-size:.85rem;font-weight:700;text-decoration:none;margin-top:.85rem">🌐 ssj.sk</a>
-      </div>
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:.85rem" class="pl">Na szczycie 2634 m będzie <strong>znacznie zimniej</strong> niż w Zakopanem — nawet w lipcu. Jeśli wybierzecie jaskinię lodową — zimą przez cały rok (–3°C).</p>
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:.85rem" class="en">At 2634 m it will be <strong>much colder</strong> than in Zakopane — even in July. If choosing the ice cave — it's winter inside all year (–3°C).</p>
+      <ul class="check">
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">🧥 Ciepła kurtka — na szczycie może być 5–10°C nawet latem</span><span class="txt en">🧥 Warm jacket — summit can be 5–10°C even in summer</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">🌧️ Kurtka przeciwdeszczowa / peleryna</span><span class="txt en">🌧️ Rain jacket or poncho</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">👟 Buty z gripem (treetop walk, jaskinia, zamek — wszędzie mokro)</span><span class="txt en">👟 Grippy shoes (treetop walk, cave, castle — wet everywhere)</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">🧣 Sweter / bluza do jaskini (7°C lub –3°C!)</span><span class="txt en">🧣 Jumper / fleece for the cave (7°C or –3°C!)</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">💧 Woda i przekąska</span><span class="txt en">💧 Water and snack</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">📷 Aparat / naładowany telefon</span><span class="txt en">📷 Camera / charged phone</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">💶 Gotówka — jaskinia Bielańska i niektóre parkingi tylko gotówka</span><span class="txt en">💶 Cash — Belianska Cave and some car parks cash only</span></label></li>
+        <li><label><input type="checkbox"><span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span><span class="txt pl">🪪 Dowód osobisty / paszport (przekraczamy granicę SK)</span><span class="txt en">🪪 ID / passport (crossing the Slovak border)</span></label></li>
+      </ul>
     </div>
   </section>
 
-  <!-- PLAN C -->
+  <!-- NOCLEG -->
   <section>
-    <h2 class="sec-title pl">Plan C — Aqua City Poprad 💦</h2>
-    <h2 class="sec-title en">Plan C — Aqua City Poprad 💦</h2>
-    <p class="sec-sub pl">Duży park wodny w Popradzie z basenem termalnym i zjeżdżalniami. Idealne na deszczowy dzień lub po zmęczeniu górami.</p>
-    <p class="sec-sub en">Large water park in Poprad with thermal pool and slides. Ideal for a rainy day or after mountain fatigue.</p>
-
+    <h2 class="sec-title pl">Nocleg</h2>
+    <h2 class="sec-title en">Accommodation</h2>
     <div class="card card-pad">
-      <div class="plan-label plan-c">🌧️ <span class="pl">Deszcz / upał</span><span class="en">Rain / hot day</span></div>
-      <div class="callout info" style="margin-top:0">
-        <div style="font-size:1.4rem">💦</div>
+      <div class="callout green" style="margin-top:0">
+        <div style="font-size:1.4rem">🏠</div>
         <div>
-          <div class="ct">Aqua City Poprad</div>
-          <p class="cd pl">Kryty i odkryty park wodny z basenem termalnym, zjeżdżalniami i strefą relaksu. Poprad to ok. <strong>20 km</strong> od Tatranskiej Lomicy. Dla całej rodziny, otwarty całorocznie.</p>
-          <p class="cd en">Indoor and outdoor water park with thermal pool, slides and relaxation zone. Poprad is about <strong>20 km</strong> from Tatranská Lomnica. Family-friendly, open year-round.</p>
-        </div>
-      </div>
-      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.85rem">
-        <a href="https://www.google.com/maps/dir/?api=1&destination=49.0563,20.2898" target="_blank" class="nav-btn">🧭 <span class="pl">Nawiguj do Aqua City</span><span class="en">Navigate to Aqua City</span></a>
-        <a href="https://www.aquacitypoprad.sk" target="_blank" style="display:inline-flex;align-items:center;gap:.45rem;background:#EAF4F8;color:#1c5a77;border:1px solid #C8DDE6;padding:.5rem 1.1rem;border-radius:2rem;font-size:.85rem;font-weight:700;text-decoration:none;margin-top:.85rem">🌐 aquacitypoprad.sk</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- PLAN D -->
-  <section>
-    <h2 class="sec-title pl">Plan D — Zamek Spyski 🏰</h2>
-    <h2 class="sec-title en">Plan D — Spiš Castle 🏰</h2>
-    <p class="sec-sub pl">Jeden z największych zamków w Europie Środkowej, wpisany na listę UNESCO. Przy pochmurnej, ale suchej pogodzie.</p>
-    <p class="sec-sub en">One of the largest castle ruins in Central Europe, UNESCO listed. Best for overcast but dry weather.</p>
-
-    <div class="card card-pad">
-      <div class="plan-label plan-d">⛅ <span class="pl">Pochmurno, bez deszczu</span><span class="en">Overcast, no rain</span></div>
-      <div class="callout purple" style="margin-top:0">
-        <div style="font-size:1.4rem">🏰</div>
-        <div>
-          <div class="ct pl">Spišský hrad (Zamek Spyski)</div>
-          <div class="ct en">Spišský hrad (Spiš Castle)</div>
-          <p class="cd pl">Ruiny potężnego zamku na wzgórzu z widokiem na Nizinę Spyską — jedna z największych budowli obronnych w Europie Środkowej. Ok. <strong>50 km</strong> od Tatranskiej Lomicy (~45 min). Zwiedzanie zajmuje ok. 2h.</p>
-          <p class="cd en">Ruins of a massive hilltop fortress overlooking the Spiš Lowlands — one of the largest defensive structures in Central Europe. About <strong>50 km</strong> from Tatranská Lomnica (~45 min drive). Allow about 2h to explore.</p>
-        </div>
-      </div>
-      <div class="callout warn">
-        <div style="font-size:1.1rem">⛈️</div>
-        <div>
-          <p class="cd pl"><strong>Przy silnym deszczu lub burzy</strong> — zamek jest odkryty, lepiej wybrać Plan B lub C.</p>
-          <p class="cd en"><strong>In heavy rain or storm</strong> — the castle is outdoors, opt for Plan B or C instead.</p>
+          <div class="ct">Tatrzańskie Domki</div>
+          <p class="cd pl">Nasz nocleg w Zakopanem — baza wypadowa na czas pobytu w Tatrach i Wysokich Tatrach.</p>
+          <p class="cd en">Our accommodation in Zakopane — base for the Tatras and High Tatras stay.</p>
         </div>
       </div>
       <div style="margin-top:.85rem">
-        <a href="https://www.google.com/maps/dir/?api=1&destination=49.0018,20.7705" target="_blank" class="nav-btn">🧭 <span class="pl">Nawiguj do zamku</span><span class="en">Navigate to castle</span></a>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=49.331001,20.033804" target="_blank" style="display:inline-flex;align-items:center;gap:.45rem;background:var(--navy);color:white;padding:.5rem 1.1rem;border-radius:2rem;font-size:.85rem;font-weight:700;text-decoration:none">🧭 <span class="pl">Nawiguj do noclegu</span><span class="en">Navigate to accommodation</span></a>
       </div>
     </div>
   </section>
@@ -271,8 +416,8 @@
         <div>
           <div class="ct pl">Przejście: Łysa Polana</div>
           <div class="ct en">Border crossing: Łysa Polana</div>
-          <p class="cd pl">Z Zakopanego jedzie się przez <strong>Łysą Polanę</strong> — granica PL/SK w dolinie Białki. Po przekroczeniu granicy ok. <strong>35 km</strong> do Tatranskiej Lomicy, łącznie ok. <strong>1 godzina jazdy</strong>. Weźcie dowody / paszporty!</p>
-          <p class="cd en">From Zakopane drive through <strong>Łysa Polana</strong> — the PL/SK border in the Białka valley. After crossing, about <strong>35 km</strong> to Tatranská Lomnica, total around <strong>1 hour drive</strong>. Don't forget your IDs / passports!</p>
+          <p class="cd pl">Z Zakopanego przez <strong>Łysą Polanę</strong> (Lysa Poľana) — granica PL/SK w dolinie Białki. Po przekroczeniu ok. <strong>35 km</strong> do Tatranskiej Lomicy, łącznie <strong>~1h jazdy</strong>. Weźcie dowody / paszporty!</p>
+          <p class="cd en">From Zakopane through <strong>Łysa Polana</strong> — the PL/SK border in the Białka valley. After crossing, ~<strong>35 km</strong> to Tatranská Lomnica, total <strong>~1h drive</strong>. Don't forget your IDs / passports!</p>
         </div>
       </div>
     </div>
